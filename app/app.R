@@ -57,9 +57,16 @@ ui_dropDownFormat <- page_navbar(
   nav_panel(title = "Population trends"),
   
   # Panel 4: citizen science data entry
-  nav_panel(title = "Citizen science")
+  nav_panel(title = "Citizen science"),
+  
+  # Links dropdown
+  nav_spacer(),
+  nav_menu(
+    title = "Links",
+    nav_item(tags$a("Vlieland project", href = "https://nioo.knaw.nl/en/facilities/hole-breeding-passerines-monitoring-vlieland?_gl=1#*uxa8vu*_ga*NTk1NjQ0Njk4LjE3NDcyMjcyNzg.*_ga_HTXYJ4973R*czE3NDgzNDI0OTMkbzQkZzEkdDE3NDgzNDI1MDMkajAkbDAkaDA.")),
+    nav_item(tags$a("Netherlands Insitute of Ecology", href = "https://nioo.knaw.nl/en"))
+  )
 )
-
 
 # App server ----------------------------------------------
 
