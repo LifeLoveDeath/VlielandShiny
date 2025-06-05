@@ -31,14 +31,14 @@ ui_simpleFormat <- fluidPage(
     tabPanel("Find an individual",
              sidebarLayout(
                sidebarPanel(
-                 textInput("search", label = "Search for an individual by colour ring combination:",
+                 textInput("search", label = "Search for an individual by colour ring sequence:",
                            placeholder = "e.g. white-black-metal-red"),
                  actionButton("goButton", "Search"),
-                 helpText(HTML("<strong>How to enter a colour ring combination:</strong><br>
+                 helpText(HTML("<strong>How to enter a colour ring sequence:</strong><br>
                  <ul>
                  <li>Start with the <strong>bird's left leg</strong>, then the <strong>right leg</strong></li>
                  <li>For each leg, enter colours from <strong>top to bottom</strong></li>
-                 <li>Include the <strong>metal ring</strong> in its correct position</li>
+                 <li>Every bird has a metal ring; include it as <strong>metal</strong> in the correct position within the colour sequence</li>
                  <li>Use <strong>dashes</strong> to separate colours (e.g. white-black-metal-red)</li>
                  </ul>
                                "))
