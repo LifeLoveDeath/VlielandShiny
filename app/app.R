@@ -37,3 +37,15 @@ ui_simpleFormat <- fluidPage(
 )
 
 
+
+
+# App server ----------------------------------------------
+
+server <- function(input, output) {}
+
+
+# Run app -------------------------------------------------
+# Run the application 
+shinyApp(ui = ui_simpleFormat, server = server)
+
+
