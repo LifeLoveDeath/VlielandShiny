@@ -28,7 +28,34 @@ ui_simpleFormat <- fluidPage(
     tabPanel("Project info"),
     
     # Tab 2: look up an individual
-    tabPanel("Find an individual"),
+    tabPanel("Find an individual",
+             sidebarLayout(
+               sidebarPanel(
+                 textInput("search", label = "Search for an individual by colour ring combination:",
+                           placeholder = "e.g. white-black-metal-red"),
+                 actionButton("goButton", "Search"),
+                 helpText(HTML("<strong>How to enter a colour ring combination:</strong><br>
+                 <ul>
+                 <li>Start with the <strong>bird's left leg</strong>, then the <strong>right leg</strong></li>
+                 <li>For each leg, enter colours from <strong>top to bottom</strong></li>
+                 <li>Include the <strong>metal ring</strong> in its correct position</li>
+                 <li>Use <strong>dashes</strong> to separate colours (e.g. white-black-metal-red)</li>
+                 </ul>
+                               "))
+               ),
+               
+               mainPanel(
+                 h3(textOutput("ring_number_title")),
+                 fluidRow(
+                   column(12,
+                          tableOutput("summary_info")
+                   )
+                 ),
+                 hr()
+               )  # closes mainPanel
+               
+             )  # closes sidebarLayout
+    ),   # closes tabPanel("Find an individual")
     
     # Tab 3: population-level trends
     tabPanel("Population trends"),
@@ -68,13 +95,22 @@ ui_dropDownFormat <- page_navbar(
   )
 )
 
+
+
+
+
+
 # App server ----------------------------------------------
 
 server <- function(input, output) {}
 
 
+
+
+
+
 # Run app -------------------------------------------------
 # Run the application 
-#shinyApp(ui = ui_simpleFormat, server = server)
-shinyApp(ui = ui_dropDownFormat, server = server)
+shinyApp(ui = ui_simpleFormat, server = server)
+#shinyApp(ui = ui_dropDownFormat, server = server)
 
