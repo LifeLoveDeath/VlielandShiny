@@ -5,6 +5,8 @@
 # Load packages 
 library(shiny)
 library(leaflet)
+library(bslib)
+library(vi)
 
 # Load data
 vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
@@ -38,6 +40,26 @@ ui_simpleFormat <- fluidPage(
 
 
 
+### Alternative format --------------------
+
+# Using page_navbar - with a drop down menu
+ui_dropDownFormat <- page_navbar(
+  title = "Great Tits & Blue Tits of Vlieland",
+  bg = viridis(1)[1],
+  inverse = TRUE,
+  # Panel 1: project info
+  nav_panel(title = "Project info"),
+  
+  # Panel 2: individual look-up
+  nav_panel(title = "Find an individual"),
+  
+  # Panel 3: population trends
+  nav_panel(title = "Population trends"),
+  
+  # Panel 4: citizen science data entry
+  nav_panel(title = "Citizen science")
+)
+
 
 # App server ----------------------------------------------
 
@@ -46,6 +68,6 @@ server <- function(input, output) {}
 
 # Run app -------------------------------------------------
 # Run the application 
-shinyApp(ui = ui_simpleFormat, server = server)
-
+#shinyApp(ui = ui_simpleFormat, server = server)
+shinyApp(ui = ui_dropDownFormat, server = server)
 
