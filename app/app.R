@@ -6,7 +6,7 @@
 library(shiny)
 library(leaflet)
 library(bslib)
-library(vi)
+library(viridis)
 
 # Load data
 vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
