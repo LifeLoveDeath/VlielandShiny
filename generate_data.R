@@ -1,10 +1,13 @@
 # Create dummy data
 # Ring number, year of birth, colour rings
 
+
+library(tidyverse)
+
 set.seed(123)
 
 # Define parameters
-colours <- c("purple", "red", "white", "blue", "black")
+colours <- c("red", "white", "blue", "yellow/black","red/white", "blue/white", "white-blue", "white", "yellow", "orange", "green", "pink/blue", "pink/green")
 n_rows <- 100
 years <- 1955:2024
 
@@ -14,19 +17,20 @@ years <- 1955:2024
 # Function to create colour combinations
 generate_colour_rings <- function() {
   repeat {
-    len <- sample(4:6, 1)  # length 4 - 6
-    base_colours <- sample(colours, len - 1, replace = FALSE)
+    #length <- 4  # length always 4
+    base_colours <- sample(colours, 3, replace = FALSE) # sample from colours (3 because one is metal)
     
-    # metal position - final 3 but not last
-    metal_pos <- sample((len-2):(len-1), 1)
+    # metal position
+    metal_pos <- sample(1:4, 1) # get position for metal (can be anywhere in sequence)
     
     # insert metal
-    combo <- append(base_colours, "metal", after = metal_pos - 1)
+    combo <- append(base_colours, "metal", after = metal_pos - 1) # add in metal
     
     # paste as string
     return(paste(combo, collapse = "-"))
   }
 }
+
 
 # Generate dataframe
 data <- data.frame(
@@ -36,9 +40,19 @@ data <- data.frame(
   stringsAsFactors = FALSE
 )
 
+is.data.frame(data)
+
+separate_wider_delim(data, delim = "-")
+
+# Separate colour rings into cols
+
+
+
+
 # Check duplicated ColourRing
 data[which(duplicated(data$ColourRing) == TRUE), ]
-# Colour combinations are repeated - but they are in the real data as well, so practice with this
+# Colour combinations can be repeated - but they are in the real data as well, so practice with this
+# None are actually repeated here
 
 
 
