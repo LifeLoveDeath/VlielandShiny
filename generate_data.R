@@ -45,11 +45,11 @@ data <- data.frame(
 # Separate colour rings into cols
 colourCombCols <- str_split_fixed(data$ColourRing, '-', 4) # get columns
 data <- cbind(data[,1:2], colourCombCols, data[ 3]) # add to data
-colnames(data) <- c("RingNumber", "ColourRingCombo", "ColourRing1", "ColourRing2", "ColourRing3", "ColourRing4", "BirthYear") # rename cols
-
-# add into data
+colnames(data) <- c("RingNumber", "ColourRingCombo", "ColourRingLeft1", "ColourRingLeft2", "ColourRingRight1", "ColourRingRight2", "BirthYear") # rename cols
 
 
+
+# Add colour abbreviations?
 
 
 # Check duplicated ColourRing
