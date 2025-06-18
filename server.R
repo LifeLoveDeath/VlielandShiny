@@ -31,7 +31,7 @@ server <- function(input, output, session) {
       return(NULL)
     }
     
-    match
+    match <- match[ c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
   })
   
   # Render the matched table

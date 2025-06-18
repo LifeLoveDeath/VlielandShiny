@@ -7,7 +7,7 @@ library(tidyverse)
 set.seed(123)
 
 # Define parameters
-colours <- c("red", "white", "blue", "yellow/black","red/white", "blue/white", "white-blue", "white", "yellow", "orange", "green", "pink/blue", "pink/green")
+colours <- c("red", "white", "blue", "yellow/black","red/white", "blue/white", "white/blue", "white", "yellow", "orange", "green", "pink/blue", "pink/green")
 n_rows <- 100
 years <- 1955:2024
 

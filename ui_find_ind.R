@@ -3,7 +3,7 @@
 
 # Load data - remove this later and just load data in server?
 #vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
-colours <- c("metal", "red", "white", "blue", "yellow/black","red/white", "blue/white", "white-blue", "white", "yellow", "orange", "green", "pink/blue", "pink/green")
+colours <- c("metal", "red", "white", "blue", "yellow/black","red/white", "blue/white", "white/blue", "white", "yellow", "orange", "green", "pink/blue", "pink/green")
 
 # Function - drop down menus -------------------------------------
   
