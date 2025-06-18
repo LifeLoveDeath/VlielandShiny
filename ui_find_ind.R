@@ -7,15 +7,23 @@ colours <- c("red", "white", "blue", "yellow/black","red/white", "blue/white", "
 
 # Function - drop down menus -------------------------------------
 
+#findIndividualUI <- function() {
+#         selectInput(
+#           inputId = "LeftLegRing1DropDown",
+#           label = "Left leg, ring 1",
+#           choices = colours
+#         )}
+  
 findIndividualUI <- function() {
-         selectInput(
-           inputId = "LeftLegRing1DropDown",
-           label = "Left leg, ring 1",
-           choices = colours
-         )}
-  
-  
-  
+  tagList(
+    selectInput("Left1", "Left leg - top ring", choices = colours),
+    selectInput("Left2", "Left leg - bottom ring", choices = colours),
+    selectInput("Right1", "Right leg - top ring", choices = colours),
+    selectInput("Right2", "Right leg - bottom ring", choices = colours),
+    
+    actionButton("searchBird", "Search")
+  )
+}
 
 #selectInput is the basic dropdown: https://shiny.posit.co/r/reference/shiny/latest/selectinput.html
 #There's also dropdown: https://appsilon.github.io/shiny.fluent/reference/Dropdown.html#ref-examples

@@ -20,27 +20,23 @@ source("ui_find_ind.R")
 
 
 ui <- fluidPage(
-  # Overall app title
   titlePanel("Great Tits & Blue Tits of Vlieland"),
   
-  # Format tabs
   tabsetPanel(
-    
-    # Tab 1: project info
     tabPanel("Project info"),
     
-    # Tab 2: look up an individual
     tabPanel("Find an individual",
              sidebarLayout(
                sidebarPanel(
-             findIndividualUI() # calls functions from ui_find_ind script that produces the lookup
+                 findIndividualUI()
+               ),
+               mainPanel()
+             )
     ),
-    mainPanel())),
     
-    # Tab 3: population-level trends
     tabPanel("Population trends"),
     
-    # Tab 4: citizen science data entry
     tabPanel("Citizen science")
+    
   )
 )
