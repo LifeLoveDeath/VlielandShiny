@@ -9,12 +9,14 @@ colours <- c("metal", "red", "white", "blue", "yellow/black","red/white", "blue/
   
 findIndividualUI <- function() {
   tagList(
-    selectInput("Left1", "Left leg - top ring", choices = colours), # they should have placeholder text before selection is made
-    selectInput("Left2", "Left leg - bottom ring", choices = colours),
-    selectInput("Right1", "Right leg - top ring", choices = colours),
-    selectInput("Right2", "Right leg - bottom ring", choices = colours),
-    
-    actionButton("searchBird", "Search")
+    selectInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", colours),
+                selected = ""), # this should introduce placeholder text
+    selectInput("Left2", "Left leg - bottom ring", choices = c("Select a colour..." = "", colours),
+                selected = ""),
+    selectInput("Right1", "Right leg - top ring", choices = c("Select a colour..." = "", colours),
+                selected = ""),
+    selectInput("Right2", "Right leg - bottom ring", choices = c("Select a colour..." = "", colours),
+                selected = "")
   )
 }
 

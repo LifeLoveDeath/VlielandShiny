@@ -12,37 +12,33 @@ library(viridis)
 
 # App server ----------------------------------------------
 
-server <- function(input, output) {
+server <- function(input, output, session) {
   vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
   
-  # Store the result in a reactiveVal
-  matched_data <- reactiveVal(NULL)
-  
-  observeEvent(input$searchBird, { # should change this so it starts searching as soon as a dropdown item is selected so it can update the choices for the other dropdowns
-    
+  # Reactive expression to filter data based on dropdowns
+  matched_data <- reactive({
     req(input$Left1, input$Left2, input$Right1, input$Right2)
     
     match <- vlieland.data[
       vlieland.data$ColourRingLeft1 == input$Left1 &
         vlieland.data$ColourRingLeft2 == input$Left2 &
         vlieland.data$ColourRingRight1 == input$Right1 &
-        vlieland.data$ColourRingRight2 == input$Right2, 
+        vlieland.data$ColourRingRight2 == input$Right2,
     ]
     
     if (nrow(match) == 0) {
       showNotification("No matching bird found.", type = "error")
-      matched_data(NULL)
-    } else {
-      matched_data(match)
+      return(NULL)
     }
+    
+    match
   })
   
-  # Output the matching data as a table
+  # Render the matched table
   output$summary_info <- renderTable({
     matched_data()
   }, striped = TRUE, bordered = TRUE, hover = TRUE)
 }
-
 
 
   
