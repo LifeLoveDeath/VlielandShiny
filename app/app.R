@@ -17,7 +17,7 @@ vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
 
 # App UI ---------------------------------------------------
 
-ui_simpleFormat <- fluidPage(
+ui <- fluidPage(
   # Overall app title
   titlePanel("Great Tits & Blue Tits of Vlieland"),
   
@@ -103,7 +103,7 @@ ui_dropDownFormat <- page_navbar(
 # App server ----------------------------------------------
 
 server <- function(input, output) {
-  vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
+  vlieland.data <- read.csv("/Users/rosielayfield/Documents/R/VlielandShiny/data/DummyData.csv", row.names = NULL)
   # do I need to load the data here?
   
   # Tab 2: look up an individual - search result
@@ -179,6 +179,6 @@ server <- function(input, output) {
 
 # Run app -------------------------------------------------
 # Run the application 
-shinyApp(ui = ui_simpleFormat, server = server)
+#shinyApp(ui = ui_simpleFormat, server = server)
 #shinyApp(ui = ui_dropDownFormat, server = server)
 

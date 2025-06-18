@@ -81,3 +81,8 @@ server <- function(input, output) {
   }, rownames = FALSE, colnames = FALSE)
   
 }
+
+
+
+# run with runApp() - calls ui.r and server.r
+# or call ui in server script so can use run app button and run as background job for live editing
