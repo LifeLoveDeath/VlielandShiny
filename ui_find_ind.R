@@ -2,9 +2,10 @@
 # function to create individual bird lookup
 
 
-# Function (old) - with search bar -------------------------------------
-# ui_find_individual.R
-findIndividualUI_searchbar <- function() {
+
+# Function - drop down menus -------------------------------------
+
+findIndividualUI <- function() {
   sidebarLayout(
     sidebarPanel(
       textInput("search", label = "Search for an individual by colour ring sequence:",
@@ -33,8 +34,13 @@ findIndividualUI_searchbar <- function() {
 
 
 
-# Function - drop down menus -------------------------------------
 
+
+
+
+
+# Function (old) - with search bar -------------------------------------
+# ui_find_individual.R
 findIndividualUI_searchbar <- function() {
   sidebarLayout(
     sidebarPanel(
