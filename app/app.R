@@ -103,7 +103,7 @@ ui_dropDownFormat <- page_navbar(
 # App server ----------------------------------------------
 
 server <- function(input, output) {
-  
+  vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
   # do I need to load the data here?
   
   # Tab 2: look up an individual - search result
