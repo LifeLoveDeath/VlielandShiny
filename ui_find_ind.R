@@ -1,22 +1,26 @@
 # Vlieland Shiny app
 # function to create individual bird lookup
 
-
+# Load data - remove this later and just load data in server?
+#vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
+colours <- c("red", "white", "blue", "yellow/black","red/white", "blue/white", "white-blue", "white", "yellow", "orange", "green", "pink/blue", "pink/green")
 
 # Function - drop down menus -------------------------------------
 
 findIndividualUI <- function() {
-  page_fillable(
-    
-    card(card_header("Search for an individual bird by colour ring sequence:"),
          selectInput(
-           inputId = "dropdown_example",
-         
-         ))}
+           inputId = "LeftLegRing1DropDown",
+           label = "Left leg, ring 1",
+           choices = colours
+         )}
   
   
   
-  
+
+#selectInput is the basic dropdown: https://shiny.posit.co/r/reference/shiny/latest/selectinput.html
+#There's also dropdown: https://appsilon.github.io/shiny.fluent/reference/Dropdown.html#ref-examples
+#Need to look into narrowing down options as colours are selected: https://stackoverflow.com/questions/75026080/how-can-i-narrow-a-menu-in-r-shiny-based-on-menu-selections
+
   
 
 # could use  navset_card_underline so can change between individual info, map, family tree etc. https://shiny.posit.co/r/articles/build/layout-guide/
