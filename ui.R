@@ -27,7 +27,7 @@ ui <- fluidPage(
     
     # Tab 2: look up an individual
     tabPanel("Find an individual",
-             findIndividualUI() # calls functions from ui_find_ind script
+             findIndividualUI() # calls functions from ui_find_ind script that produces the lookup
     ),
     
     # Tab 3: population-level trends
