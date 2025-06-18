@@ -9,7 +9,7 @@ colours <- c("metal", "red", "white", "blue", "yellow/black","red/white", "blue/
   
 findIndividualUI <- function() {
   tagList(
-    selectInput("Left1", "Left leg - top ring", choices = colours),
+    selectInput("Left1", "Left leg - top ring", choices = colours), # they should have placeholder text before selection is made
     selectInput("Left2", "Left leg - bottom ring", choices = colours),
     selectInput("Right1", "Right leg - top ring", choices = colours),
     selectInput("Right2", "Right leg - bottom ring", choices = colours),
