@@ -77,3 +77,4 @@ head(data)
 
 # Save data
 write.csv(data, "data/DummyData.csv", row.names = FALSE)
+
