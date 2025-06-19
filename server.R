@@ -17,7 +17,7 @@ source("ui_find_ind.R")
 server <- function(input, output, session) {
   vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
   
-  findIndividualServer()
+  matched_data <- findIndividualServer(input, vlieland.data)
   
   # Render the matched table      # this bit stays in server.r?
   output$summary_info <- renderTable({

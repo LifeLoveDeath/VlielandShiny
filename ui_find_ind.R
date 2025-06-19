@@ -77,9 +77,9 @@ findIndividualUI_searchbar <- function() {
 
 
 
-# Server function - search data based on dropdowns
+# Server function - search data based on dropdowns ---------------------------
 
-findIndividualServer <- function() {
+findIndividualServer <- function(input, data) {
   matched_data <- reactive({
     req(input$Left1, input$Left2, input$Right1, input$Right2)
     
@@ -97,5 +97,6 @@ findIndividualServer <- function() {
     
     match <- match[ c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
   })
+  return(matched_data)
 }
 
