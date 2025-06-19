@@ -11,7 +11,7 @@ library(viridis)
 
 
 # Source files/functions -----------------------------------
-source("ui_find_ind.R")
+source("find_ind_functions.R")
 
 # App UI ---------------------------------------------------
 
