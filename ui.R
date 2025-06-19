@@ -28,7 +28,7 @@ ui <- fluidPage(
     tabPanel("Find an individual",
              sidebarLayout(
                sidebarPanel(
-                 findIndividualUI()
+                 findIndividualUI_withIcons()
                ),
                mainPanel( # area to show results
                  h3("Matching bird record:"), # heading

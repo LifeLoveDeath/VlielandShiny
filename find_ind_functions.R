@@ -22,27 +22,74 @@ library(viridis)
 ##### Might require HTML rendering and selectizeInput() (can render images in options)
 ##### https://shiny.posit.co/r/articles/build/selectize/
 ##### Need to use multiple = FALSE to make it a dropdown rather than textbox?
-##### Images of colours are her but not totally clear: https://avianid.co.uk/plastic-striped-split-rings
+##### Images of colours are here but not totally clear: https://avianid.co.uk/plastic-striped-split-rings
+##### Rendering html https://stackoverflow.com/questions/66884854/use-html-in-selectizeinput-with-r-shiny 
 
 
-findIndividualUI <- function() {
+# html rednering for icons - have removed from function
+colour_icons <- c(
+  "blue" = "blue <div style='width:15px; height:10px; background-color:blue; display:inline-block; margin-right:5px; '></div>",
+  "blue/white" = "blue/white",
+  "green" = "green",
+  "metal" = "metal",
+  "orange" = "orange",
+  "pink/blue" = "pink/blue",
+  "pink/green" = "pink/green",
+  "red" = "red",
+  "red/white" = "red/white",
+  "white" = "white",
+  "white/blue" = "white/blue",
+  "yellow" = "yellow",
+  "yellow/black" = "yellow/black")
+
+
+findIndividualUI_withIcons <- function() {
   colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
   
   tagList(
-    selectizeInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", colours),
-                selected = ""), # this should introduce placeholder text
-    selectizeInput("Left2", "Left leg - bottom ring", choices = c("Select a colour..." = "", colours),
-                selected = ""),
-    selectizeInput("Right1", "Right leg - top ring", choices = c("Select a colour..." = "", colours),
-                selected = ""),
-    selectizeInput("Right2", "Right leg - bottom ring", choices = c("Select a colour..." = "", colours),
-                selected = "")
+    selectizeInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", "blue", "green"),
+                   options = list(render = I('
+    {
+      option: function(item, escape) {
+        var icons = {
+          "blue": "<div style=\\"width:20px; height:10px; background-color:blue; float:right; margin-left:5px;\\"></div>",
+          "green": "<div style=\\"width:20px; height:10px; background-color:green; float:right; margin-left:5px;\\"></div>"
+        };
+        var icon = icons[item.value] || "";
+        return "<div style=\\"overflow:hidden;\\">" + escape(item.label) + icon + "</div>";
+      },
+      item: function(item, escape) {
+        var icons = {
+          "blue": "<div style=\\"width:20px; height:10px; background-color:blue; float:right; margin-left:5px;\\"></div>",
+          "green": "<div style=\\"width:px; height:10px; background-color:green; float:right; margin-left:5px;\\"></div>"
+        };
+        var icon = icons[item.value] || "";
+        return "<div style=\\"overflow:hidden;\\">" + escape(item.label) + icon + "</div>";
+      }
+    }
+  '))),
+    selectizeInput(
+      "Left2", "Left leg - bottom ring", choices =  c("Select a colour..." = "", colours),, selected = ""
+    ),
+    selectizeInput(
+      "Right1", "Right leg - top ring", choices =  c("Select a colour..." = "", colours),, selected = ""
+    ),
+    selectizeInput(
+      "Right2", "Right leg - bottom ring", choices =  c("Select a colour..." = "", colours),, selected = ""
+    )
   )
 }
 
+  
+
+  
+  
+  
+ 
+
 
 # Original with basic dropdowns
-findIndividualUI2 <- function() {
+findIndividualUI <- function() {
   colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
   
   tagList(
