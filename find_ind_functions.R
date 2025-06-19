@@ -19,9 +19,30 @@ library(viridis)
 
 # To do:
 # Needs icons for the ring colours (or at least a key): https://www.r-bloggers.com/2024/01/icons-in-a-shiny-dropdown-input/
+##### Might require HTML rendering and selectizeInput() (can render images in options)
+##### https://shiny.posit.co/r/articles/build/selectize/
+##### Need to use multiple = FALSE to make it a dropdown rather than textbox?
+##### Images of colours are her but not totally clear: https://avianid.co.uk/plastic-striped-split-rings
 
 
 findIndividualUI <- function() {
+  colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
+  
+  tagList(
+    selectizeInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", colours),
+                selected = ""), # this should introduce placeholder text
+    selectizeInput("Left2", "Left leg - bottom ring", choices = c("Select a colour..." = "", colours),
+                selected = ""),
+    selectizeInput("Right1", "Right leg - top ring", choices = c("Select a colour..." = "", colours),
+                selected = ""),
+    selectizeInput("Right2", "Right leg - bottom ring", choices = c("Select a colour..." = "", colours),
+                selected = "")
+  )
+}
+
+
+# Original with basic dropdowns
+findIndividualUI2 <- function() {
   colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
   
   tagList(
