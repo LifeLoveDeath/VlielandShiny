@@ -9,32 +9,17 @@ library(leaflet)
 library(bslib)
 library(viridis)
 
+# Source files/functions -----------------------------------
+source("ui_find_ind.R")
 
 # App server ----------------------------------------------
 
 server <- function(input, output, session) {
   vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
   
-  # Reactive expression to filter data based on dropdowns
-  matched_data <- reactive({
-    req(input$Left1, input$Left2, input$Right1, input$Right2)
-    
-    match <- vlieland.data[
-      vlieland.data$ColourRingLeft1 == input$Left1 &
-        vlieland.data$ColourRingLeft2 == input$Left2 &
-        vlieland.data$ColourRingRight1 == input$Right1 &
-        vlieland.data$ColourRingRight2 == input$Right2,
-    ]
-    
-    if (nrow(match) == 0) {
-      showNotification("No matching bird found.", type = "error")
-      return(NULL)
-    }
-    
-    match <- match[ c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
-  })
+  findIndividualServer()
   
-  # Render the matched table
+  # Render the matched table      # this bit stays in server.r?
   output$summary_info <- renderTable({
     matched_data()
   }, striped = TRUE, bordered = TRUE, hover = TRUE)

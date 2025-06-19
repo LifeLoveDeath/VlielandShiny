@@ -1,13 +1,24 @@
 # Vlieland Shiny app
 # function to create individual bird lookup
 
+# Load packages 
+library(shiny)
+library(leaflet)
+library(bslib)
+library(viridis)
+
+
+
+
 # Load data - remove this later and just load data in server?
 #vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
-colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
 
-# Function - drop down menus -------------------------------------
+
+# UI function - drop down menus -------------------------------------
 # This creates four drop down menus with labels ("Left leg - top ring etc.), place holder text ("Select a colour...") and options (coours list)
+
 findIndividualUI <- function() {
+  colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
   tagList(
     selectInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", colours),
                 selected = ""), # this should introduce placeholder text
@@ -33,11 +44,7 @@ findIndividualUI <- function() {
 
 
 
-
-
-
-
-# Function (old) - with search bar -------------------------------------
+# UI function (old) - with search bar -------------------------------------
 # ui_find_individual.R
 findIndividualUI_searchbar <- function() {
   sidebarLayout(
@@ -65,3 +72,30 @@ findIndividualUI_searchbar <- function() {
     )
   )
 }
+
+
+
+
+
+# Server function - search data based on dropdowns
+
+findIndividualServer <- function() {
+  matched_data <- reactive({
+    req(input$Left1, input$Left2, input$Right1, input$Right2)
+    
+    match <- vlieland.data[
+      vlieland.data$ColourRingLeft1 == input$Left1 &
+        vlieland.data$ColourRingLeft2 == input$Left2 &
+        vlieland.data$ColourRingRight1 == input$Right1 &
+        vlieland.data$ColourRingRight2 == input$Right2,
+    ]
+    
+    if (nrow(match) == 0) {
+      showNotification("No matching bird found.", type = "error")
+      return(NULL)
+    }
+    
+    match <- match[ c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
+  })
+}
+
