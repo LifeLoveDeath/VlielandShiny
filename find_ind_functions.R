@@ -47,7 +47,7 @@ findIndividualUI_withIcons <- function() {
   colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
   
   tagList(
-    selectizeInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", "blue", "green"),
+    selectizeInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", colours), selected = "",
                    options = list(render = I('
     {
       option: function(item, escape) {
@@ -69,13 +69,13 @@ findIndividualUI_withIcons <- function() {
     }
   '))),
     selectizeInput(
-      "Left2", "Left leg - bottom ring", choices =  c("Select a colour..." = "", colours),, selected = ""
+      "Left2", "Left leg - bottom ring", choices =  c("Select a colour..." = "", colours), selected = ""
     ),
     selectizeInput(
-      "Right1", "Right leg - top ring", choices =  c("Select a colour..." = "", colours),, selected = ""
+      "Right1", "Right leg - top ring", choices =  c("Select a colour..." = "", colours), selected = ""
     ),
     selectizeInput(
-      "Right2", "Right leg - bottom ring", choices =  c("Select a colour..." = "", colours),, selected = ""
+      "Right2", "Right leg - bottom ring", choices =  c("Select a colour..." = "", colours), selected = ""
     )
   )
 }
