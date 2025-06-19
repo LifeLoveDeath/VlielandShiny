@@ -1,5 +1,5 @@
 # Vlieland Shiny app
-# function to create individual bird lookup
+# functions to create individual bird lookup
 
 # Load packages 
 library(shiny)
@@ -16,7 +16,8 @@ library(viridis)
 
 # UI function - drop down menus -------------------------------------
 # This creates four drop down menus with labels ("Left leg - top ring etc.), place holder text ("Select a colour...") and options (coours list)
-
+# To do:
+# Needs icons for the ring colours (or at least a key)
 findIndividualUI <- function() {
   colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
   tagList(
@@ -78,6 +79,9 @@ findIndividualUI_searchbar <- function() {
 
 
 # Server function - search data based on dropdowns ---------------------------
+# To do:
+# Needs to start search as soon as one of the drop downs is selected/narrow down options for other dropdowns
+# Notification if none of the dropdowns is set to metal?
 
 findIndividualServer <- function(input, data) {
   matched_data <- reactive({

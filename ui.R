@@ -30,9 +30,9 @@ ui <- fluidPage(
                sidebarPanel(
                  findIndividualUI()
                ),
-               mainPanel(
-                 h3("Matching bird record:"), # area to show results
-                 tableOutput("summary_info")
+               mainPanel( # area to show results
+                 h3("Matching bird record:"), # heading
+                 tableOutput("summary_info") # table placeholder filled by "output$summary_output <- " in server code
                )
              )
     ),
