@@ -6,7 +6,7 @@
 colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
 
 # Function - drop down menus -------------------------------------
-  
+# This creates four drop down menus with labels ("Left leg - top ring etc.), place holder text ("Select a colour...") and options (coours list)
 findIndividualUI <- function() {
   tagList(
     selectInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", colours),
