@@ -14,7 +14,7 @@ library(viridis)
 #vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
 
 
-# UI function - drop down menus -------------------------------------
+# UI function - drop down menus with icons -------------------------------------
 # This creates four drop down menus with labels ("Left leg - top ring etc.), place holder text ("Select a colour...") and options (coours list)
 
 # To do:
@@ -47,7 +47,7 @@ findIndividualUI_withIcons <- function() {
   colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
   
   tagList(
-    selectizeInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", colours), selected =,
+    selectizeInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", colours), selected = "",
                    options = list(render = I('
     {
       option: function(item, escape) {
@@ -82,13 +82,8 @@ findIndividualUI_withIcons <- function() {
 
   
 
-  
-  
-  
- 
 
-
-# Original with basic dropdowns
+# Original UI function with basic dropdowns (no icons) --------------
 findIndividualUI <- function() {
   colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
   
@@ -150,13 +145,16 @@ findIndividualUI_searchbar <- function() {
 
 
 
+
+
+
 # Server function - search data based on dropdowns ---------------------------
 # To do:
 # Needs to start search as soon as one of the drop downs is selected/narrow down options for other dropdowns
 #### One way to do this might be making the started text "select a colour" an actual option"?
 # Notification if none of the dropdowns is set to metal?
 
-findIndividualServer <- function(input, data) {
+findIndividualServer2 <- function(input, data) {
   matched_data <- reactive({
     req(input$Left1, input$Left2, input$Right1, input$Right2)
     
@@ -177,3 +175,43 @@ findIndividualServer <- function(input, data) {
   return(matched_data)
 }
 
+
+
+# Server function - narrow dropdown options as selections made ----------------
+# This changes the dropdown options based on selections made but need it to also search and return matching records
+# Currently, backspace clears the selection but need a clickable "clear" option (or keep the "Select..." option)
+# Also, when selection is made in one dropbox, the options for that dropbox are restricted to that value (even if only one selection has been made) - so you can't change the option (unless you clear the selection with backspace)
+
+findIndividualServer <- function(input, data, session) {
+  
+    # Update dropdowns based on selections made
+    observe({
+      # Filter the data based on current selections
+      filtered <- data
+      
+      if (input$Left1 != "") {
+        filtered <- filtered[filtered$ColourRingLeft1 == input$Left1, ]
+      }
+      if (input$Left2 != "") {
+        filtered <- filtered[filtered$ColourRingLeft2 == input$Left2, ]
+      }
+      if (input$Right1 != "") {
+        filtered <- filtered[filtered$ColourRingRight1 == input$Right1, ]
+      }
+      if (input$Right2 != "") {
+        filtered <- filtered[filtered$ColourRingRight2 == input$Right2, ]
+      }
+      
+      # Extract remaining possible selections from filtered data
+      options_Left1  <- unique(filtered$ColourRingLeft1)
+      options_Left2  <- unique(filtered$ColourRingLeft2)
+      options_Right1 <- unique(filtered$ColourRingRight1)
+      options_Right2 <- unique(filtered$ColourRingRight2)
+      
+      # Update all dropdowns (but keep current selection)
+      updateSelectInput(session, "Left1", choices = c("Select..." = "", sort(options_Left1)), selected = isolate(input$Left1))
+      updateSelectInput(session, "Left2", choices = c("Select..." = "", sort(options_Left2)), selected = isolate(input$Left2))
+      updateSelectInput(session, "Right1", choices = c("Select..." = "", sort(options_Right1)), selected = isolate(input$Right1))
+      updateSelectInput(session, "Right2", choices = c("Select..." = "", sort(options_Right2)), selected = isolate(input$Right2))
+    })
+  }

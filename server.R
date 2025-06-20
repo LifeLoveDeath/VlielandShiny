@@ -14,10 +14,10 @@ source("find_ind_functions.R")
 
 # App server ----------------------------------------------
 
-server <- function(input, output, session) {
+server <- function(input, output, session) { # not sure if I'll use session?
   vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
   
-  matched_data <- findIndividualServer(input, vlieland.data)
+  matched_data <- findIndividualServer(input, vlieland.data, session)
   
   # Render the matched table      # this bit stays in server.r?
   output$summary_info <- renderTable({
