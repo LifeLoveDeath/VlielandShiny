@@ -47,13 +47,13 @@ findIndividualUI_withIcons <- function() {
   colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
   
   tagList(
-    selectizeInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", colours), selected = "",
+    selectizeInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", colours), selected =,
                    options = list(render = I('
     {
       option: function(item, escape) {
         var icons = {
-          "blue": "<div style=\\"width:20px; height:10px; background-color:blue; float:right; margin-left:5px;\\"></div>",
-          "green": "<div style=\\"width:20px; height:10px; background-color:green; float:right; margin-left:5px;\\"></div>"
+          "blue": "<div style=\\"width:20px; height:10px; background-color:blue; float:right; margin-right:5px;\\"></div>",
+          "green": "<div style=\\"width:20px; height:10px; background-color:green; float:right; margin-right:5px;\\"></div>"
         };
         var icon = icons[item.value] || "";
         return "<div style=\\"overflow:hidden;\\">" + escape(item.label) + icon + "</div>";
