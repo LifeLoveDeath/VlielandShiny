@@ -43,11 +43,11 @@ colour_icons <- c(
   "yellow/black" = "yellow/black")
 
 
-findIndividualUI_withIcons <- function() {
+findIndividualUI_withIcons <- function(data) {
   colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
   
   tagList(
-    selectizeInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", colours), selected = "",
+    selectizeInput("Left1", "Left leg - top ring", choices =  c("", colours), selected = "",
                    options = list(render = I('
     {
       option: function(item, escape) {
@@ -69,13 +69,13 @@ findIndividualUI_withIcons <- function() {
     }
   '))),
     selectizeInput(
-      "Left2", "Left leg - bottom ring", choices =  c("Select a colour..." = "", colours), selected = ""
+      "Left2", "Left leg - bottom ring", choices =  c("", colours), selected = ""
     ),
     selectizeInput(
-      "Right1", "Right leg - top ring", choices =  c("Select a colour..." = "", colours), selected = ""
+      "Right1", "Right leg - top ring", choices =  c("", colours), selected = ""
     ),
     selectizeInput(
-      "Right2", "Right leg - bottom ring", choices =  c("Select a colour..." = "", colours), selected = ""
+      "Right2", "Right leg - bottom ring", choices =  c("", colours), selected = ""
     )
   )
 }
@@ -89,7 +89,7 @@ findIndividualUI <- function() {
   
   tagList(
     selectInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", colours),
-                selected = ""), # this should introduce placeholder text
+                selected = ""), # the placeholder text isn't working properly
     selectInput("Left2", "Left leg - bottom ring", choices = c("Select a colour..." = "", colours),
                 selected = ""),
     selectInput("Right1", "Right leg - top ring", choices = c("Select a colour..." = "", colours),
@@ -98,6 +98,33 @@ findIndividualUI <- function() {
                 selected = "")
   )
 }
+
+findIndividualUI2 <- function() {
+  colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green",
+               "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
+  
+  named_colours <- setNames(colours, colours)
+  clear_choice <- c("Clear selection" = "")
+  
+  tagList(
+    selectInput("Left1", "Left leg - top ring", 
+                choices = c(clear_choice, named_colours),
+                selected = clear_choice),
+    
+    selectInput("Left2", "Left leg - bottom ring", 
+                choices = c(clear_choice, named_colours),
+                selected = ""),
+    
+    selectInput("Right1", "Right leg - top ring", 
+                choices = c(clear_choice, named_colours),
+                selected = ""),
+    
+    selectInput("Right2", "Right leg - bottom ring", 
+                choices = c(clear_choice, named_colours),
+                selected = "")
+  )
+}
+
 
 #selectInput is the basic dropdown: https://shiny.posit.co/r/reference/shiny/latest/selectinput.html
 #There's also dropdown: https://appsilon.github.io/shiny.fluent/reference/Dropdown.html#ref-examples
@@ -152,9 +179,11 @@ findIndividualUI_searchbar <- function() {
 # To do:
 # Needs to start search as soon as one of the drop downs is selected/narrow down options for other dropdowns
 #### One way to do this might be making the started text "select a colour" an actual option"?
-# Notification if none of the dropdowns is set to metal?
+# Notification if none of the dropdowns is set to metal? But actually this won't be possible once the options narrow down
+# Below - alternative that narrows dropdown options as selections made
+# This one - no placeholder text "Select colour..." so that seems to only come from the server side function (even thought it's also in the UI side function)
 
-findIndividualServer2 <- function(input, data) {
+findIndividualServer2 <- function(input, data, session) {
   matched_data <- reactive({
     req(input$Left1, input$Left2, input$Right1, input$Right2)
     
@@ -181,6 +210,8 @@ findIndividualServer2 <- function(input, data) {
 # This changes the dropdown options based on selections made but need it to also search and return matching records
 # Currently, backspace clears the selection but need a clickable "clear" option (or keep the "Select..." option)
 # Also, when selection is made in one dropbox, the options for that dropbox are restricted to that value (even if only one selection has been made) - so you can't change the option (unless you clear the selection with backspace)
+# Now the "Select colour..." text remains and clears the search
+# Probably also need a button that clears all
 
 findIndividualServer <- function(input, data, session) {
   
@@ -189,16 +220,16 @@ findIndividualServer <- function(input, data, session) {
       # Filter the data based on current selections
       filtered <- data
       
-      if (input$Left1 != "") {
+      if (input$Left1 != "" & input$Left1 != "clear") {
         filtered <- filtered[filtered$ColourRingLeft1 == input$Left1, ]
       }
-      if (input$Left2 != "") {
+      if (input$Left2 != "" & input$Left2 != "clear") {
         filtered <- filtered[filtered$ColourRingLeft2 == input$Left2, ]
       }
-      if (input$Right1 != "") {
+      if (input$Right1 != "" & input$Right1 != "clear") {
         filtered <- filtered[filtered$ColourRingRight1 == input$Right1, ]
       }
-      if (input$Right2 != "") {
+      if (input$Right2 != "" & input$Right2 != "clear") {
         filtered <- filtered[filtered$ColourRingRight2 == input$Right2, ]
       }
       
@@ -209,9 +240,9 @@ findIndividualServer <- function(input, data, session) {
       options_Right2 <- unique(filtered$ColourRingRight2)
       
       # Update all dropdowns (but keep current selection)
-      updateSelectInput(session, "Left1", choices = c("Select..." = "", sort(options_Left1)), selected = isolate(input$Left1))
-      updateSelectInput(session, "Left2", choices = c("Select..." = "", sort(options_Left2)), selected = isolate(input$Left2))
-      updateSelectInput(session, "Right1", choices = c("Select..." = "", sort(options_Right1)), selected = isolate(input$Right1))
-      updateSelectInput(session, "Right2", choices = c("Select..." = "", sort(options_Right2)), selected = isolate(input$Right2))
+      updateSelectInput(session, "Left1", choices = c("Select colour..." = "", "Select colour..." = "clear", sort(options_Left1)), selected = isolate(input$Left1))
+      updateSelectInput(session, "Left2", choices = c("Select colour..." = "", "Select colour..." = "clear", sort(options_Left2)), selected = isolate(input$Left2))
+      updateSelectInput(session, "Right1", choices = c("Select colour..." = "", "Select colour..." = "clear", sort(options_Right1)), selected = isolate(input$Right1))
+      updateSelectInput(session, "Right2", choices = c("Select colour..." = "", "Select colour..." = "clear", sort(options_Right2)), selected = isolate(input$Right2))
     })
   }
