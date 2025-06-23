@@ -213,7 +213,7 @@ findIndividualServer2 <- function(input, data, session) {
 # Now the "Select colour..." text remains and clears the search
 # Probably also need a button that clears all
 # Not sure the other drop downs re-update when a selection is cleared using 'Select a colour' - maybe it is
-# But when you make one selection, the seleciton for that dropdown becomes the seleciton made and " Select a colour' (to clear) and it should keep all the options availble until they're no longer possible due to other selecitions
+# But when you make one selection, the selection for that dropdown becomes the selection made and " Select a colour' (to clear) and it should keep all the options availble until they're no longer possible due to other selecitions
 # All options come back when you reset all dropdowns to "Select a colour" though
 
 findIndividualServer <- function(input, data, session) {
