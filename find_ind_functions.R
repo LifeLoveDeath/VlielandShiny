@@ -212,6 +212,9 @@ findIndividualServer2 <- function(input, data, session) {
 # Also, when selection is made in one dropbox, the options for that dropbox are restricted to that value (even if only one selection has been made) - so you can't change the option (unless you clear the selection with backspace)
 # Now the "Select colour..." text remains and clears the search
 # Probably also need a button that clears all
+# Not sure the other drop downs re-update when a selection is cleared using 'Select a colour' - maybe it is
+# But when you make one selection, the seleciton for that dropdown becomes the seleciton made and " Select a colour' (to clear) and it should keep all the options availble until they're no longer possible due to other selecitions
+# All options come back when you reset all dropdowns to "Select a colour" though
 
 findIndividualServer <- function(input, data, session) {
   
@@ -231,6 +234,7 @@ findIndividualServer <- function(input, data, session) {
       }
       if (input$Right2 != "" & input$Right2 != "clear") {
         filtered <- filtered[filtered$ColourRingRight2 == input$Right2, ]
+        return(filtered) #think this needs to be in a reactive
       }
       
       # Extract remaining possible selections from filtered data

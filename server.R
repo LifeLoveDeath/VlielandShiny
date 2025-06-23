@@ -21,7 +21,7 @@ server <- function(input, output, session) { # not sure if I'll use session?
   
   # Render the matched table      # this bit stays in server.r?
   output$summary_info <- renderTable({
-    matched_data()
+    filtered() #not working - think it needs to be in a reactive in server function
   }, striped = TRUE, bordered = TRUE, hover = TRUE)
 }
 
