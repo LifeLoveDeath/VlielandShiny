@@ -27,7 +27,8 @@ server <- function(input, output, session) {
   # Render the matched table    
   output$summary_info <- renderTable({
     df <- search_results() 
-    df[,c(1,2, 7,8)]})
+    df[,c(1,2, 7,8)]},
+    striped = TRUE, bordered = TRUE, hover = TRUE)
 }
 
 
