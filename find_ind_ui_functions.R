@@ -93,7 +93,8 @@ findIndividualUI <- function() {
   
   tagList(
     selectInput("Left1", "Left leg - top ring", choices = c("Select a colour..." = "", colours),
-                selected = ""), # the placeholder text isn't working properly
+                selected = "", # the placeholder text isn't working properly
+                options = list(placeholder = 'Select or leave blank...')), # this might introduce a placeholder but would need to update choices and selected on server side to check 
     selectInput("Left2", "Left leg - bottom ring", choices = c("Select a colour..." = "", colours),
                 selected = ""),
     selectInput("Right1", "Right leg - top ring", choices = c("Select a colour..." = "", colours),

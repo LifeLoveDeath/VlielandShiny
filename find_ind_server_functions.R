@@ -118,8 +118,8 @@ findIndividualServer_search <- function(input, data, session) {
       #return(NULL)  # No input = no result
     #}
     
-    # Or if only two selections are made?
-    # Count how many inputs are filled (i.e. not blank)
+    # Or if only one selection is made? Can alter 
+    # Count how many selections are made (i.e. not blank but issue of "clear")
     filled_inputs <- sum(input$Left1 != "", input$Left2 != "", input$Right1 != "", input$Right2 != "")
     
     # Only search if at least 2 are filled
