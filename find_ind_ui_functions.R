@@ -1,12 +1,14 @@
 # Vlieland Shiny app
-# functions to create individual bird lookup
+# UI functions to create individual bird lookup
+
+## Need to organise/rename all these
 
 # Load packages 
 library(shiny)
 library(leaflet)
 library(bslib)
 library(viridis)
-
+library(dplyr)
 
 
 
@@ -14,8 +16,10 @@ library(viridis)
 #vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
 
 
-# UI function - drop down menus with icons -------------------------------------
-# This creates four drop down menus with labels ("Left leg - top ring etc.), place holder text ("Select a colour...") and options (coours list)
+
+
+## Drop down menus with icons -------------------------------------
+## This creates four drop down menus with labels ("Left leg - top ring etc.), place holder text ("Select a colour...") and options (coours list)
 
 # To do:
 # Needs icons for the ring colours (or at least a key): https://www.r-bloggers.com/2024/01/icons-in-a-shiny-dropdown-input/
@@ -29,7 +33,7 @@ library(viridis)
 # html rednering for icons - have removed from function
 colour_icons <- c(
   "blue" = "blue <div style='width:15px; height:10px; background-color:blue; display:inline-block; margin-right:5px; '></div>",
-  "blue/white" = "blue/white",
+  "blue/white" = "blue/white", # update rest
   "green" = "green",
   "metal" = "metal",
   "orange" = "orange",
@@ -83,7 +87,7 @@ findIndividualUI_withIcons <- function(data) {
   
 
 
-# Original UI function with basic dropdowns (no icons) --------------
+## Basic dropdowns (no icons) --------------
 findIndividualUI <- function() {
   colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
   
@@ -139,8 +143,8 @@ findIndividualUI2 <- function() {
 
 
 
-# UI function (old) - with search bar -------------------------------------
-# ui_find_individual.R
+## UI function (old) - with search bar -------------------------------------
+## ui_find_individual.R
 findIndividualUI_searchbar <- function() {
   sidebarLayout(
     sidebarPanel(
@@ -167,86 +171,3 @@ findIndividualUI_searchbar <- function() {
     )
   )
 }
-
-
-
-
-
-
-
-
-# Server function - search data based on dropdowns ---------------------------
-# To do:
-# Needs to start search as soon as one of the drop downs is selected/narrow down options for other dropdowns
-#### One way to do this might be making the started text "select a colour" an actual option"?
-# Notification if none of the dropdowns is set to metal? But actually this won't be possible once the options narrow down
-# Below - alternative that narrows dropdown options as selections made
-# This one - no placeholder text "Select colour..." so that seems to only come from the server side function (even thought it's also in the UI side function)
-
-findIndividualServer2 <- function(input, data, session) {
-  matched_data <- reactive({
-    req(input$Left1, input$Left2, input$Right1, input$Right2)
-    
-    match <- data[
-      data$ColourRingLeft1 == input$Left1 &
-        data$ColourRingLeft2 == input$Left2 &
-        data$ColourRingRight1 == input$Right1 &
-        data$ColourRingRight2 == input$Right2,
-    ]
-    
-    if (nrow(match) == 0) {
-      showNotification("No matching bird found.", type = "error")
-      return(NULL)
-    }
-    
-    match <- match[ c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
-  })
-  return(matched_data)
-}
-
-
-
-# Server function - narrow dropdown options as selections made ----------------
-# This changes the dropdown options based on selections made but need it to also search and return matching records
-# Currently, backspace clears the selection but need a clickable "clear" option (or keep the "Select..." option)
-# Also, when selection is made in one dropbox, the options for that dropbox are restricted to that value (even if only one selection has been made) - so you can't change the option (unless you clear the selection with backspace)
-# Now the "Select colour..." text remains and clears the search
-# Probably also need a button that clears all
-# Not sure the other drop downs re-update when a selection is cleared using 'Select a colour' - maybe it is
-# But when you make one selection, the selection for that dropdown becomes the selection made and " Select a colour' (to clear) and it should keep all the options availble until they're no longer possible due to other selecitions
-# All options come back when you reset all dropdowns to "Select a colour" though
-
-findIndividualServer <- function(input, data, session) {
-  
-    # Update dropdowns based on selections made
-    observe({
-      # Filter the data based on current selections
-      filtered <- data
-      
-      if (input$Left1 != "" & input$Left1 != "clear") {
-        filtered <- filtered[filtered$ColourRingLeft1 == input$Left1, ]
-      }
-      if (input$Left2 != "" & input$Left2 != "clear") {
-        filtered <- filtered[filtered$ColourRingLeft2 == input$Left2, ]
-      }
-      if (input$Right1 != "" & input$Right1 != "clear") {
-        filtered <- filtered[filtered$ColourRingRight1 == input$Right1, ]
-      }
-      if (input$Right2 != "" & input$Right2 != "clear") {
-        filtered <- filtered[filtered$ColourRingRight2 == input$Right2, ]
-        return(filtered) #think this needs to be in a reactive
-      }
-      
-      # Extract remaining possible selections from filtered data
-      options_Left1  <- unique(filtered$ColourRingLeft1)
-      options_Left2  <- unique(filtered$ColourRingLeft2)
-      options_Right1 <- unique(filtered$ColourRingRight1)
-      options_Right2 <- unique(filtered$ColourRingRight2)
-      
-      # Update all dropdowns (but keep current selection)
-      updateSelectInput(session, "Left1", choices = c("Select colour..." = "", "Select colour..." = "clear", sort(options_Left1)), selected = isolate(input$Left1))
-      updateSelectInput(session, "Left2", choices = c("Select colour..." = "", "Select colour..." = "clear", sort(options_Left2)), selected = isolate(input$Left2))
-      updateSelectInput(session, "Right1", choices = c("Select colour..." = "", "Select colour..." = "clear", sort(options_Right1)), selected = isolate(input$Right1))
-      updateSelectInput(session, "Right2", choices = c("Select colour..." = "", "Select colour..." = "clear", sort(options_Right2)), selected = isolate(input$Right2))
-    })
-  }

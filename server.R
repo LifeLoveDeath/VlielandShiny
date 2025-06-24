@@ -10,23 +10,29 @@ library(bslib)
 library(viridis)
 
 # Source files/functions -----------------------------------
-source("find_ind_functions.R")
+source("find_ind_server_functions.R")
 
 # App server ----------------------------------------------
 
-server <- function(input, output, session) { # not sure if I'll use session?
+server <- function(input, output, session) {
+  #load data
   vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
   
-  matched_data <- findIndividualServer(input, vlieland.data, session)
+  # Find individual by colour rings - narrow dropdown options as selections made
+  findIndividualServer_updateDropdowns(input, vlieland.data, session)
   
-  # Render the matched table      # this bit stays in server.r?
+  # Find individual by colour rings - perform search
+  search_results <- findIndividualServer_search(input, vlieland.data, session)
+    
+  # Render the matched table    
   output$summary_info <- renderTable({
-    filtered() #not working - think it needs to be in a reactive in server function
-  }, striped = TRUE, bordered = TRUE, hover = TRUE)
+    df <- search_results() 
+    df[,c(1,2, 7,8)]})
 }
 
 
-  
+#not working - think it needs to be in a reactive
+#}, striped = TRUE, bordered = TRUE, hover = TRUE)  
 
 # run with runApp() - calls ui.r and server.r
 # or call ui in server script so can use run app button and run as background job for live editing
