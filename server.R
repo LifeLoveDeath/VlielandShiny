@@ -28,7 +28,7 @@ server <- function(input, output, session) {
   output$summary_info <- renderTable({
     df <- search_results() 
     df[,c(1,2, 7,8)]},
-    striped = TRUE, bordered = TRUE, hover = TRUE)
+    bordered = TRUE, hover = TRUE)
 }
 
 
