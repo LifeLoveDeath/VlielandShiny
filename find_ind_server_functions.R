@@ -49,15 +49,13 @@ findIndividualServer2 <- function(input, data, session) {
 # The options for selected etc. here overide those in UI
 
 
-
-# This changes the dropdown options based on selections made but need it to also search and return matching records
-# Currently, backspace clears the selection but need a clickable "clear" option (or keep the "Select..." option)
+# This changes the dropdown options based on selections made 
+# Currently, backspace clears the selection but need a clickable "clear" option (or keep the "Select..." option) - added
 # Also, when selection is made in one dropbox, the options for that dropbox are restricted to that value (even if only one selection has been made) - so you can't change the option (unless you clear the selection with backspace)
 # Now the "Select colour..." text remains and clears the search
-# Probably also need a button that clears all
-# Not sure the other drop downs re-update when a selection is cleared using 'Select a colour' - maybe it is
-# But when you make one selection, the selection for that dropdown becomes the selection made and " Select a colour' (to clear) and it should keep all the options availble until they're no longer possible due to other selecitions
-# All options come back when you reset all dropdowns to "Select a colour" though
+# Not sure the other drop downs re-update when a selection is cleared using 'Select a colour' - maybe they are
+
+# Need to sort out "" vs "clear" issue and placeholder
 
 findIndividualServer_updateDropdowns <- function(input, data, session) {
   
@@ -93,6 +91,13 @@ findIndividualServer_updateDropdowns <- function(input, data, session) {
     updateSelectInput(session, "Right2", choices = c("Select colour..." = "", "Select colour..." = "clear", sort(options_Right2)), selected = isolate(input$Right2))
   })
   
+  observeEvent(input$reset_filters, {
+    updateSelectInput(session, "Left1", selected = "")
+    updateSelectInput(session, "Left2", selected = "")
+    updateSelectInput(session, "Right1", selected = "")
+    updateSelectInput(session, "Right2", selected = "")
+  })
+  
 }
 
 
@@ -103,7 +108,7 @@ findIndividualServer_updateDropdowns <- function(input, data, session) {
 ## For now, this return the whole table and narrows it down while they search
 ## Don't want them to see the whole table
 ## Search once they've made 2 selections?
-## Or have a search button?
+## Or have a search button? But would be less intuitive that you could leave selections blank and still find the individual
 
 # Issues:
 ## because of the "" vs "clear" issue, if they clear a selection using "Select a colour" (="clear"), it still updates the search
