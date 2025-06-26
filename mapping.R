@@ -16,3 +16,4 @@ m <- leaflet() %>% addTiles() %>% # adds default OpenStreetMap map tiles
 # fitBounds() fits the map within a specified rectangle of long and lat - won't need to be beyond vlieland so could try and do this?
 
 m # see map
+
