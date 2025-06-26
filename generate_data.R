@@ -80,6 +80,16 @@ data$BirthYear[missing_data_rows] <- NA # missing birth year data
 boxes <- read.csv("data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
 
 # Add nest of origin
+# Add random next from boxes data
+for(i in 1:nrow(data)) {
+  data$OriginNestNo[i] <- boxes[sample(nrow(boxes), 1, replace = TRUE), "Nestbox"]
+  data$OriginNestLon[i] <- boxes[which(boxes$Nestbox == data$OriginNestNo[i]), "Lon"]
+  data$OriginNestLat[i] <- boxes[which(boxes$Nestbox == data$OriginNestNo[i]), "Lat"]
+}
+
+
+
+
 
 
 
@@ -88,6 +98,7 @@ boxes <- read.csv("data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
 # Save data ------------------------------------------------------------------------------------
 # See data
 head(data)
+summary(data)
 
 # Save
 write.csv(data, "data/DummyData.csv", row.names = FALSE)
