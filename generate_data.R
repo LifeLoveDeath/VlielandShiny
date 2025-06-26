@@ -6,6 +6,7 @@ library(tidyverse)
 
 set.seed(123)
 
+# Create data with ring number, colour rings and birth year --------------------------------------------------------
 # Define parameters
 colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
 n_rows <- 100
@@ -59,7 +60,7 @@ data[which(duplicated(data$ColourRing) == TRUE), ]
 
 
 
-# Add species:
+# Add species --------------------------------------------------------
 # Sample 35 random rows for blue tits
 blue_tit_rows <- sample(nrow(data), 35)
 
@@ -68,13 +69,26 @@ data$Species <- "Great tit"  # default for all rows
 data$Species[blue_tit_rows] <- "Blue tit" # change the random sample of 35 rows to blue tit
 
 
-# Create missing data
+# Create missing data --------------------------------------------------------
 missing_data_rows <- sample(nrow(data), 5) # 5 random rows to have missing data
 data$BirthYear[missing_data_rows] <- NA # missing birth year data
 
+
+# Add in locations --------------------------------------------------------
+
+# read in coordinates data
+boxes <- read.csv("data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
+
+# Add nest of origin
+
+
+
+
+
+# Save data ------------------------------------------------------------------------------------
 # See data
 head(data)
 
-# Save data
+# Save
 write.csv(data, "data/DummyData.csv", row.names = FALSE)
 
