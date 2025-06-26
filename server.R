@@ -29,11 +29,10 @@ server <- function(input, output, session) {
     df <- search_results() 
     df[,c(1,2, 7,8)]},
     bordered = TRUE, hover = TRUE)
+  # This table actually needs to be clickable so they can select the correct ind? renderDataTable?
 }
 
 
-#not working - think it needs to be in a reactive
-#}, striped = TRUE, bordered = TRUE, hover = TRUE)  
 
 # run with runApp() - calls ui.r and server.r
 # or call ui in server script so can use run app button and run as background job for live editing
