@@ -109,11 +109,14 @@ findIndividualServer_updateDropdowns <- function(input, data, session) {
 ## Don't want them to see the whole table
 ## Search once they've made 2 selections?
 ## Or have a search button? But would be less intuitive that you could leave selections blank and still find the individual
+
 ## Or it could provide results once there are fewer than three options?
+## This fixes the "" vs "clear" issue as well
 
 # Issues:
-## because of the "" vs "clear" issue, if they clear a selection using "Select a colour" (="clear"), it still updates the search
+## because of the "" vs "clear" issue, if they clear a selection using "Select a colour" (="clear"), it still updates the search (i.e. can show all data rows by setting them all back to 'Select a colour...')
 # Need to fix "" vs. "clear" in other findIndividual functions
+# Likely needs proper placeholder text?
 
 
 findIndividualServer_search <- function(input, data, session) {
@@ -126,12 +129,12 @@ findIndividualServer_search <- function(input, data, session) {
     
     # Or if only one selection is made? Can alter 
     # Count how many selections are made (i.e. not blank but issue of "clear")
-    filled_inputs <- sum(input$Left1 != "", input$Left2 != "", input$Right1 != "", input$Right2 != "")
+    #filled_inputs <- sum(input$Left1 != "", input$Left2 != "", input$Right1 != "", input$Right2 != "")
     
     # Only search if at least 2 are filled
-    if (filled_inputs < 2) {
-      return(NULL)
-    }
+    #if (filled_inputs < 2) {
+    #  return(NULL)
+    #}
   
     
     filtered <- data
@@ -150,7 +153,9 @@ findIndividualServer_search <- function(input, data, session) {
     }
     
     # If going to return results based on number of narrowed options, add an if statement around return here
-    return(filtered)
+    if(nrow(filtered) < 5) {
+      return(filtered) 
+    }
   })
 }
 

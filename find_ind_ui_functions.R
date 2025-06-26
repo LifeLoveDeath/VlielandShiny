@@ -51,7 +51,8 @@ findIndividualUI_withIcons <- function(data) {
   colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
   
   tagList(
-    selectizeInput("Left1", "Left leg - top ring", choices =  c("", colours), selected = "",
+    selectizeInput("Left1", "Left leg - top ring", 
+                   choices =  c("", colours), selected = "",
                    options = list(render = I('
     {
       option: function(item, escape) {
@@ -73,7 +74,9 @@ findIndividualUI_withIcons <- function(data) {
     }
   '))),
     selectizeInput(
-      "Left2", "Left leg - bottom ring", choices =  c("", colours), selected = ""
+      "Left2", "Left leg - bottom ring", 
+      choices =  c("", colours), selected = ""
+      #options = list(placeholder = "Select") # doesn't work
     ),
     selectizeInput(
       "Right1", "Right leg - top ring", choices =  c("", colours), selected = ""
@@ -144,7 +147,7 @@ findIndividualUI2 <- function() {
 
 
 
-## UI function (old) - with search bar -------------------------------------
+## Old search - with search bar -------------------------------------
 ## ui_find_individual.R
 findIndividualUI_searchbar <- function() {
   sidebarLayout(
