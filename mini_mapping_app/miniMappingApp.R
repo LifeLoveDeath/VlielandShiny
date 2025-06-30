@@ -37,13 +37,24 @@ data <- read.csv("data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
 mappingUIFunction <- function() {
   nestBoxes <- unique(data$Nestbox)
   tagList(
-    selectizeInput(
-      "Box", "Nestbox", 
-      choices = nestBoxes,
-      multiple = TRUE
+    fluidRow(
+      column(5,
+             selectizeInput(
+               "Box", "Nestbox", 
+               choices = nestBoxes,
+               multiple = TRUE
+             )
+      ),
+      column(4,
+             div(style = "margin-top: 25px;",
+                 actionButton("clear_button", "Clear Selection")
+             )
+      )
     )
   )
 }
+
+
 
 
 # Sever function
@@ -89,14 +100,7 @@ ui_mapping <- fluidPage(
   titlePanel("Mapping nest boxes"),
   
   # search bar and print button
-  fluidRow(
-    column(5, mappingUIFunction()),
-    column(6,
-           div(style = "margin-top: 25px; text-align: left;",
-               actionButton("clear_button", "Clear Selection")
-           )
-    )
-  ),
+  mappingUIFunction(),
   
   # map area
   fluidRow(
