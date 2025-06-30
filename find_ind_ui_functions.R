@@ -83,8 +83,9 @@ findIndividualUI_withIcons <- function(data) {
     ),
     selectizeInput(
       "Right2", "Right leg - bottom ring", choices =  c("", colours), selected = ""
-    )
-  ,   actionButton("reset_filters", "Reset filters"))
+    ),
+    actionButton("reset_filters", "Reset filters"),
+  helpText(HTML("placeholder instructions text"))) # not working
 }
 
   
