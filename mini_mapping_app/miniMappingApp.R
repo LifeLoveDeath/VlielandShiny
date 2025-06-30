@@ -7,6 +7,7 @@ library(osmdata)
 library(leaflet)
 
 
+#Load data
 data <- read.csv("data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
 
 #They're all in the north, so recentre map
@@ -14,12 +15,12 @@ data <- read.csv("data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
 #try 53.286226, 5.018424
 
 
-m <- leaflet() %>% addTiles() %>% # adds default OpenStreetMap map tiles 
-  setView(lng = 5.018424, lat = 53.286226, zoom = 11) # got long and lat from google maps - sets the view to be on Vlieland
+#m <- leaflet() %>% addTiles() %>% # adds default OpenStreetMap map tiles 
+#  setView(lng = 5.018424, lat = 53.286226, zoom = 11) # got long and lat from google maps - sets the view to be on Vlieland
 
-m %>% addMarkers(
-  lng = data$Lon,
-  lat = data$Lat)
+#m %>% addMarkers(
+#  lng = data$Lon,
+#  lat = data$Lat)
 
 
 
@@ -28,7 +29,6 @@ m %>% addMarkers(
 
 
 # UI function
-data <- read.csv("data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
 mappingUIFunction <- function() {
   nestBoxes <- unique(data$Nestbox)
   tagList(
@@ -42,7 +42,7 @@ mappingUIFunction <- function() {
 
 
 # Sever function
-mappingFunction <- function(input, output, data) {
+mappingFunction <- function(input, output, data, session) {
   
   output$map <- renderLeaflet({
     # Base map
@@ -70,8 +70,12 @@ mappingFunction <- function(input, output, data) {
     
     m
   })
-  
+  # Clear button observer
+  observeEvent(input$clear_button, {
+    updateSelectizeInput(session, "Box", selected = character(0))
+  })
 }
+
 
 
 
@@ -79,10 +83,17 @@ mappingFunction <- function(input, output, data) {
 ui_mapping <- fluidPage(
   titlePanel("Mapping nest boxes"),
   
+  # search bar and print button
   fluidRow(
-    column(12, mappingUIFunction())
+    column(5, mappingUIFunction()),
+    column(6,
+           div(style = "margin-top: 25px; text-align: left;",
+               actionButton("clear_button", "Clear Selection")
+           )
+    )
   ),
   
+  # map area
   fluidRow(
     column(12, leafletOutput("map", width = "100%", height = "600px"))
   )
@@ -93,7 +104,7 @@ ui_mapping <- fluidPage(
 # Server definition
 server_mapping <- function(input, output, session) {
   data <- read.csv("data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
-  mappingFunction(input, output, data)
+  mappingFunction(input, output, data, session)
 }
 
 
