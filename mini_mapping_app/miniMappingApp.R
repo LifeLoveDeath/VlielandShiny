@@ -1,20 +1,23 @@
 # Mini mapping app
 
 # Load packages
-library(shiny)
-library(tidyverse)
-library(osmdata)
-library(leaflet)
+# Required packages
+required_packages <- c("shiny", "tidyverse", "osmdata", "leaflet")
+
+# Install any missing packages
+new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
+if(length(new_packages)) install.packages(new_packages)
+
+# Load packages
+lapply(required_packages, library, character.only = TRUE)
 
 
 #Load data
 data <- read.csv("data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
 
-#They're all in the north, so recentre map
-#was: lng = 4.960574, lat = 53.264568
-#try 53.286226, 5.018424
 
 
+# Checking nestbox locations and basic mapping
 #m <- leaflet() %>% addTiles() %>% # adds default OpenStreetMap map tiles 
 #  setView(lng = 5.018424, lat = 53.286226, zoom = 11) # got long and lat from google maps - sets the view to be on Vlieland
 
@@ -22,7 +25,9 @@ data <- read.csv("data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
 #  lng = data$Lon,
 #  lat = data$Lat)
 
-
+#They're all in the north, so recentre map
+#was: lng = 4.960574, lat = 53.264568
+#try 53.286226, 5.018424
 
 
 
