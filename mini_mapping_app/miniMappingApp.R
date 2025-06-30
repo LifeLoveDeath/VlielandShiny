@@ -8,7 +8,7 @@ library(leaflet)
 
 
 #Load data
-data <- read.csv("data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
+data <- read.csv("/Users/rosielayfield/Documents/R/VlielandShiny/data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
 
 #They're all in the north, so recentre map
 #was: lng = 4.960574, lat = 53.264568
@@ -103,7 +103,6 @@ ui_mapping <- fluidPage(
 
 # Server definition
 server_mapping <- function(input, output, session) {
-  data <- read.csv("data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
   mappingFunction(input, output, data, session)
 }
 
