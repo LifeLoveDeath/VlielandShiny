@@ -166,11 +166,17 @@ findIndividualServer_search <- function(input, output, data, session) {
     reactable(df[, c(1, 2, 7, 8)],
               highlight = TRUE,
               bordered = TRUE,
-              searchable = TRUE,
-              selection = "single",
-              onClick = "select"  )
+              selection = "single", # would like it to be clickable without this selection tick box...
+              onClick = "select",
+              theme = reactableTheme(
+                rowSelectedStyle = list(backgroundColor = "#eee", boxShadow = "inset 2px 0 0 0 #ffa62d")))
   }) 
   return(search_results)
+  
+  selected_row <- reactive({
+    getReactableState("summary_info", "selected")
+  })
+  
 }
 
   
