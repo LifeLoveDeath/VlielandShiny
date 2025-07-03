@@ -9,6 +9,7 @@ library(leaflet)
 library(bslib)
 library(viridis)
 library(dplyr)
+library(reactable)
 
 
 
@@ -56,6 +57,7 @@ findIndividualServer2 <- function(input, data, session) {
 # Not sure the other drop downs re-update when a selection is cleared using 'Select a colour' - maybe they are
 
 # Need to sort out "" vs "clear" issue and placeholder
+
 
 findIndividualServer_updateDropdowns <- function(input, data, session) {
   
@@ -118,6 +120,7 @@ findIndividualServer_updateDropdowns <- function(input, data, session) {
 # Need to fix "" vs. "clear" in other findIndividual functions
 # Likely needs proper placeholder text?
 
+# Make the table clickable: https://shiny.posit.co/r/components/outputs/table-reactable/
 
 findIndividualServer_search <- function(input, output, data, session) {
   
@@ -157,11 +160,16 @@ findIndividualServer_search <- function(input, output, data, session) {
       return(filtered) 
     }
   })
-  output$summary_info <- renderTable({
+  output$summary_info <- renderReactable({
     df <- search_results()
-    df[, c(1, 2, 7, 8)]
-  }, bordered = TRUE, hover = TRUE)
-  
+    if (is.null(df) || nrow(df) == 0) return(NULL)
+    reactable(df[, c(1, 2, 7, 8)],
+              highlight = TRUE,
+              bordered = TRUE,
+              searchable = TRUE,
+              selection = "single",
+              onClick = "select"  )
+  }) 
   return(search_results)
 }
 

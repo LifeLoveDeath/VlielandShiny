@@ -8,6 +8,7 @@ library(shiny)
 library(leaflet)
 library(bslib)
 library(viridis)
+library(reactable)
 
 
 # Source files/functions -----------------------------------
@@ -32,7 +33,7 @@ ui <- fluidPage(
                ),
                mainPanel( # area to show results
                  h3("Matching bird record:"), # heading
-                 tableOutput("summary_info") # table placeholder filled by "output$summary_output <- " in server code
+                 reactableOutput("summary_info") # table placeholder filled by "output$summary_output <- " in server code
                )
              )
     ),
