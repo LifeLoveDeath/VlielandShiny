@@ -12,7 +12,7 @@ library(reactable)
 
 
 # Source files/functions -----------------------------------
-source("find_ind_ui_functions.R")
+source("individual_search/find_ind_ui_functions.R")
 
 # App UI ---------------------------------------------------
 

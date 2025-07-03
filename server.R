@@ -10,7 +10,7 @@ library(bslib)
 library(viridis)
 
 # Source files/functions -----------------------------------
-source("find_ind_server_functions.R")
+source("individual_search/find_ind_server_functions.R")
 
 # App server ----------------------------------------------
 
