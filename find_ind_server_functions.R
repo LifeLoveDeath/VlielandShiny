@@ -119,9 +119,9 @@ findIndividualServer_updateDropdowns <- function(input, data, session) {
 # Likely needs proper placeholder text?
 
 
-findIndividualServer_search <- function(input, data, session) {
+findIndividualServer_search <- function(input, output, data, session) {
   
-  reactive({
+  search_results <- reactive({
     # Don't return table if no selections are made
     #if (all(input$Left1 == "", input$Left2 == "", input$Right1 == "", input$Right2 == "")) {
       #return(NULL)  # No input = no result
@@ -157,6 +157,12 @@ findIndividualServer_search <- function(input, data, session) {
       return(filtered) 
     }
   })
+  output$summary_info <- renderTable({
+    df <- search_results()
+    df[, c(1, 2, 7, 8)]
+  }, bordered = TRUE, hover = TRUE)
+  
+  return(search_results)
 }
 
   

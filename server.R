@@ -22,14 +22,8 @@ server <- function(input, output, session) {
   findIndividualServer_updateDropdowns(input, vlieland.data, session)
   
   # Find individual by colour rings - perform search
-  search_results <- findIndividualServer_search(input, vlieland.data, session)
-    
-  # Render the matched table    
-  output$summary_info <- renderTable({
-    df <- search_results() 
-    df[,c(1,2, 7,8)]},
-    bordered = TRUE, hover = TRUE)
-  # This table actually needs to be clickable so they can select the correct ind? renderDataTable?
+  search_results <- findIndividualServer_search(input, output, vlieland.data, session)
+
 }
 
 
