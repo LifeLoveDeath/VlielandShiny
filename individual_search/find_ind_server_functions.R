@@ -10,6 +10,7 @@ library(bslib)
 library(viridis)
 library(dplyr)
 library(reactable)
+library(DT)
 
 
 
@@ -121,6 +122,7 @@ findIndividualServer_updateDropdowns <- function(input, data, session) {
 # Likely needs proper placeholder text?
 
 # Make the table clickable: https://shiny.posit.co/r/components/outputs/table-reactable/
+# This might be a better way without the tick boxes: https://stackoverflow.com/questions/69870709/r-shiny-get-data-from-selected-row
 
 findIndividualServer_search <- function(input, output, data, session) {
   
@@ -160,22 +162,29 @@ findIndividualServer_search <- function(input, output, data, session) {
       return(filtered) 
     }
   })
-  output$summary_info <- renderReactable({
-    df <- search_results()
-    if (is.null(df) || nrow(df) == 0) return(NULL)
-    reactable(df[, c(1, 2, 7, 8)],
-              highlight = TRUE,
-              bordered = TRUE,
-              selection = "single", # would like it to be clickable without this selection tick box...
-              onClick = "select",
-              theme = reactableTheme(
-                rowSelectedStyle = list(backgroundColor = "#eee", boxShadow = "inset 2px 0 0 0 #ffa62d")))
-  }) 
-  return(search_results)
+  # This section works to return the search results as a clickable dataframe but I'm changing it to avoid tickboxes
+  #output$summary_info <- renderReactable({
+  #  df <- search_results()
+  #  if (is.null(df) || nrow(df) == 0) return(NULL)
+  #  reactable(df[, c(1, 2, 7, 8)],
+  #            highlight = TRUE,
+  #            bordered = TRUE,
+  #            selection = "single", # would like it to be clickable without this selection tick box...
+   #           theme = reactableTheme(
+  ##            onClick = "select",
+  #              rowSelectedStyle = list(backgroundColor = "#eee", boxShadow = "inset 2px 0 0 0 #ffa62d")))
+  #}) 
+  #return(search_results)
   
-  selected_row <- reactive({
-    getReactableState("summary_info", "selected")
-  })
+  #selected_row <- reactive({
+  #  getReactableState("summary_info", "selected")
+  #})
+  ####
+  
+  # This works to produce clickable datatable but need to get rid of search bar etc.              
+  output$summary_info <- DT::renderDataTable(DT::datatable({ search_results() }))
+  
+  output$text <- renderText({ toString(search_results()[input$table_rows_selected, "RingNumber"]) })
   
 }
 

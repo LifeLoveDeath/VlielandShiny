@@ -33,7 +33,9 @@ ui <- fluidPage(
                ),
                mainPanel( # area to show results
                  h3("Matching bird record:"), # heading
-                 reactableOutput("summary_info") # table placeholder filled by "output$summary_output <- " in server code
+                 #reactableOutput("summary_info") # table placeholder filled by "output$summary_output <- " in server code
+                 DT::dataTableOutput("summary_info"), # changed to this to change the clickable datatable
+                 verbatimTextOutput("text")
                )
              )
     ),
