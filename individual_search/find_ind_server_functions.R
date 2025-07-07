@@ -182,7 +182,13 @@ findIndividualServer_search <- function(input, output, data, session) {
   ####
   
   # This works to produce clickable datatable but need to get rid of search bar etc.              
-  output$summary_info <- DT::renderDataTable(DT::datatable({ search_results() }))
+  #output$summary_info <- renderDataTable(datatable({ search_results() }))
+  output$summary_info <- renderDataTable(datatable(search_results()[, c("RingNumber", "ColourRingCombo", "BirthYear", "Species")],
+  options = list(dom = 't'), # think this might be deprecated?
+  rownames = FALSE,
+  selection = "single"
+  ))
+  
   
   output$text <- renderText({ toString(search_results()[input$table_rows_selected, "RingNumber"]) })
   
