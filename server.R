@@ -10,7 +10,11 @@ library(bslib)
 library(viridis)
 
 # Source files/functions -----------------------------------
-source("individual_search/find_ind_server_functions.R")
+#source("individual_search/find_ind_server_functions.R")
+
+# Can add more files as needed:
+files_to_source <- c("individual_search/find_ind_server_functions.R", "mapping/generate_map_server_functions.R")
+lapply(files_to_source, source)
 
 # App server ----------------------------------------------
 
@@ -23,6 +27,9 @@ server <- function(input, output, session) {
   
   # Find individual by colour rings - perform search
   search_results <- findIndividualServer_search(input, output, vlieland.data, session)
+  
+  # Generate map
+  map <- gen_map(input, output, data, session)
 
 }
 

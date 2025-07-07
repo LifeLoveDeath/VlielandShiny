@@ -12,7 +12,12 @@ library(reactable)
 
 
 # Source files/functions -----------------------------------
-source("individual_search/find_ind_ui_functions.R")
+#source("individual_search/find_ind_ui_functions.R")
+
+# Can add more files as needed:
+files_to_source <- c("individual_search/find_ind_ui_functions.R")
+lapply(files_to_source, source)
+
 
 # App UI ---------------------------------------------------
 
@@ -37,7 +42,7 @@ ui <- fluidPage(
                  DT::dataTableOutput("summary_info"), # selectable datatable
                  verbatimTextOutput("text"), # validation text
                  fluidRow(
-                   column(4, leafletOutput("map", width = "100%", height = "600px")) # map area?
+                   leafletOutput("map", width = "100%", height = "600px") # map area?
                  )
                )
              )
