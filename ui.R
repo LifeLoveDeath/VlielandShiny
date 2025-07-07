@@ -31,14 +31,14 @@ ui <- fluidPage(
                sidebarPanel(
                  findIndividualUI_withIcons()
                ),
-               mainPanel( # area to show results
-                 h3("Matching bird record:"), # heading
-                 #reactableOutput("summary_info") # table placeholder filled by "output$summary_output <- " in server code
-                 DT::dataTableOutput("summary_info"), # changed to this to change the clickable datatable
-                 verbatimTextOutput("text")
-               )
-               fluidRow( # add map below search results table
-                 column(4, leafletOutput("map", width = "100%", height = "600px"))
+               mainPanel(
+                 h3("Matching bird record:"),
+                 #reactableOutput("summary_info") # changed because using datatable instead now (below):
+                 DT::dataTableOutput("summary_info"), # selectable datatable
+                 verbatimTextOutput("text"), # validation text
+                 fluidRow(
+                   column(4, leafletOutput("map", width = "100%", height = "600px")) # map area?
+                 )
                )
              )
     ),
