@@ -189,8 +189,13 @@ findIndividualServer_search <- function(input, output, data, session) {
   selection = "single"
   ))
   
+  # validation text to check row selection works
+  #output$text <- renderText({ toString(search_results()[input$summary_info_rows_selected, "RingNumber"]) })
   
-  output$text <- renderText({ toString(search_results()[input$summary_info_rows_selected, "RingNumber"]) })
+  
+  # return reactive expression for use in other function:
+  return(search_results)
+  
   
 }
 

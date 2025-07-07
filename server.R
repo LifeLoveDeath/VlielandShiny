@@ -29,7 +29,7 @@ server <- function(input, output, session) {
   search_results <- findIndividualServer_search(input, output, vlieland.data, session)
   
   # Generate map
-  map <- gen_map(input, output, data, session)
+  map <- gen_map(input, output, search_results, session)
 
 }
 
