@@ -186,6 +186,7 @@ findIndividualServer_search <- function(input, output, data, session) {
   output$summary_info <- renderDataTable(datatable(search_results()[, c("RingNumber", "ColourRingCombo", "BirthYear", "Species")],
   options = list(dom = 't'), # think this might be deprecated?
   rownames = FALSE,
+  ordering = FALSE,
   selection = "single"
   ))
   
