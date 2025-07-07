@@ -37,6 +37,9 @@ ui <- fluidPage(
                  DT::dataTableOutput("summary_info"), # changed to this to change the clickable datatable
                  verbatimTextOutput("text")
                )
+               fluidRow( # add map below search results table
+                 column(4, leafletOutput("map", width = "100%", height = "600px"))
+               )
              )
     ),
     
