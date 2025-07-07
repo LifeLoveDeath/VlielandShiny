@@ -42,7 +42,8 @@ ui <- fluidPage(
                  DT::dataTableOutput("summary_info"), # selectable datatable
                  verbatimTextOutput("text"), # validation text
                  fluidRow(
-                   leafletOutput("map", width = "100%", height = "600px") # map area?
+                   #leafletOutput("map", width = "95%", height = "600px") # map area?
+                   uiOutput("map_ui") # map output shows when row is selected (defined in map server function)
                  )
                )
              )

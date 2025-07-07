@@ -12,6 +12,13 @@ library(reactable)
 
 
 gen_map <- function(input, output, data, session) {
+  
+  # Show map if a row is selected
+  output$map_ui <- renderUI({
+    req(input$summary_info_rows_selected)  # Only render if a row is selected
+    leafletOutput("map", width = "95%", height = "600px")
+  })
+  
   # baseline map to test (but don't show if no birds selected?)
     output$map <- renderLeaflet({
       # Base map
@@ -24,11 +31,5 @@ gen_map <- function(input, output, data, session) {
         }
       ")
   })
-    
-    
-    #observeEvent(input$summary_info_rows_selected, {
-    #  row <- input$summary_info_rows_selected
-    #  if (is.null(row)) return()
-      
-    #  selected_ind <- data[row, "RingNumber"]
 }
+
