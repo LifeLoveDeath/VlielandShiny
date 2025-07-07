@@ -190,7 +190,7 @@ findIndividualServer_search <- function(input, output, data, session) {
   ))
   
   
-  output$text <- renderText({ toString(search_results()[input$table_rows_selected, "RingNumber"]) })
+  output$text <- renderText({ toString(search_results()[input$summary_info_rows_selected, "RingNumber"]) })
   
 }
 
