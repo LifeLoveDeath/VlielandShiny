@@ -28,7 +28,7 @@ gen_map <- function(input, output, search_results, session) { # data intput is s
       # Base map
       m <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>% 
         addTiles() %>% 
-        setView(lng = 5.018424, lat = 53.286226, zoom = 13) %>%
+        setView(lng = 5.018424, lat = 53.286226, zoom = 12) %>%
         htmlwidgets::onRender("
         function(el, x) {
           this.zoomControl.setPosition('topright');
