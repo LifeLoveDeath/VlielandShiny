@@ -1,6 +1,7 @@
 # Vlieland Shiny app
 # Server functions to create map for selected bird
 
+# Probably need a separate dataframe in long format for nestboxes associated with ring numbers
 
 # Load packages 
 library(shiny)
@@ -25,32 +26,42 @@ gen_map <- function(input, output, search_results, session) { # data intput is s
       req(search_results()) # i.e. search_results not NULL                
       req(input$summary_info_rows_selected) # a row has been selected
       
-      # Base map
-      m <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>% 
-        addTiles() %>% 
-        setView(lng = 5.018424, lat = 53.286226, zoom = 12) %>%
-        htmlwidgets::onRender("
-        function(el, x) {
-          this.zoomControl.setPosition('topright');
-        }
-      ")
-      
       # Filer data based on row selection
       filtered_data <- search_results()[input$summary_info_rows_selected, ]
+      # Should actually filter a second nestboxes dataframe based on bird ring number here
       
-      # Check location ingo exists:
+      # Check location info exists:
       validate(
         need(!is.null(filtered_data$OriginNestLon), "No location data"),
         need(!is.null(filtered_data$OriginNestLat), "No location data")
       )
       
-      # Add markers
-      m <- m %>% addMarkers(
-        lng = filtered_data$OriginNestLon,
-        lat = filtered_data$OriginNestLat,
-        label = filtered_data$OriginNestbox
-      )
+      # specify markers style
+      #originNestIcons <- awesomeIcons(
+      #  iconColor = 'black',
+      #  markerColor = getColor(df.20)
+      #)
     
+      # Create map with marker
+      m <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>% 
+        addTiles() %>% 
+        setView(lng = 5.018424, lat = 53.286226, zoom = 12) %>%
+        htmlwidgets::onRender("
+    function(el, x) {
+      this.zoomControl.setPosition('topright');
+    }
+  ") %>%
+        addAwesomeMarkers(
+          lng = filtered_data$OriginNestLon,
+          lat = filtered_data$OriginNestLat,
+          label = "Origin nestbox",
+          icon = awesomeIcons(icon = "home", markerColor = "darkgreen") # the icon is the symbol/shape in the middle, the marker is the pin
+          # default icons are https://www.w3schools.com/bootstrap/bootstrap_ref_comp_glyphs.asp
+          # can change to "fa" (fontawesome) or "ion" (ionicons)
+          
+        )
+      
+      
     m
     })
 }
