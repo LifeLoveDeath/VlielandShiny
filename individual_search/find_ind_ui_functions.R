@@ -9,6 +9,7 @@ library(leaflet)
 library(bslib)
 library(viridis)
 library(dplyr)
+library(shinyWidgets)
 
 
 
@@ -29,6 +30,9 @@ library(dplyr)
 ##### Images of colours are here but not totally clear: https://avianid.co.uk/plastic-striped-split-rings
 ##### Rendering html https://stackoverflow.com/questions/66884854/use-html-in-selectizeinput-with-r-shiny 
 
+
+# This might be better for colour icons: https://stackoverflow.com/questions/30486412/r-shiny-custom-icon-image-in-selectinput
+# For making the icons? https://www.datanovia.com/en/blog/how-to-create-icon-in-r/
 
 # html rednering for icons - have removed from function
 colour_icons <- c(
@@ -85,10 +89,11 @@ findIndividualUI_withIcons <- function(data) {
       "Right2", "Right leg - bottom ring", choices =  c("", colours), selected = ""
     ),
     actionButton("reset_filters", "Reset filters"),
-  helpText(HTML("placeholder instructions text"))) # not working
+  helpText(HTML("placeholder instructions text")))
 }
 
-  
+
+
 
 
 ## Basic dropdowns (no icons) --------------
