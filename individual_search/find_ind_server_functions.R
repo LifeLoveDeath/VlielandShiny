@@ -11,6 +11,7 @@ library(viridis)
 library(dplyr)
 library(reactable)
 library(DT)
+library(tidyverse)
 
 
 
@@ -124,6 +125,10 @@ findIndividualServer_updateDropdowns <- function(input, data, session) {
 # Make the table clickable: https://shiny.posit.co/r/components/outputs/table-reactable/
 # This might be a better way without the tick boxes: https://stackoverflow.com/questions/69870709/r-shiny-get-data-from-selected-row
 
+
+# Add action button to select the correct individual
+# https://forum.posit.co/t/add-a-button-into-a-row-in-a-datatable/18651/2
+
 findIndividualServer_search <- function(input, output, data, session) {
   
   search_results <- reactive({
@@ -181,21 +186,45 @@ findIndividualServer_search <- function(input, output, data, session) {
   #})
   ####
   
+  # Function to create action buttons
+  buttonInput <- function(FUN, len, id, ...) {
+    inputs <- character(len)
+    for (i in seq_len(len)) {
+      inputs[i] <- as.character(FUN(paste0(id, i), ...))
+    }
+    return(inputs)
+  }
+  
+  
   # This works to produce clickable datatable but need to get rid of search bar etc.              
   #output$summary_info <- renderDataTable(datatable({ search_results() }))
-  output$summary_info <- renderDataTable(datatable(search_results()[, c("RingNumber", "ColourRingCombo", "BirthYear", "Species")],
-  options = list(dom = 't', ordering = FALSE), # think this might be deprecated?
-  rownames = FALSE,
-  selection = "single"
-  ))
+  output$summary_info <- renderDataTable({
+    df <- search_results()[, c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
+    
+    # Add the action button column
+    df$Select <- buttonInput(
+      FUN = actionButton,
+      len = nrow(df),
+      id = "select_",
+      label = "Select",
+      onclick = 'Shiny.setInputValue("select_button", this.id, {priority: "event"})'
+    )
+    
+    datatable(
+      df,
+      options = list(dom = 't', ordering = FALSE),
+      rownames = FALSE,
+      escape = FALSE,  # allow HTML (for buttons)
+      selection = "single"
+    )
+  })
   
   # validation text to check row selection works
   #output$text <- renderText({ toString(search_results()[input$summary_info_rows_selected, "RingNumber"]) })
   
   
-  # return reactive expression for use in other function:
-  return(search_results)
-  
+  # return reactive expression for use in other functions:
+  return(search_results) # clicked row
   
 }
 
