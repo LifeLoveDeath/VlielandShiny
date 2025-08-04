@@ -128,6 +128,7 @@ findIndividualServer_updateDropdowns <- function(input, data, session) {
 
 # Add action button to select the correct individual
 # https://forum.posit.co/t/add-a-button-into-a-row-in-a-datatable/18651/2
+# Added buttons but need to make them function
 
 findIndividualServer_search <- function(input, output, data, session) {
   
