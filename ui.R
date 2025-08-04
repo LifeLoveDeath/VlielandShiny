@@ -27,13 +27,14 @@ lapply(files_to_source, source)
 # Have the top-level menu to dropdown so I can use tabs on the find an individual page
 # But seems to have changed all the formatting?
 
-ui <- page_navbar(
+ui <- navbarPage(
   title = "Great Tits & Blue Tits of Vlieland",
-  bg = viridis(1)[1],
-  inverse = TRUE,
+  position = "static-top",
+  #bg = viridis(1)[1],
+  #inverse = TRUE,
   
   # Dropdown menu on the top right
-  nav_menu("Menu", align = "right",
+  navbarMenu("Menu", align = "right",
            
   nav_panel("Project info"),
   
