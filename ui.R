@@ -25,13 +25,17 @@ lapply(files_to_source, source)
 # The rest will call other scripts
 
 
-ui <- fluidPage(
-  titlePanel("Great Tits & Blue Tits of Vlieland"),
+ui <- page_navbar(
+  title = "Great Tits & Blue Tits of Vlieland",
+  bg = viridis(1)[1],
+  inverse = TRUE,
   
-  tabsetPanel(
-    tabPanel("Project info"),
-    
-    tabPanel("Find an individual",
+  # Dropdown menu on the top right
+  nav_menu("Menu", align = "right",
+           
+  nav_panel("Project info"),
+  
+  nav_panel("Find an individual",
              sidebarLayout(
                sidebarPanel(
                  findIndividualUI_withIcons()
@@ -49,9 +53,9 @@ ui <- fluidPage(
              )
     ),
     
-    tabPanel("Population trends"),
+  nav_panel("Population trends"),
     
-    tabPanel("Citizen science")
+  nav_panel("Citizen science")
     
   )
 )
