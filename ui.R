@@ -25,7 +25,7 @@ lapply(files_to_source, source)
 # The rest will call other scripts
 
 # Have the top-level menu to dropdown so I can use tabs on the find an individual page
-# But seems to have changed all the formatting?
+# Page title appear in a weird place - formatting need improving
 
 ui <- navbarPage(
   title = "Great Tits & Blue Tits of Vlieland",
@@ -36,9 +36,15 @@ ui <- navbarPage(
   # Dropdown menu on the top right
   navbarMenu("Menu", align = "right",
            
-  nav_panel("Project info"),
+  # Defining the pages
+  nav_panel("Project info", 
+            h3("Project info"), # Title
+            "Project info will appear here"), # Placeholder text
   
   nav_panel("Find an individual",
+            h3("Find an individual"), # Title
+            tabsetPanel(
+              tabPanel("Search for an individual",
              sidebarLayout(
                sidebarPanel(
                  findIndividualUI_withIcons()
@@ -54,11 +60,15 @@ ui <- navbarPage(
                  )
                )
              )
+              )
+            )
     ),
     
-  nav_panel("Population trends"),
+  nav_panel("Population trends",
+            h3("Poupulation trends")),
     
-  nav_panel("Citizen science")
+  nav_panel("Citizen science",
+            h3("Citizen science"))
     
   )
 )
