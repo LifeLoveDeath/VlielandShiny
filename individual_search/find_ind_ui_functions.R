@@ -34,23 +34,6 @@ library(shinyWidgets)
 # This might be better for colour icons: https://stackoverflow.com/questions/30486412/r-shiny-custom-icon-image-in-selectinput
 # For making the icons? https://www.datanovia.com/en/blog/how-to-create-icon-in-r/
 
-# html rednering for icons - have removed from function
-colour_icons <- c(
-  "blue" = "blue <div style='width:15px; height:10px; background-color:blue; display:inline-block; margin-right:5px; '></div>",
-  "blue/white" = "blue/white", # update rest
-  "green" = "green",
-  "metal" = "metal",
-  "orange" = "orange",
-  "pink/blue" = "pink/blue",
-  "pink/green" = "pink/green",
-  "red" = "red",
-  "red/white" = "red/white",
-  "white" = "white",
-  "white/blue" = "white/blue",
-  "yellow" = "yellow",
-  "yellow/black" = "yellow/black")
-
-
 findIndividualUI_withIcons <- function(data) {
   colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
   
@@ -97,6 +80,24 @@ findIndividualUI_withIcons <- function(data) {
 #      }
 #    }
 #  '))),
+
+# html rednering for icons - have removed from function
+colour_icons <- c(
+  "blue" = "blue <div style='width:15px; height:10px; background-color:blue; display:inline-block; margin-right:5px; '></div>",
+  "blue/white" = "blue/white", # update rest
+  "green" = "green",
+  "metal" = "metal",
+  "orange" = "orange",
+  "pink/blue" = "pink/blue",
+  "pink/green" = "pink/green",
+  "red" = "red",
+  "red/white" = "red/white",
+  "white" = "white",
+  "white/blue" = "white/blue",
+  "yellow" = "yellow",
+  "yellow/black" = "yellow/black")
+
+
 
 
 ## Basic dropdowns (no icons) --------------

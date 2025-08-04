@@ -24,6 +24,8 @@ lapply(files_to_source, source)
 # This will be strictly layout stuff (panels etc.)
 # The rest will call other scripts
 
+# Have the top-level menu to dropdown so I can use tabs on the find an individual page
+# But seems to have changed all the formatting?
 
 ui <- page_navbar(
   title = "Great Tits & Blue Tits of Vlieland",
