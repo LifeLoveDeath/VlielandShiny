@@ -39,7 +39,7 @@ ui <- navbarPage(
   # Defining the pages
   nav_panel("Project info", 
             h3("Project info"), # Title
-            "Project info will appear here"), # Placeholder text
+            "Project info will appear here"), # Place holder text
   
   nav_panel("Find an individual",
             #h3("Find an individual"), # Title
