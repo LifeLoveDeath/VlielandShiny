@@ -30,7 +30,7 @@ lapply(files_to_source, source)
 ui <- navbarPage(
   title = "Great Tits & Blue Tits of Vlieland",
   position = "static-top",
-  #bg = viridis(1)[1],
+  #bg = viridis(1)[1], # change background colour
   #inverse = TRUE,
   
   # Dropdown menu on the top right
