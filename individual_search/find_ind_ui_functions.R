@@ -56,27 +56,8 @@ findIndividualUI_withIcons <- function(data) {
   
   tagList(
     selectizeInput("Left1", "Left leg - top ring", 
-                   choices =  c("", colours), selected = "",
-                   options = list(render = I('
-    {
-      option: function(item, escape) {
-        var icons = {
-          "blue": "<div style=\\"width:20px; height:10px; background-color:blue; float:right; margin-right:5px;\\"></div>",
-          "green": "<div style=\\"width:20px; height:10px; background-color:green; float:right; margin-right:5px;\\"></div>"
-        };
-        var icon = icons[item.value] || "";
-        return "<div style=\\"overflow:hidden;\\">" + escape(item.label) + icon + "</div>";
-      },
-      item: function(item, escape) {
-        var icons = {
-          "blue": "<div style=\\"width:20px; height:10px; background-color:blue; float:right; margin-left:5px;\\"></div>",
-          "green": "<div style=\\"width:px; height:10px; background-color:green; float:right; margin-left:5px;\\"></div>"
-        };
-        var icon = icons[item.value] || "";
-        return "<div style=\\"overflow:hidden;\\">" + escape(item.label) + icon + "</div>";
-      }
-    }
-  '))),
+                   choices =  c("", colours), selected = ""
+                   ),
     selectizeInput(
       "Left2", "Left leg - bottom ring", 
       choices =  c("", colours), selected = ""
@@ -93,7 +74,29 @@ findIndividualUI_withIcons <- function(data) {
 }
 
 
-
+#Old code using html to create logos:
+#selectizeInput("Left1", "Left leg - top ring", 
+#               choices =  c("", colours), selected = "",
+#               options = list(render = I('
+#    {
+#      option: function(item, escape) {
+#        var icons = {
+#          "blue": "<div style=\\"width:20px; height:10px; background-color:blue; float:right; margin-right:5px;\\"></div>",
+#          "green": "<div style=\\"width:20px; height:10px; background-color:green; float:right; margin-right:5px;\\"></div>"
+#        };
+#        var icon = icons[item.value] || "";
+#        return "<div style=\\"overflow:hidden;\\">" + escape(item.label) + icon + "</div>";
+#      },
+#      item: function(item, escape) {
+#        var icons = {
+#          "blue": "<div style=\\"width:20px; height:10px; background-color:blue; float:right; margin-left:5px;\\"></div>",
+#          "green": "<div style=\\"width:px; height:10px; background-color:green; float:right; margin-left:5px;\\"></div>"
+#        };
+#        var icon = icons[item.value] || "";
+#        return "<div style=\\"overflow:hidden;\\">" + escape(item.label) + icon + "</div>";
+#      }
+#    }
+#  '))),
 
 
 ## Basic dropdowns (no icons) --------------
