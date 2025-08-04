@@ -42,7 +42,7 @@ ui <- navbarPage(
             "Project info will appear here"), # Placeholder text
   
   nav_panel("Find an individual",
-            h3("Find an individual"), # Title
+            #h3("Find an individual"), # Title
             tabsetPanel(
               tabPanel("Search for an individual",
              sidebarLayout(
