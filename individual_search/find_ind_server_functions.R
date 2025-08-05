@@ -107,20 +107,123 @@ findIndividualServer_updateDropdowns <- function(input, data, session) {
 
 
 
-## Perform search ---------------------------------------
+# Perform search ------------------------------------------------------------------------
+  
+# New function based on conditional tabs UI
+# Switches tabset when bird is selected
 
-## For now, this return the whole table and narrows it down while they search
-## Don't want them to see the whole table
-## Search once they've made 2 selections?
-## Or have a search button? But would be less intuitive that you could leave selections blank and still find the individual
+findIndividualServer_search <- function(input, output, data, session) {
+  
+  # Reactive filtered search results, returns results when fewer than 5 rows
+  search_results <- reactive({
+    filtered <- data
+    
+    if (input$Left1 != "" && input$Left1 != "clear") {
+      filtered <- filtered[filtered$ColourRingLeft1 == input$Left1, ]
+    }
+    if (input$Left2 != "" && input$Left2 != "clear") {
+      filtered <- filtered[filtered$ColourRingLeft2 == input$Left2, ]
+    }
+    if (input$Right1 != "" && input$Right1 != "clear") {
+      filtered <- filtered[filtered$ColourRingRight1 == input$Right1, ]
+    }
+    if (input$Right2 != "" && input$Right2 != "clear") {
+      filtered <- filtered[filtered$ColourRingRight2 == input$Right2, ]
+    }
+    
+    if (nrow(filtered) < 5) {
+      return(filtered)
+    } else {
+      return(NULL)  # No results or too many results: return NULL
+    }
+  })
+  
+  # Function to generate action buttons to add to rows
+  buttonInput <- function(FUN, len, id, ...) {
+    inputs <- character(len)
+    for (i in seq_len(len)) {
+      inputs[i] <- as.character(FUN(paste0(id, i), ...))
+    }
+    inputs
+  }
+  
+  # Render datatable with clickable rows and "Select individual" buttons
+  # Clickable rows + action button might be an awkward combo
+  output$summary_info <- DT::renderDataTable({
+    df <- search_results()
+    if (is.null(df) || nrow(df) == 0) return(NULL)
+    
+    df <- df[, c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
+    
+    # Add action buttons column to datatable
+    df$Select <- buttonInput(
+      FUN = shiny::actionButton,
+      len = nrow(df),
+      id = "select_",
+      label = "Select individual",
+      onclick = 'Shiny.setInputValue("select_button", this.id, {priority: "event"})'
+    )
+    
+    datatable(
+      df,
+      options = list(dom = 't', ordering = FALSE),
+      rownames = FALSE,
+      escape = FALSE,  # allow HTML for buttons
+      selection = "single"
+    )
+  })
+  
+  # ReactiveVal to store selected bird RingNumber - clicking row
+  selected_ring <- reactiveVal(NULL)
+  
+  # Update selected_ring when "Select individual" button is clicked
+  observeEvent(input$select_button, {
+    row_index <- as.numeric(gsub("select_", "", input$select_button))
+    df <- search_results()
+    if (!is.null(df) && nrow(df) >= row_index) {
+      selected_ring(df[row_index, "RingNumber"])
+    }
+  })
+  
+  # Reactive to tell UI whether a bird is selected - changes conditional tabs
+  output$birdSelected <- reactive({
+    !is.null(selected_ring())
+  })
+  outputOptions(output, "birdSelected", suspendWhenHidden = FALSE)
+  
+  # Back to search button
+  observeEvent(input$back_to_search, {
+    selected_ring(NULL)
+  })
+  
+  # Content for the bird detail tabs
+  output$bird_general <- renderPrint({
+    req(selected_ring())
+    # Fetch and display general info for selected_ring()
+    paste("General info for bird:", selected_ring())
+  })
+  
+  output$bird_map <- leaflet::renderLeaflet({
+    req(selected_ring())
+    uiOutput("map_ui")  # needs updating
 
-## Or it could provide results once there are fewer than three options?
-## This fixes the "" vs "clear" issue as well
+  })
+  
+  output$bird_pedigree <- renderPlot({
+    req(selected_ring())
+    
+  })
+  
+  # Return reactive expression (row number of clicked row) for use in other functions (map):
+  return(search_results)
+  
+  
+}
 
-# Issues:
-## because of the "" vs "clear" issue, if they clear a selection using "Select a colour" (="clear"), it still updates the search (i.e. can show all data rows by setting them all back to 'Select a colour...')
-# Need to fix "" vs. "clear" in other findIndividual functions
-# Likely needs proper placeholder text?
+
+
+
+## Old code: Perform search ---------------------------------------
 
 # Make the table clickable: https://shiny.posit.co/r/components/outputs/table-reactable/
 # This might be a better way without the tick boxes: https://stackoverflow.com/questions/69870709/r-shiny-get-data-from-selected-row
@@ -130,12 +233,12 @@ findIndividualServer_updateDropdowns <- function(input, data, session) {
 # https://forum.posit.co/t/add-a-button-into-a-row-in-a-datatable/18651/2
 # Added buttons but need to make them function
 
-findIndividualServer_search <- function(input, output, data, session) {
+findIndividualServer_search_old <- function(input, output, data, session) {
   
   search_results <- reactive({
     # Don't return table if no selections are made
     #if (all(input$Left1 == "", input$Left2 == "", input$Right1 == "", input$Right2 == "")) {
-      #return(NULL)  # No input = no result
+    #return(NULL)  # No input = no result
     #}
     
     # Or if only one selection is made? Can alter 
@@ -146,7 +249,7 @@ findIndividualServer_search <- function(input, output, data, session) {
     #if (filled_inputs < 2) {
     #  return(NULL)
     #}
-  
+    
     
     filtered <- data
     
@@ -176,7 +279,7 @@ findIndividualServer_search <- function(input, output, data, session) {
   #            highlight = TRUE,
   #            bordered = TRUE,
   #            selection = "single", # would like it to be clickable without this selection tick box...
-   #           theme = reactableTheme(
+  #           theme = reactableTheme(
   ##            onClick = "select",
   #              rowSelectedStyle = list(backgroundColor = "#eee", boxShadow = "inset 2px 0 0 0 #ffa62d")))
   #}) 
@@ -262,11 +365,6 @@ findIndividualServer_search <- function(input, output, data, session) {
   # return reactive expression (row number of clicked row) for use in other functions (map):
   return(search_results) # clicked row
 }
-
-  
-  
-
-
 
 
   

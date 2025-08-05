@@ -84,6 +84,8 @@ ui <- navbarPage(
            )),
            conditionalPanel(
              condition = "output.birdSelected == true",
+             tagList (
+               actionButton("back_to_search", "Return to search"),
              tabsetPanel(
                id = "bird_tabs",
                tabPanel("General Info", verbatimTextOutput("bird_general")),
@@ -91,7 +93,7 @@ ui <- navbarPage(
                tabPanel("Pedigree", plotOutput("bird_pedigree"))
              )
            )
-  ),
+  )),
     
   tabPanel("Population trends",
             h3("Poupulation trends")),
