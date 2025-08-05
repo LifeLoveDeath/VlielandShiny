@@ -106,3 +106,4 @@ ui <- navbarPage(
   )
 )
 
+# Alternative is to dynamically add tabs when bird is selected, with search tab always on the far left
