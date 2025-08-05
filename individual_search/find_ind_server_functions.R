@@ -200,7 +200,14 @@ findIndividualServer_search <- function(input, output, data, session) {
   # This works to produce clickable datatable but need to get rid of search bar etc.              
   #output$summary_info <- renderDataTable(datatable({ search_results() }))
   output$summary_info <- renderDataTable({
-    df <- search_results()[, c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
+    df <- search_results()
+    
+    # Only proceed if there are results to show, otherwise it gives an error
+    if (is.null(df) || nrow(df) == 0) {
+      return(NULL)  # Return nothing so nothing appears in the space
+    }
+    
+    df <- df[, c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
     
     # Add the action button column
     df$Select <- buttonInput(
