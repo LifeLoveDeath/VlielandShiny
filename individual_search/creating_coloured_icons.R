@@ -5,7 +5,7 @@
 # For making the icons? https://www.datanovia.com/en/blog/how-to-create-icon-in-r/
 # Or grid?
 
-
+library(imager)
 library(grid)
 
 grid.newpage()
@@ -16,51 +16,26 @@ grid.rect(x = 0.2, y = 0.48, width = 0.2, height = 0.02, gp = gpar(fill = "white
 grid.rect(x = 0.2, y = 0.46, width = 0.2, height = 0.02, gp = gpar(fill = "#2986cc", col = "#2986cc"))
 
 
-grid.rect(x = 0.5, y = 0.4, width = 0.2, height = 0.3, gp = gpar(fill = "#2986cc"))
-
-
-grid.rect(x = 0.8, y = 0.5, width = 0.2, height = 0.1, gp = gpar(fill = "white"))
-grid.rect(x = 0.8, y = 0.4, width = 0.2, height = 0.1, gp = gpar(fill = "#2986cc"))
-grid.rect(x = 0.8, y = 0.3, width = 0.2, height = 0.1, gp = gpar(fill = "white"))
-
-
+# blue/white icon ------------------------------------------------
+# Drawing with grid, saving image, cropping with imagr and saving
+png("boxes.png", width = 400, height = 400, res = 100)
 grid.newpage()
-
-grid.rect(x = 0.2, y = 0.5, width = 0.2, height = 0.1, gp = gpar(fill = "red"))
-grid.rect(x = 0.2, y = 0.4, width = 0.2, height = 0.1, gp = gpar(fill = "white"))
-grid.rect(x = 0.2, y = 0.3, width = 0.2, height = 0.1, gp = gpar(fill = "red"))
-
-
-# Save icon as a png?
-library(gridSVG)
-grid.newpage()
-# Open PNG device
-png("striped_box.png", width = 400, height = 300)
-#Change area
-pushViewport(viewport(xscale = c(0.1, 0.3), yscale = c(0.2, 0.6)))
-# Draw boxes
-grid.rect(x = 0.2, y = 0.5, width = 0.2, height = 0.1, gp = gpar(fill = "#2986cc"))
-grid.rect(x = 0.2, y = 0.4, width = 0.2, height = 0.1, gp = gpar(fill = "white"))
-grid.rect(x = 0.2, y = 0.3, width = 0.2, height = 0.1, gp = gpar(fill = "#2986cc"))
-
-# Close device and save
+grid.rect(x = 0.5, y = 0.5, width = 0.6, height = 0.1, gp = gpar(fill = "white"))
+grid.rect(x = 0.5, y = 0.4, width = 0.6, height = 0.1, gp = gpar(fill = "#2986cc"))
+grid.rect(x = 0.5, y = 0.3, width = 0.6, height = 0.1, gp = gpar(fill = "white"))
 dev.off()
+# Laod in imager
+img <- load.image("boxes.png")
+plot(img)
+# crop
+plot(img)
+cropped_rect1 <- imsub(img, x %in% 80:320, y %in% 300:180)
+plot(cropped_rect1)
+# save
+save.image(cropped_rect1,"blue_white.png")
 
 
-# Trying to crop it
-library(gridSVG)
-grid.newpage()
-# Draw your boxes
-grid.rect(x = 0.2, y = 0.5, width = 0.2, height = 0.1, gp = gpar(fill = "#2986cc"))
-grid.rect(x = 0.2, y = 0.4, width = 0.2, height = 0.1, gp = gpar(fill = "white"))
-grid.rect(x = 0.2, y = 0.3, width = 0.2, height = 0.1, gp = gpar(fill = "#2986cc"))
-grid.export("striped_box.svg")
 
-library(rsvg)
-library(magick)
+# Function to specify the three colours and create and save the icon ------------------------------------------------
 
-# Read and convert
-svg_file <- "striped_box.svg"
-png_file <- "striped_box.png"
 
-image <- rsvg::rsvg_png(svg_file, file = png_file)
