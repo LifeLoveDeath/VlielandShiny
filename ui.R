@@ -37,37 +37,66 @@ ui <- navbarPage(
   navbarMenu("Menu", align = "right",
            
   # Defining the pages
-  nav_panel("Project info", 
+  tabPanel("Project info", 
             h3("Project info"), # Title
             "Project info will appear here"), # Place holder text
   
-  nav_panel("Find an individual",
-            #h3("Find an individual"), # Title
-            tabsetPanel(
-              tabPanel("Search for an individual",
+  #tabPanel("Find an individual",
+  #          #h3("Find an individual"), # Title
+  #            tabPanel("Search for an individual",
+  #          tabsetPanel(id = "Find_ind_tabs",
+  #           sidebarLayout(
+  #             sidebarPanel(
+  #               findIndividualUI_withIcons()
+  #             ),
+  #             mainPanel(
+  #               h3("Matching bird record:"),
+  #               #reactableOutput("summary_info") # changed because using datatable instead now (below):
+  #               DT::dataTableOutput("summary_info"), # selectable datatable
+  #               verbatimTextOutput("text"), # validation text
+  #               fluidRow(
+  #                 #leafletOutput("map", width = "95%", height = "600px") # map area?
+  #                 uiOutput("map_ui") # map output shows when row is selected (defined in map server function)
+  #               )
+  #             )
+  #           )
+  #            )
+  #          )
+  #  ),
+  
+  tabPanel("Find an individual",
+           # Two conditional panels: search and individual view
+           conditionalPanel(
+             condition = "output.birdSelected == false",
              sidebarLayout(
                sidebarPanel(
+                 # Drop down search bars:
                  findIndividualUI_withIcons()
                ),
                mainPanel(
-                 h3("Matching bird record:"),
-                 #reactableOutput("summary_info") # changed because using datatable instead now (below):
-                 DT::dataTableOutput("summary_info"), # selectable datatable
-                 verbatimTextOutput("text"), # validation text
+                 DT::dataTableOutput("summary_info"),
+                 verbatimTextOutput("text"),
                  fluidRow(
                    #leafletOutput("map", width = "95%", height = "600px") # map area?
                    uiOutput("map_ui") # map output shows when row is selected (defined in map server function)
-                 )
                )
              )
-              )
-            )
-    ),
+           )),
+           conditionalPanel(
+             condition = "output.birdSelected == true",
+             tabsetPanel(
+               id = "bird_tabs",
+               tabPanel("General Info", verbatimTextOutput("bird_general")),
+               tabPanel("Map", leafletOutput("bird_map")),
+               tabPanel("Pedigree", plotOutput("bird_pedigree"))
+             )
+           )
+  ),
     
-  nav_panel("Population trends",
+  tabPanel("Population trends",
             h3("Poupulation trends")),
     
-  nav_panel("Citizen science",
+  tabPanel("Citizen science",
             h3("Citizen science"))
     
   )

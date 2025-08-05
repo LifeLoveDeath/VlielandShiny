@@ -214,7 +214,7 @@ findIndividualServer_search <- function(input, output, data, session) {
       FUN = actionButton,
       len = nrow(df),
       id = "select_",
-      label = "Select",
+      label = "Select individual",
       onclick = 'Shiny.setInputValue("select_button", this.id, {priority: "event"})'
     )
     
@@ -230,10 +230,37 @@ findIndividualServer_search <- function(input, output, data, session) {
   # validation text to check row selection works
   #output$text <- renderText({ toString(search_results()[input$summary_info_rows_selected, "RingNumber"]) })
   
+  # get the ring number when "select individual" button is clicked
+  selected_ring <- reactiveVal(NULL)
   
-  # return reactive expression for use in other functions:
+  observeEvent(input$select_button, {
+    # Get row index from button ID
+    row_index <- as.numeric(gsub("select_", "", input$select_button))
+    
+    df <- search_results()
+    
+    if (!is.null(df) && nrow(df) >= row_index) {
+      selected_ring(df[row_index, "RingNumber"])
+    }
+  })
+  
+  # Add a tab when row is selected
+  observeEvent(selected_ring(), {
+    insertTab(inputId = "Find_ind_tabs", # name of tab set on find individual page (main UI func)
+              tabPanel(
+                title = paste("Bird:", selected_ring()),
+                value = paste0("bird_", selected_ring()),
+                h3(paste("Data for RingNumber:", selected_ring())),
+                verbatimTextOutput("bird_details")
+              ),
+              target = "summary",  # insert after a known tab ID, or use position = "after"
+              position = "after",
+              select = TRUE  # auto-switch to the new tab
+    )
+  })
+  
+  # return reactive expression (row number of clicked row) for use in other functions (map):
   return(search_results) # clicked row
-  
 }
 
   
