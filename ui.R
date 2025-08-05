@@ -25,7 +25,7 @@ lapply(files_to_source, source)
 # The rest will call other scripts
 
 # Have the top-level menu to dropdown so I can use tabs on the find an individual page
-# Page title appear in a weird place - formatting need improving
+# Page title appear in a weird place - formatting needs improving
 
 ui <- navbarPage(
   title = "Great Tits & Blue Tits of Vlieland",
@@ -86,7 +86,8 @@ ui <- navbarPage(
            conditionalPanel(
              condition = "output.birdSelected == true",
              tagList (
-               h3("Explore individual info"), actionButton("back_to_search", "Return to search"),
+               h3("Explore individual info"),
+               actionButton("back_to_search", "Return to search"),
              tabsetPanel(
                id = "bird_tabs",
                tabPanel("General Info", verbatimTextOutput("bird_general")),
