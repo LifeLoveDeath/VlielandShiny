@@ -68,6 +68,7 @@ ui <- navbarPage(
            # Two conditional panels: search and individual view
            conditionalPanel(
              condition = "output.birdSelected == false",
+             h3("Search for an individual"),
              sidebarLayout(
                sidebarPanel(
                  # Drop down search bars:
@@ -85,7 +86,7 @@ ui <- navbarPage(
            conditionalPanel(
              condition = "output.birdSelected == true",
              tagList (
-               actionButton("back_to_search", "Return to search"),
+               h3("Explore individual info"), actionButton("back_to_search", "Return to search"),
              tabsetPanel(
                id = "bird_tabs",
                tabPanel("General Info", verbatimTextOutput("bird_general")),
