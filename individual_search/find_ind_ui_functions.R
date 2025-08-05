@@ -34,24 +34,74 @@ library(shinyWidgets)
 # This might be better for colour icons: https://stackoverflow.com/questions/30486412/r-shiny-custom-icon-image-in-selectinput
 # For making the icons? https://www.datanovia.com/en/blog/how-to-create-icon-in-r/
 
+# Create dataframe of colours and icons
+colour_rings <- data.frame(
+  val = c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
+)
+
+#colour_rings$img <- sprintf("<img src='blue_white.png' width=30px><div class='jhr'>%s</div></img>", #colour_rings$val[1])
+colour_rings$img <- sprintf(
+  "<div class='picker-item'>
+     <span class='text'>%s</span>
+     <img src='%s.png' class='icon'>
+   </div>",
+  colour_rings$val,
+  gsub("/", "_", colour_rings$val)
+)
+
+
 findIndividualUI_withIcons <- function(data) {
-  colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
+  
   
   tagList(
-    selectizeInput("Left1", "Left leg - top ring", 
-                   choices =  c("", colours), selected = ""
-                   ),
+    # Old drop down
+    #selectizeInput("Left1", "Left leg - top ring", 
+    #               choices =  c("", colours), selected = ""
+     #              ),
+    
+    #Formatting for icons
+    tags$head(tags$style(HTML("
+  .picker-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .picker-item .text {
+    flex-grow: 1;
+  }
+
+  .picker-item .icon {
+    height: 1em; /* Match the text height */
+    width: auto;
+    margin-left: 5px;
+  }
+"))),
+    
+    # new dropdown format - icons work but search doesn't work anymore (and issues with starting selection/placeholder text)
+    # Search actually working ok but option in the dropdown containing icons is not narrowing down
+    pickerInput(inputId = "Left1",
+                label = "Left leg - top ring",
+                choices = c("", colour_rings$val),
+                choicesOpt = list(content = c("", colour_rings$img)),
+                selected = "",
+                options = list(title = "Select colour...")),  # this works but for the other format the "Select colour..." came from somewhere else so this might interfere with the search functions
+    
     selectizeInput(
       "Left2", "Left leg - bottom ring", 
       choices =  c("", colours), selected = ""
       #options = list(placeholder = "Select") # doesn't work
     ),
+    
     selectizeInput(
       "Right1", "Right leg - top ring", choices =  c("", colours), selected = ""
     ),
+    
     selectizeInput(
       "Right2", "Right leg - bottom ring", choices =  c("", colours), selected = ""
     ),
+    
     actionButton("reset_filters", "Reset filters"),
   helpText(HTML("placeholder instructions text")))
 }
