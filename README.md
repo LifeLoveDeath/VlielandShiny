@@ -10,8 +10,11 @@ VlielandShiny.Rproj
     |- mapping_module.R
 |- helpers/
     |- creating_coloured_icons.R
+    |- 
 |- www/                               # static items (images etc.)
     | - colouredIcons
 |- mini_mapping_app/                  # standalone app - maps nextboxes
     |- data
     |- miniMappingApp.R
+| testing/                            # practice code
+    
