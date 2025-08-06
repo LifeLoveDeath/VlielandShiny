@@ -15,7 +15,8 @@ library(reactable)
 files_to_source <- c(#"individual_search/find_ind_ui_functions.R",
                      #"individual_search/find_ind_server_functions.R",
                      "modules/birdFinder_module.R",
-                     "mapping/generate_map_server_functions.R",
+                     "modules/mapping_module.R",
+                     #"mapping/generate_map_server_functions.R",
                      "helpers/colour_ring_data_func.R")  # Can add more files as needed
 lapply(files_to_source, source)
 
@@ -103,7 +104,7 @@ server <- function(input, output, session) {
   search_results <- birdFinderSearchServer(input, output, vlieland.data, session)
   
   # Generate map
-  map <- gen_map(input, output, search_results, session)
+  map <- genMapServer(input, output, search_results, session)
   
 }
 
