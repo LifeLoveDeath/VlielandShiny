@@ -34,24 +34,10 @@ library(shinyWidgets)
 # This might be better for colour icons: https://stackoverflow.com/questions/30486412/r-shiny-custom-icon-image-in-selectinput
 # For making the icons? https://www.datanovia.com/en/blog/how-to-create-icon-in-r/
 
-# Create dataframe of colours and icons
-colour_rings <- data.frame(
-  val = c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
-)
-
-#colour_rings$img <- sprintf("<img src='blue_white.png' width=30px><div class='jhr'>%s</div></img>", #colour_rings$val[1])
-colour_rings$img <- sprintf(
-  "<div class='picker-item'>
-     <span class='text'>%s</span>
-     <img src='%s.png' class='icon'>
-   </div>",
-  colour_rings$val,
-  gsub("/", "_", colour_rings$val)
-)
-
 
 findIndividualUI_withIcons <- function(data) {
   
+  colour_rings <- get_colour_rings()
   
   tagList(
     # Old drop down
