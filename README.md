@@ -2,7 +2,7 @@
 Shiny app for Vlieland great tit project
 
 VlielandShiny.Rproj
-|- app.R                              # currently separate ui.R and server.R
+|- app.R                              # contains app ui and server
 |- data/
 |- data_cleaning/
 |- modules/
