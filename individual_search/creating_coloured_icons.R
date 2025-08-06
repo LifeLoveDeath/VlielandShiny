@@ -77,10 +77,10 @@ create_ring_icon(c("#818385", "#818385", "#818385"), "metal")
 create_ring_icon(c("#D98B23", "#D98B23", "#D98B23"), "orange")
 
 # Pink/blue
-create_ring_icon(c("#E0539B", "#2986cc", "#E0539B"), "pink_blue")
+create_ring_icon(c("#2986cc", "#E0539B", "#2986cc"), "pink_blue")
 
 # Pink/green
-create_ring_icon(c("#E0539B", "#3C8558", "#E0539B"), "pink_green")
+create_ring_icon(c("#3C8558", "#E0539B", "#3C8558"), "pink_green")
 
 # Red
 create_ring_icon(c("#C73232", "#C73232", "#C73232"), "red")
