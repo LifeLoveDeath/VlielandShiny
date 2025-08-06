@@ -84,9 +84,10 @@ findIndividualUI_withIcons <- function(data) {
     pickerInput(inputId = "Left1",
                 label = "Left leg - top ring",
                 choices = c("", colour_rings$val),
-                choicesOpt = list(content = c("", colour_rings$img)),
-                selected = "",
-                options = list(title = "Select colour...")),  # this works but for the other format the "Select colour..." came from somewhere else so this might interfere with the search functions
+                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                selected = "Select colour...",
+                #options = list(title = "Select colour...")
+                ),  # this works but for the other format the "Select colour..." came from somewhere else so this might interfere with the search functions
     
     selectizeInput(
       "Left2", "Left leg - bottom ring", 
