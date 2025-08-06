@@ -12,8 +12,9 @@ library(reactable)
 
 
 # Source files/functions -----------------------------------
-files_to_source <- c("individual_search/find_ind_ui_functions.R",
-                     "individual_search/find_ind_server_functions.R",
+files_to_source <- c(#"individual_search/find_ind_ui_functions.R",
+                     #"individual_search/find_ind_server_functions.R",
+                     "modules/birdFinder_module.R",
                      "mapping/generate_map_server_functions.R",
                      "helpers/colour_ring_data_func.R")  # Can add more files as needed
 lapply(files_to_source, source)
@@ -50,7 +51,7 @@ ui <- navbarPage(
                         sidebarLayout(
                           sidebarPanel(
                             # Drop down search bars:
-                            findIndividualUI_withIcons()
+                            birdFinderUI()
                           ),
                           mainPanel(
                             DT::dataTableOutput("summary_info"),
@@ -96,10 +97,10 @@ server <- function(input, output, session) {
   vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
   
   # Find individual by colour rings - narrows dropdown options as selections made
-  findIndividualServer_updateDropdowns(input, vlieland.data, session)
+  birdFinderDropdownsServer(input, vlieland.data, session)
   
   # Find individual by colour rings - perform search
-  search_results <- findIndividualServer_search(input, output, vlieland.data, session)
+  search_results <- birdFinderSearchServer(input, output, vlieland.data, session)
   
   # Generate map
   map <- gen_map(input, output, search_results, session)
