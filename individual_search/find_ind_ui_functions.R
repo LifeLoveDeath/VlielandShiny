@@ -81,27 +81,53 @@ findIndividualUI_withIcons <- function(data) {
     
     # new dropdown format - icons work but search doesn't work anymore (and issues with starting selection/placeholder text)
     # Search actually working ok but option in the dropdown containing icons is not narrowing down
+    # Also, for the other format, the "Select colour..." came from somewhere else so this might interfere with the search functions
     pickerInput(inputId = "Left1",
                 label = "Left leg - top ring",
                 choices = c("", colour_rings$val),
                 choicesOpt = list(content = c("Select colour...", colour_rings$img)),
                 selected = "Select colour...",
                 #options = list(title = "Select colour...")
-                ),  # this works but for the other format the "Select colour..." came from somewhere else so this might interfere with the search functions
+                ),
     
-    selectizeInput(
-      "Left2", "Left leg - bottom ring", 
-      choices =  c("", colours), selected = ""
-      #options = list(placeholder = "Select") # doesn't work
+    pickerInput(inputId = "Left2",
+                label = "Left leg - bottom ring",
+                choices = c("", colour_rings$val),
+                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                selected = "Select colour...",
+                #options = list(title = "Select colour...")
     ),
     
-    selectizeInput(
-      "Right1", "Right leg - top ring", choices =  c("", colours), selected = ""
+    pickerInput(inputId = "Right1",
+                label = "Right leg - top ring",
+                choices = c("", colour_rings$val),
+                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                selected = "Select colour...",
+                #options = list(title = "Select colour...")
     ),
     
-    selectizeInput(
-      "Right2", "Right leg - bottom ring", choices =  c("", colours), selected = ""
+    pickerInput(inputId = "Right2",
+                label = "Right leg - bottom ring",
+                choices = c("", colour_rings$val),
+                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                selected = "Select colour...",
+                #options = list(title = "Select colour...")
     ),
+  
+    
+    #selectizeInput(
+    #  "Left2", "Left leg - bottom ring", 
+    #  choices =  c("", colours), selected = ""
+
+    #),
+    
+    #selectizeInput(
+    #  "Right1", "Right leg - top ring", choices =  c("", colours), selected = ""
+    #),
+    
+    #selectizeInput(
+    #  "Right2", "Right leg - bottom ring", choices =  c("", colours), selected = ""
+    #),
     
     actionButton("reset_filters", "Reset filters"),
   helpText(HTML("placeholder instructions text")))
