@@ -1,12 +1,11 @@
 # Create dummy data
 # Ring number, year of birth, colour rings
 
-
 library(tidyverse)
 
 set.seed(123)
 
-# Create data with ring number, colour rings and birth year --------------------------------------------------------
+# Create data with ring number, colour rings, birth year etc. --------------------------------------------------------
 # Define parameters
 colours <- c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
 n_rows <- 100
@@ -60,7 +59,7 @@ data[which(duplicated(data$ColourRing) == TRUE), ]
 
 
 
-# Add species --------------------------------------------------------
+## Add species --------------------------------------------------------
 # Sample 35 random rows for blue tits
 blue_tit_rows <- sample(nrow(data), 35)
 
@@ -69,12 +68,12 @@ data$Species <- "Great tit"  # default for all rows
 data$Species[blue_tit_rows] <- "Blue tit" # change the random sample of 35 rows to blue tit
 
 
-# Create missing data --------------------------------------------------------
+## Create missing data --------------------------------------------------------
 missing_data_rows <- sample(nrow(data), 5) # 5 random rows to have missing data
 data$BirthYear[missing_data_rows] <- NA # missing birth year data
 
 
-# Add in locations --------------------------------------------------------
+## Add in locations --------------------------------------------------------
 
 # read in coordinates data
 boxes <- read.csv("data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
@@ -88,18 +87,125 @@ for(i in 1:nrow(data)) {
 }
 
 
-
-
-
-
-
-
-
-# Save data ------------------------------------------------------------------------------------
+## Save data ------------------------------------------------------------------------------------
 # See data
 head(data)
 summary(data)
 
 # Save
 write.csv(data, "data/DummyData.csv", row.names = FALSE)
+
+
+
+
+
+# Location data (long) --------------------------------------------------------
+# Read in ring number/colour data
+colourRings <- read.csv("data/DummyData.csv")
+# Select just ring number/colour/origin nest cols
+colourRings <- colourRings[ , c("RingNumber", "ColourRingCombo", "BirthYear", "OriginNestNo", "OriginNestLon", "OriginNestLat")]
+head(colourRings)
+
+# Read in box location data
+boxes <- read.csv("data/Coordinates_Boxes_Vlieland.csv", row.names = NULL)
+head(boxes)
+
+#Intialise empty data frame
+locationData <- data.frame()
+
+# Restructure data
+for (i in 1:nrow(colourRings)) {
+  ring_number <- colourRings$RingNumber[i]
+  birth_year <- colourRings$BirthYear[i]
+
+  #If BirthYear NA:
+  if (is.na(birth_year)) {
+    # Create row with NAs but keep RingNumber
+    locationDataRow <- data.frame(
+      RingNumber = ring_number,
+      Event = NA,
+      Year = NA,
+      NestNo = NA,
+      NestLon = NA,
+      NestLat = NA,
+      stringsAsFactors = FALSE
+    )
+  } else {
+    # If BirthYear is not NA, add data
+    locationDataRow <- data.frame(
+      RingNumber = ring_number,
+      Event = "birth",
+      Year = birth_year,
+      NestNo = colourRings$OriginNestNo[i],
+      NestLon = colourRings$OriginNestLon[i],
+      NestLat = colourRings$OriginNestLat[i],
+      stringsAsFactors = FALSE
+    )
+  }
+  locationData <- rbind(locationData, locationDataRow)
+}
+
+
+locationData
+
+nestData <- data.frame()
+
+for (i in 1:nrow(colourRings)) {
+  ring_number <- colourRings$RingNumber[i]
+  birth_year <- colourRings$BirthYear[i]
+  
+  # Determine years to simulate nest events
+  if (is.na(birth_year)) {
+    # Choose 3 consecutive years before 2025 (excluding NAs)
+    valid_years <- na.omit(colourRings$BirthYear)
+    start_year <- sample(min(valid_years, na.rm = TRUE):(2022), 1)
+    years <- start_year:(start_year + 2)
+  } else {
+    max_year <- min(birth_year + 4, 2025)
+    years <- (birth_year + 1):max_year
+  }
+  
+  # Generate 1–2 nest events per year
+  for (year in years) {
+    n_nests <- sample(c(1, 2), size = 1, prob = c(0.7, 0.3))
+    selected_boxes <- boxes %>% sample_n(n_nests)
+    
+    nest_events <- data.frame(
+      RingNumber = rep(ring_number, n_nests),
+      Event = rep("nest", n_nests),
+      Year = rep(year, n_nests),
+      NestNo = selected_boxes$Nestbox,
+      NestLon = selected_boxes$Lon,
+      NestLat = selected_boxes$Lat,
+      stringsAsFactors = FALSE
+    )
+    
+    nestData <- rbind(nestData, nest_events)
+  }
+}
+  
+nestData
+
+
+nestLocationData <- rbind(locationData, nestData)
+
+# This should have been a function
+
+# Save
+write.csv(nestLocationData, "data/NestLocationData.csv", row.names = FALSE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
