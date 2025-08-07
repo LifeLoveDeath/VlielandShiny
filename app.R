@@ -26,6 +26,7 @@ lapply(files_to_source, source)
 # Notes and fixes:
 # Using conditional tabs so bird info appears when individual selected. Alternative it to dynamically add tabs
 # Page title appear in a weird place - formatting needs improving
+# I think some of this could be moved into the functions
 
 ui <- navbarPage(
   title = "Great Tits & Blue Tits of Vlieland",
@@ -56,7 +57,7 @@ ui <- navbarPage(
                           ),
                           mainPanel(
                             DT::dataTableOutput("summary_info"),
-                            verbatimTextOutput("text"),
+                            #verbatimTextOutput("text"),
                             fluidRow(
                               #leafletOutput("map", width = "95%", height = "600px") # map area?
                               uiOutput("map_ui") # map output shows when row is selected (defined in map server function)
@@ -97,11 +98,15 @@ server <- function(input, output, session) {
   #load data
   vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
   
+  # Find individual by colour rings
+  search_results <- birdFinderServer(input, output, vlieland.data, session)
+  
+  
   # Find individual by colour rings - narrows dropdown options as selections made
-  birdFinderDropdownsServer(input, vlieland.data, session)
+  #birdFinderDropdownsServer(input, vlieland.data, session)
   
   # Find individual by colour rings - perform search
-  search_results <- birdFinderSearchServer(input, output, vlieland.data, session)
+  #search_results <- birdFinderSearchServer(input, output, vlieland.data, session)
   
   # Generate map
   map <- genMapServer(input, output, search_results, session)
