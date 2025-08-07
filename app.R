@@ -17,7 +17,7 @@ files_to_source <- c(#"individual_search/find_ind_ui_functions.R",
                      "modules/birdFinder_module.R",
                      "modules/mapping_module.R",
                      #"mapping/generate_map_server_functions.R",
-                     "helpers/colour_ring_data_func.R")  # Can add more files as needed
+                     "helpers/colour_ring_data_func.R")
 lapply(files_to_source, source)
 
 
@@ -48,12 +48,12 @@ ui <- navbarPage(
                       # Two conditional panels: search and individual view
                       ## Initial search panel:
                       conditionalPanel(
-                        condition = "output.birdSelected == false",
+                        condition = "output['birdFinder-birdSelected'] == false",
                         h3("Search for an individual"),
                         sidebarLayout(
                           sidebarPanel(
                             # Drop down search bars:
-                            birdFinderUI()
+                            birdFinderUI("birdFinder")
                           ),
                           mainPanel(
                             DT::dataTableOutput("summary_info"),
@@ -67,7 +67,7 @@ ui <- navbarPage(
                       
                       ## Individual view panel - appears when bird selected
                       conditionalPanel(
-                        condition = "output.birdSelected == true",
+                        condition = "output['birdFinder-birdSelected'] == true",
                         tagList (
                           h3("Explore individual info"),
                           actionButton("back_to_search", "Return to search"),
@@ -99,7 +99,7 @@ server <- function(input, output, session) {
   vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
   
   # Find individual by colour rings
-  search_results <- birdFinderServer(input, output, vlieland.data, session)
+  search_results <- birdFinderServer("birdFinder", vlieland.data)
   
   
   # Find individual by colour rings - narrows dropdown options as selections made

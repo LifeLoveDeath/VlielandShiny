@@ -14,20 +14,19 @@ library(shinyWidgets)
 library(reactable)
 library(DT)
 library(tidyverse)
+library(shinyjs)
 
 
 # UI function --------------------------------------------------------------
 
 # Old name: findIndividualUI_withIcons
-birdFinderUI <- function(data) {
+birdFinderUI <- function(id) {
   
-  colour_rings <- get_colour_rings()
+  ns <- NS(id) # namespacing
+  
+  colour_rings <- get_colour_rings() # function to get dataframe of colour ring names and their icons
   
   tagList(
-    # Old drop down
-    #selectizeInput("Left1", "Left leg - top ring", 
-    #               choices =  c("", colours), selected = ""
-    #              ),
     
     #Formatting for icons - would be better if they were aligned to the far right?
     tags$head(tags$style(HTML("
@@ -53,25 +52,25 @@ birdFinderUI <- function(data) {
     # Search actually working ok but option in the dropdown containing icons is not narrowing down
     # Also, for the other format, the "Select colour..." came from somewhere else so this might interfere with the search functions
     
-    pickerInput(inputId = "Left1",
+    pickerInput(inputId = ns("Left1"),
                 label = "Left leg - top ring",
                 choices = c("", colour_rings$val),
                 choicesOpt = list(content = c("Select colour...", colour_rings$img)),
                 selected = "Select colour..."),
     
-    pickerInput(inputId = "Left2",
+    pickerInput(inputId = ns("Left2"),
                 label = "Left leg - bottom ring",
                 choices = c("", colour_rings$val),
                 choicesOpt = list(content = c("Select colour...", colour_rings$img)),
                 selected = "Select colour..."),
     
-    pickerInput(inputId = "Right1",
+    pickerInput(inputId = ns("Right1"),
                 label = "Right leg - top ring",
                 choices = c("", colour_rings$val),
                 choicesOpt = list(content = c("Select colour...", colour_rings$img)),
                 selected = "Select colour..."),
     
-    pickerInput(inputId = "Right2",
+    pickerInput(inputId = ns("Right2"),
                 label = "Right leg - bottom ring",
                 choices = c("", colour_rings$val),
                 choicesOpt = list(content = c("Select colour...", colour_rings$img)),
@@ -81,18 +80,10 @@ birdFinderUI <- function(data) {
     #selectizeInput(
     #  "Left2", "Left leg - bottom ring", 
     #  choices =  c("", colours), selected = ""
-    
     #),
+
     
-    #selectizeInput(
-    #  "Right1", "Right leg - top ring", choices =  c("", colours), selected = ""
-    #),
-    
-    #selectizeInput(
-    #  "Right2", "Right leg - bottom ring", choices =  c("", colours), selected = ""
-    #),
-    
-    actionButton("reset_filters", "Reset filters"),
+    actionButton(ns("reset_filters"), "Reset filters"),
     helpText(HTML("placeholder instructions text")))
 }
 
@@ -103,11 +94,10 @@ birdFinderUI <- function(data) {
 
 ## Single server function 
 
-birdFinderServer <- function(input, output, data, session) {
-  
+birdFinderServer <- function(id, data) {
+  moduleServer(id, function(input, output, session) {
+    
   # --- Dropdown narrowing ---
-  # Reactive observation - triggers output whenever one of the inputs changes
-  observe({
     
     # Functions to get colour ring options and matching icons
     colour_rings <- get_colour_rings()
@@ -115,6 +105,10 @@ birdFinderServer <- function(input, output, data, session) {
       row <- match(options, colour_rings$val)
       colour_rings$img[row]
     }
+    
+    
+    # Reactive observation - triggers output whenever one of the inputs changes
+    observe({
     
     # Filter options for each dropdown based on other selections (excluding it's own selection)
     options_Left1 <- unique(data[
@@ -184,16 +178,16 @@ birdFinderServer <- function(input, output, data, session) {
   search_results <- reactive({
     filtered <- data
     
-    if (input$Left1 != "" && input$Left1 != "clear") {
+    if (input$Left1 != "") {
       filtered <- filtered[filtered$ColourRingLeft1 == input$Left1, ]
     }
-    if (input$Left2 != "" && input$Left2 != "clear") {
+    if (input$Left2 != "") {
       filtered <- filtered[filtered$ColourRingLeft2 == input$Left2, ]
     }
-    if (input$Right1 != "" && input$Right1 != "clear") {
+    if (input$Right1 != "") {
       filtered <- filtered[filtered$ColourRingRight1 == input$Right1, ]
     }
-    if (input$Right2 != "" && input$Right2 != "clear") {
+    if (input$Right2 != "") {
       filtered <- filtered[filtered$ColourRingRight2 == input$Right2, ]
     }
     
@@ -203,6 +197,10 @@ birdFinderServer <- function(input, output, data, session) {
       return(NULL)  # No results or too many results: return NULL
     }
   })
+  
+  # ReactiveVal to store selected ring number
+  selected_ring <- reactiveVal(NULL)
+  
   
   # Function to generate action buttons to add to rows
   buttonInput <- function(FUN, len, id, ...) {
@@ -238,9 +236,6 @@ birdFinderServer <- function(input, output, data, session) {
       selection = "single"
     )
   })
-  
-  # ReactiveVal to store selected bird RingNumber - clicking row
-  selected_ring <- reactiveVal(NULL)
   
   # Update selected_ring when "Select individual" button is clicked
   observeEvent(input$select_button, {
@@ -280,9 +275,13 @@ birdFinderServer <- function(input, output, data, session) {
     
   })
   
+
+  
+  
   # Return reactive expression (row number of clicked row) for use in other functions (map):
   return(search_results)
   
+})
 }
 
 
@@ -416,6 +415,8 @@ birdFinderSearchServer <- function(input, output, data, session) {
   # Clickable rows + action button might be an awkward combo
   output$summary_info <- DT::renderDataTable({
     df <- search_results()
+    print(df) # debugging
+    print(searhc_results) # debugging
     if (is.null(df) || nrow(df) == 0) return(NULL)
     
     df <- df[, c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
