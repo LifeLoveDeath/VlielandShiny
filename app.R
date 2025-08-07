@@ -15,7 +15,7 @@ library(reactable)
 files_to_source <- c(#"individual_search/find_ind_ui_functions.R",
                      #"individual_search/find_ind_server_functions.R",
                      "modules/birdFinder_module.R",
-                     "modules/mapping_module.R",
+                     "modules/mappingPreview_module.R",
                      #"mapping/generate_map_server_functions.R",
                      "helpers/colour_ring_data_func.R")  # Can add more files as needed
 lapply(files_to_source, source)
@@ -97,6 +97,7 @@ ui <- navbarPage(
 server <- function(input, output, session) {
   #load data
   vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
+  location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
   
   # Find individual by colour rings
   search_results <- birdFinderServer(input, output, vlieland.data, session)
@@ -109,7 +110,7 @@ server <- function(input, output, session) {
   #search_results <- birdFinderSearchServer(input, output, vlieland.data, session)
   
   # Generate map
-  map <- genMapServer(input, output, search_results, session)
+  map <- genPreviewMapServer(input, output, search_results, session)
   
 }
 

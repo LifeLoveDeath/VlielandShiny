@@ -1,5 +1,5 @@
 
-# Mapping module
+# Mapping preview module
 
 # Probably need a separate dataframe in long format for nestboxes associated with ring numbers
 
@@ -14,8 +14,9 @@ library(reactable)
 
 # Server ------------------------------------------------
 
-# old name: gen_map
-genMapServer <- function(input, output, search_results, session) { # data intput is search_results from the individual search server function. Is it right to do it like this or should it stil be data?
+# this could also be where they were last seen?
+
+genPreviewMapServer <- function(input, output, search_results, session) { # data intput is search_results from the individual search server function. Is it right to do it like this or should it still be data?
   
   # Show map if a row is selected
   output$map_ui <- renderUI({
