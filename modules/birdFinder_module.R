@@ -19,6 +19,7 @@ library(tidyverse)
 # UI function --------------------------------------------------------------
 
 # Old name: findIndividualUI_withIcons
+# This doesn't need the data input?
 birdFinderUI <- function(data) {
   
   colour_rings <- get_colour_rings()
@@ -263,27 +264,24 @@ birdFinderServer <- function(input, output, data, session) {
   })
   
   # Content for the bird detail tabs
-  output$bird_general <- renderPrint({
-    req(selected_ring())
-    # Fetch and display general info for selected_ring()
-    paste("General info for bird:", selected_ring())
-  })
+  #output$bird_general <- renderPrint({
+  #  req(selected_ring())
+  #  # Fetch and display general info for selected_ring()
+  #  paste("General info for bird:", selected_ring())
+  #})
   
-  output$bird_map <- leaflet::renderLeaflet({
-    req(selected_ring())
-    uiOutput("map_ind_ui") # don't need this because it's elsewhere?
+  #output$bird_map <- leaflet::renderLeaflet({ # these don't need to be here (they are in the app UI)
+  #  req(selected_ring())
+    #uiOutput("map_ind_ui") # don't need this because it's elsewhere?
     
-  })
+  #})
   
-  output$bird_pedigree <- renderPlot({
-    req(selected_ring())
-    
-  })
+  #output$bird_pedigree <- renderPlot({
+  #  req(selected_ring())
+  #  
+  #})
   
-  # Return reactive expression (row number of clicked row) for use in other functions (map):
-  #return(search_results)
-  
-  # Return select ring for use in other functions:
+  # Return reactive expression search_results and selected_ring for use in other functions:
   return(list(search_results = search_results, selected_ring = selected_ring))
   
 }

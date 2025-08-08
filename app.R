@@ -74,7 +74,7 @@ ui <- navbarPage(
                           actionButton("back_to_search", "Return to search"),
                           tabsetPanel(
                             id = "bird_tabs",
-                            tabPanel("General Info", verbatimTextOutput("bird_general")),
+                            tabPanel("General Info"),
                             tabPanel("Map", uiOutput("map_ind_ui")),
                             tabPanel("Pedigree", plotOutput("bird_pedigree"))
                           )
