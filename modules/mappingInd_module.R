@@ -9,6 +9,8 @@ library(bslib)
 library(viridis)
 library(dplyr)
 library(reactable)
+library(leaflet.extras2)
+library(leaftime)
 
 # UI ----------------------------------------------------
 
@@ -28,12 +30,15 @@ mapUI <- function(id) {
         checkboxGroupInput(ns("event_filter"), "Show locations for:", 
                            choices = c("Birth nest" = "birth", "Breeding nests" = "nest"),
                            selected = c("birth", "nest")),
-        sliderInput("year_range", "Year range:",
-                    min = min(location.data$Year, na.rm = TRUE),
-                    max = max(location.data$Year, na.rm = TRUE),
-                    value = c(1980, 2025), sep = "")
+        # moving this to server so it reflects range of years for selected bird (not whole dataset)
+        #sliderInput("year_range", "Year range:",
+        #            min = min(location.data$Year, na.rm = TRUE),
+        #            max = max(location.data$Year, na.rm = TRUE),
+        #            value = c(min(location.data$Year, na.rm = TRUE), max(location.data$Year, na.rm = TRUE)), sep = "",
+        #            step = 1)
+        uiOutput(ns("year_slider")
       )
-    ),
+    )),
     column(
       width = 9,
       uiOutput(ns("map_ind_ui"))  # this is your leafletOutput wrapped in renderUI
@@ -46,6 +51,24 @@ mapUI <- function(id) {
 
 genMapServer <- function(id, location.data, selected_ring) {
   moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+    
+    
+    # Dynamic slider UI
+    output$year_slider <- renderUI({
+      req(selected_ring())
+      bird_data <- location.data %>%
+        filter(RingNumber == selected_ring(), !is.na(Year))
+      validate(need(nrow(bird_data) > 0, "No year data"))
+      
+      sliderInput(ns("year_range"), "Year range:",
+                  min = min(bird_data$Year, na.rm = TRUE),
+                  max = max(bird_data$Year, na.rm = TRUE),
+                  value = c(min(bird_data$Year, na.rm = TRUE), max(bird_data$Year, na.rm = TRUE)),
+                  sep = "", step = 1)
+    })
+    
+    
     # Render UI placeholder for the map
     output$map_ind_ui <- renderUI({
       req(selected_ring())
@@ -54,16 +77,21 @@ genMapServer <- function(id, location.data, selected_ring) {
     
     # Render Leaflet map
     output$map_individual <- renderLeaflet({
-      req(selected_ring())
+      req(selected_ring(), input$year_range)
       
       # Get data for selected individual
       bird_data <- location.data %>%
-        filter(RingNumber == selected_ring())
+        filter(RingNumber == selected_ring(),
+               Year >= input$year_range[1],
+               Year <= input$year_range[2])
       
       # Check these is data
       validate(
         need(nrow(bird_data) > 0, "No matching bird data")
       )
+      
+      # Sort by year
+      bird_data <- bird_data %>% arrange(Year)
       
       # Map:
       m <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
@@ -99,9 +127,23 @@ genMapServer <- function(id, location.data, selected_ring) {
               lat = breeding_data$NestLat,
               label = paste0("Breeding nest: ", breeding_data$Year),
               icon = awesomeIcons(icon = "leaf", markerColor = "darkblue"),
-              clusterOptions = markerClusterOptions()
-            )
+              clusterOptions = markerClusterOptions() # removing clustering might make timeline clearer?
+            ) %>%
+            addTimeline(
+              data = bird_data)
         }
+      }
+      
+      if (nrow(bird_data) > 1) { # this needs to integrate with the tick boxes. Also add a tick box for showing this path
+        m <- m %>%
+          addPolylines(
+            lng = bird_data$NestLon,
+            lat = bird_data$NestLat,
+            color = "darkblue",
+            weight = 3,
+            opacity = 0.7,
+            label = paste0("Movement path for ", selected_ring())
+          )
       }
       
       m
