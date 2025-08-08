@@ -60,7 +60,7 @@ genPreviewMapServer <- function(input, output, search_results, session) { # data
         lng = filtered_data$OriginNestLon,
         lat = filtered_data$OriginNestLat,
         label = "Origin nestbox",
-        icon = awesomeIcons(icon = "home", markerColor = "darkgreen") # the icon is the symbol/shape in the middle, the marker is the pin
+        icon = awesomeIcons(icon = "leaf", markerColor = "darkgreen") # the icon is the symbol/shape in the middle, the marker is the pin
         # default icons are https://www.w3schools.com/bootstrap/bootstrap_ref_comp_glyphs.asp
         # can change to "fa" (fontawesome) or "ion" (ionicons)
         
