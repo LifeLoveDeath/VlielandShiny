@@ -15,6 +15,7 @@ library(reactable)
 # Server ------------------------------------------------
 
 # this could also be where they were last seen?
+# this should maybe go in birdFinderServer
 
 genPreviewMapServer <- function(input, output, search_results, session) { # data intput is search_results from the individual search server function. Is it right to do it like this or should it still be data?
   
