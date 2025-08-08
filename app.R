@@ -75,7 +75,7 @@ ui <- navbarPage(
                           tabsetPanel(
                             id = "bird_tabs",
                             tabPanel("General Info"),
-                            tabPanel("Map", uiOutput("map_ind_ui")),
+                            tabPanel("Map", mapUI("map_individual")),
                             tabPanel("Pedigree", plotOutput("bird_pedigree"))
                           )
                         )
@@ -117,7 +117,8 @@ server <- function(input, output, session) {
   map_preview <- genPreviewMapServer(input, output, search_results, session)
   
   # Generate interactive map
-  map_individual <- genMapServer(input, output, location.data, selected_ring, session)
+  #map_individual <- genMapServer(input, output, location.data, selected_ring, session)
+  map_individual <- genMapServer("map_individual", location.data, selected_ring)
   
 }
 
