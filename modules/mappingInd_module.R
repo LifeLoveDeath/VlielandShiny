@@ -130,7 +130,16 @@ genMapServer <- function(id, location.data, selected_ring) {
               clusterOptions = markerClusterOptions() # removing clustering might make timeline clearer?
             ) %>%
             addTimeline(
-              data = bird_data) # not working but look into this from leaftime package
+              data = bird_data) %>% # not working but look into this from leaftime package
+            #addPolylines(
+             # lat = ~NestLat,
+            #  lng = ~NestLon,
+            #  group = ~RingNumber,
+            #  color = "blue",
+            #  weight = 2,
+            #  opacity = 0.7,
+            #  popup = ~paste("Year:", Year, "<br>", "NestNo:", NestNo)
+            #) #old path line code
         }
       }
       
