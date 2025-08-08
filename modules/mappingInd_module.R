@@ -130,7 +130,7 @@ genMapServer <- function(id, location.data, selected_ring) {
               clusterOptions = markerClusterOptions() # removing clustering might make timeline clearer?
             ) %>%
             addTimeline(
-              data = bird_data)
+              data = bird_data) # not working but look into this from leaftime package
         }
       }
       
