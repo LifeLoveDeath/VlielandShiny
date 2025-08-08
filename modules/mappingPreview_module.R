@@ -19,13 +19,13 @@ library(reactable)
 genPreviewMapServer <- function(input, output, search_results, session) { # data intput is search_results from the individual search server function. Is it right to do it like this or should it still be data?
   
   # Show map if a row is selected
-  output$map_ui <- renderUI({
+  output$map_preview_ui <- renderUI({
     req(input$summary_info_rows_selected)  # Only render if a row is selected
-    leafletOutput("map", width = "95%", height = "600px")
+    leafletOutput("map_preview", width = "95%", height = "600px")
   })
   
   # baseline map to test
-  output$map <- renderLeaflet({
+  output$map_preview <- renderLeaflet({
     # Check there is data
     req(search_results()) # i.e. search_results not NULL                
     req(input$summary_info_rows_selected) # a row has been selected

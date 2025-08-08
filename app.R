@@ -16,6 +16,7 @@ files_to_source <- c(#"individual_search/find_ind_ui_functions.R",
                      #"individual_search/find_ind_server_functions.R",
                      "modules/birdFinder_module.R",
                      "modules/mappingPreview_module.R",
+                     "modules/mappingInd_module.R",
                      #"mapping/generate_map_server_functions.R",
                      "helpers/colour_ring_data_func.R")  # Can add more files as needed
 lapply(files_to_source, source)
@@ -60,7 +61,7 @@ ui <- navbarPage(
                             #verbatimTextOutput("text"),
                             fluidRow(
                               #leafletOutput("map", width = "95%", height = "600px") # map area?
-                              uiOutput("map_ui") # map output shows when row is selected (defined in map server function)
+                              uiOutput("map_preview_ui") # map output shows when row is selected (defined in map server function)
                             )
                           )
                         )),
@@ -74,7 +75,7 @@ ui <- navbarPage(
                           tabsetPanel(
                             id = "bird_tabs",
                             tabPanel("General Info", verbatimTextOutput("bird_general")),
-                            tabPanel("Map", leafletOutput("bird_map")),
+                            tabPanel("Map", uiOutput("map_ind_ui")),
                             tabPanel("Pedigree", plotOutput("bird_pedigree"))
                           )
                         )
@@ -100,7 +101,10 @@ server <- function(input, output, session) {
   location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
   
   # Find individual by colour rings
-  search_results <- birdFinderServer(input, output, vlieland.data, session)
+  #search_results <- birdFinderServer(input, output, vlieland.data, session)
+  finder <- birdFinderServer(input, output, vlieland.data, session)
+  search_results <- finder$search_results
+  selected_ring <- finder$selected_ring
   
   
   # Find individual by colour rings - narrows dropdown options as selections made
@@ -109,8 +113,11 @@ server <- function(input, output, session) {
   # Find individual by colour rings - perform search
   #search_results <- birdFinderSearchServer(input, output, vlieland.data, session)
   
-  # Generate map
-  map <- genPreviewMapServer(input, output, search_results, session)
+  # Generate preview map
+  map_preview <- genPreviewMapServer(input, output, search_results, session)
+  
+  # Generate interactive map
+  map_individual <- genMapServer(input, output, location.data, selected_ring, session)
   
 }
 

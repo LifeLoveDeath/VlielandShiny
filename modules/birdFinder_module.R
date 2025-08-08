@@ -271,7 +271,7 @@ birdFinderServer <- function(input, output, data, session) {
   
   output$bird_map <- leaflet::renderLeaflet({
     req(selected_ring())
-    uiOutput("map_ui")  # needs updating
+    uiOutput("map_ind_ui") # don't need this because it's elsewhere?
     
   })
   
@@ -281,7 +281,10 @@ birdFinderServer <- function(input, output, data, session) {
   })
   
   # Return reactive expression (row number of clicked row) for use in other functions (map):
-  return(search_results)
+  #return(search_results)
+  
+  # Return select ring for use in other functions:
+  return(list(search_results = search_results, selected_ring = selected_ring))
   
 }
 
