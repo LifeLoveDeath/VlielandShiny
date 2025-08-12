@@ -261,7 +261,7 @@ birdFinderServer <- function(input, output, data, session) {
   # Back to search button
   observeEvent(input$back_to_search, {
     selected_ring(NULL)
-  })
+  }) # After clicking this and returning to the search page, going to an individual page produces map with no icons etc. Preview map still works though
   
   # Content for the bird detail tabs
   #output$bird_general <- renderPrint({
