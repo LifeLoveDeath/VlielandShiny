@@ -44,7 +44,7 @@ mapUI <- function(id) {
 
 # Server ------------------------------------------------
 
-# If I got back to zoom and then back to ind page map, there are no icons etc. Selected ring must not update/set to NULL?
+# If I go back to zoom and then back to ind page map, there are no icons etc. Selected ring must not update/set to NULL?
 # Removing the year slider etcc = markers don't appear at first but do when user tick/unticks the checkboxes. Return to search issue still the same
 
 genMapServer <- function(id, location.data, selected_ring) {
@@ -57,11 +57,11 @@ genMapServer <- function(id, location.data, selected_ring) {
       leafletOutput(session$ns("map_individual"), width = "100%", height = "600px")
     })
     
-    
+    map_ready <- reactiveVal(FALSE)
     
     # Render Leaflet map
     output$map_individual <- renderLeaflet({
-      leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
+      m <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
         addTiles() %>%
         setView(lng = 5.018424, lat = 53.286226, zoom = 12) %>%
         htmlwidgets::onRender("
@@ -71,15 +71,21 @@ genMapServer <- function(id, location.data, selected_ring) {
     ") %>%
         addEasyButton(
           easyButton(
-            icon = "fa-rotate-right",    # reset icon? Can also do fa-home?
+            icon = "fa-rotate-right", 
             title = "Reset zoom",
-            onClick = JS("function(btn, map){ map.setView([53.286226, 5.018424], 12); }"),
+            onClick = JS("function(btn, map){ map.setView([53.286226, 5.018424], 12); }")
           )
         )
+      
+      map_ready(TRUE)  # reactive value
+      
+      m  # return m explictly so leafletProxy can update it?
     })
     
     observe({ # this means the map updates but isn't re-rendered when inputs change, so zoom stays the same and doesn't reset
       req(selected_ring())
+      req(input$event_filter) 
+      req(map_ready())
       
       bird_data <- location.data %>%
         filter(RingNumber == selected_ring()) %>%
@@ -87,7 +93,7 @@ genMapServer <- function(id, location.data, selected_ring) {
       
       validate(need(nrow(bird_data) > 0, "No matching bird data"))
       
-      m <- leafletProxy("map_individual", session) %>%
+      m <- leafletProxy(ns("map_individual"), session) %>% # could this be the issue
         clearMarkers() %>%
         clearShapes()
       
@@ -122,31 +128,31 @@ genMapServer <- function(id, location.data, selected_ring) {
       # Path / timeline
       if (nrow(bird_data) > 1 && input$timeline == TRUE) {
         if ("birth" %in% input$event_filter & "nest" %in% input$event_filter) {
-        m <- m %>%
-          addPolylines(
-            lng = bird_data$NestLon,
-            lat = bird_data$NestLat,
-            color = "darkblue",
-            weight = 3,
-            opacity = 0.7,
-            label = "Timeline path"
-          ) }
-      if ("nest" %in% input$event_filter) {
-        breeding_data <- bird_data %>% filter(Event == "nest")
-        m <- m %>%
-          addPolylines(
-            lng = breeding_data$NestLon,
-            lat = breeding_data$NestLat,
-            color = "darkblue",
-            weight = 3,
-            opacity = 0.7,
-            label = paste0("Nest timeline")
-          )
-      }
+          m <- m %>%
+            addPolylines(
+              lng = bird_data$NestLon,
+              lat = bird_data$NestLat,
+              color = "darkblue",
+              weight = 3,
+              opacity = 0.7,
+              label = "Timeline path"
+            ) }
+        if ("nest" %in% input$event_filter) {
+          breeding_data <- bird_data %>% filter(Event == "nest")
+          m <- m %>%
+            addPolylines(
+              lng = breeding_data$NestLon,
+              lat = breeding_data$NestLat,
+              color = "darkblue",
+              weight = 3,
+              opacity = 0.7,
+              label = paste0("Nest timeline")
+            )
+        }
       }
       m # not needed for rendering the map but adding to try and fix return to search issue
+    })
   })
-})
 }
 
 
