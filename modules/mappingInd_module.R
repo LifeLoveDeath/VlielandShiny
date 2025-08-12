@@ -44,6 +44,7 @@ mapUI <- function(id) {
 
 # Server ------------------------------------------------
 
+# If I got back to zoom and then back to ind page map, there are no icons etc. Selected ring must not update/set to NULL?
 
 genMapServer <- function(id, location.data, selected_ring) {
   moduleServer(id, function(input, output, session) {
@@ -160,6 +161,7 @@ genMapServer <- function(id, location.data, selected_ring) {
           )
       }
       }
+      m # not needed for rendering the map but adding to try and fix return to search issue
   })
 })
 }
