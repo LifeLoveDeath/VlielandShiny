@@ -45,7 +45,7 @@ mapUI <- function(id) {
 # Server ------------------------------------------------
 
 # If I got back to zoom and then back to ind page map, there are no icons etc. Selected ring must not update/set to NULL?
-# Removing the year slider etcc = markers don't appear at first but do when user tick/unticks the checkboxes. Return to search issue the same
+# Removing the year slider etcc = markers don't appear at first but do when user tick/unticks the checkboxes. Return to search issue still the same
 
 genMapServer <- function(id, location.data, selected_ring) {
   moduleServer(id, function(input, output, session) {
