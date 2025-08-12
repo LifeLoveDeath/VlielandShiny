@@ -76,7 +76,7 @@ genPreviewMapServer <- function(input, output, search_results, session) { # data
         lng = filtered_data$OriginNestLon,
         lat = filtered_data$OriginNestLat,
         label = "Birth nest",
-        #labelOptions = labelOptions(noHide = TRUE), # Makes labels static but they're in an odd place? Also green probably not the best colour
+        #labelOptions = labelOptions(noHide = TRUE), # Makes labels static but they're in an odd place? Also green probably not the best
         color = "darkgreen"
       )
     
