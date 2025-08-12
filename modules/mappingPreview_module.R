@@ -56,14 +56,28 @@ genPreviewMapServer <- function(input, output, search_results, session) { # data
       this.zoomControl.setPosition('topleft');
     }
   ") %>%
-      addAwesomeMarkers(
-        lng = filtered_data$OriginNestLon,
-        lat = filtered_data$OriginNestLat,
-        label = "Origin nestbox",
-        icon = awesomeIcons(icon = "leaf", markerColor = "darkgreen") # the icon is the symbol/shape in the middle, the marker is the pin
+      addEasyButton(
+        easyButton(
+          icon = "fa-rotate-right",    # reset icon? Can also do fa-home?
+          title = "Reset zoom",
+          onClick = JS("function(btn, map){ map.setView([53.286226, 5.018424], 12); }"),
+        )
+      ) %>%
+      #addAwesomeMarkers( # change to circles?
+       # lng = filtered_data$OriginNestLon,
+       # lat = filtered_data$OriginNestLat,
+       # label = "Origin nestbox",
+       # icon = awesomeIcons(icon = "leaf", markerColor = "darkgreen") # the icon is the symbol/shape in the middle, the marker is the pin
         # default icons are https://www.w3schools.com/bootstrap/bootstrap_ref_comp_glyphs.asp
         # can change to "fa" (fontawesome) or "ion" (ionicons)
         
+      #)
+      addCircleMarkers(
+        lng = filtered_data$OriginNestLon,
+        lat = filtered_data$OriginNestLat,
+        label = "Birth nest",
+        #labelOptions = labelOptions(noHide = TRUE), # Makes labels static but they're in an odd place? Also green probably not the best colour
+        color = "darkgreen"
       )
     
     
