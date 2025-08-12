@@ -28,6 +28,8 @@ mapUI <- function(id) {
         checkboxGroupInput(ns("event_filter"), "Show locations for:", 
                            choices = c("Birth nest" = "birth", "Breeding nests" = "nest"),
                            selected = c("birth", "nest")),
+        checkboxInput(ns("timeline"), "Show timeline path", value = FALSE, width = NULL),
+        
         uiOutput(ns("year_slider")
       )
     )),
@@ -40,6 +42,8 @@ mapUI <- function(id) {
 
 
 # Server ------------------------------------------------
+
+# Whenever you interact with the map the zoom resets
 
 genMapServer <- function(id, location.data, selected_ring) {
   moduleServer(id, function(input, output, session) {
@@ -130,7 +134,7 @@ genMapServer <- function(id, location.data, selected_ring) {
             addCircleMarkers(
               lng = breeding_data$NestLon,
               lat = breeding_data$NestLat,
-              label = paste0("Breeding nest: ", birth_data$Month, ", ", breeding_data$Year),
+              label = paste0("Breeding nest: ", breeding_data$Month, ", ", breeding_data$Year),
               color = "darkblue"
             )
             #%>%
@@ -149,7 +153,8 @@ genMapServer <- function(id, location.data, selected_ring) {
         }
       }
       
-      if (nrow(bird_data) > 1) { # this needs to integrate with the tick boxes. Also add a tick box for showing this path (show nest timeline?)
+      if (nrow(bird_data) > 1 & input$timeline == TRUE) {
+        if ("birth" %in% input$event_filter & "nest" %in% input$event_filter) {
         m <- m %>%
           addPolylines(
             lng = bird_data$NestLon,
@@ -157,9 +162,23 @@ genMapServer <- function(id, location.data, selected_ring) {
             color = "darkblue",
             weight = 3,
             opacity = 0.7,
-            label = paste0("Movement path for ", selected_ring())
+            label = paste0("Nest timeline")
           )
-      }
+        }
+        if ("nest" %in% input$event_filter) {
+          breeding_data <- bird_data %>% filter(Event == "nest")
+          m <- m %>%
+            addPolylines(
+              lng = breeding_data$NestLon,
+              lat = breeding_data$NestLat,
+              color = "darkblue",
+              weight = 3,
+              opacity = 0.7,
+              label = paste0("Nest timeline")
+            )
+        }
+        
+        }
       
       m
     })
