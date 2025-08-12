@@ -1,8 +1,6 @@
 
 # Mapping individuals module
 
-
-
 library(shiny)
 library(leaflet)
 library(bslib)
