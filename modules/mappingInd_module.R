@@ -25,23 +25,15 @@ mapUI <- function(id) {
     column(
       width = 3,
       wellPanel(
-        #checkboxInput(ns("show_birth"), "Birth nest", value = TRUE),
-        #checkboxInput(ns("show_breeding"), "Breeding nests", value = TRUE) # shuold actually be one line with choices
         checkboxGroupInput(ns("event_filter"), "Show locations for:", 
                            choices = c("Birth nest" = "birth", "Breeding nests" = "nest"),
                            selected = c("birth", "nest")),
-        # moving this to server so it reflects range of years for selected bird (not whole dataset)
-        #sliderInput("year_range", "Year range:",
-        #            min = min(location.data$Year, na.rm = TRUE),
-        #            max = max(location.data$Year, na.rm = TRUE),
-        #            value = c(min(location.data$Year, na.rm = TRUE), max(location.data$Year, na.rm = TRUE)), sep = "",
-        #            step = 1)
         uiOutput(ns("year_slider")
       )
     )),
     column(
       width = 9,
-      uiOutput(ns("map_ind_ui"))  # this is your leafletOutput wrapped in renderUI
+      uiOutput(ns("map_ind_ui"))  # leafletOutput from server wrapped in renderUI
     )
   )
 }
@@ -54,7 +46,7 @@ genMapServer <- function(id, location.data, selected_ring) {
     ns <- session$ns
     
     
-    # Dynamic slider UI
+    # Year slider - year range of selected individual (maybe this should include month)
     output$year_slider <- renderUI({
       req(selected_ring())
       bird_data <- location.data %>%
@@ -85,7 +77,7 @@ genMapServer <- function(id, location.data, selected_ring) {
                Year >= input$year_range[1],
                Year <= input$year_range[2])
       
-      # Check these is data
+      # Check there is data
       validate(
         need(nrow(bird_data) > 0, "No matching bird data")
       )
@@ -108,29 +100,43 @@ genMapServer <- function(id, location.data, selected_ring) {
         birth_data <- bird_data %>% filter(Event == "birth")
         if (nrow(birth_data) > 0) {
           m <- m %>%
-            addAwesomeMarkers(
-              lng = birth_data$NestLon,
-              lat = birth_data$NestLat,
-              label = paste0("Birth nest: ", birth_data$Year),
-              icon = awesomeIcons(icon = "leaf", markerColor = "darkgreen")
+            #addAwesomeMarkers(
+            #  lng = birth_data$NestLon,
+            #  lat = birth_data$NestLat,
+            #  label = paste0("Birth nest: ", birth_data$Year),
+            #  icon = awesomeIcons(icon = "leaf", markerColor = "darkgreen")
+            #)
+          addCircleMarkers(
+            lng = birth_data$NestLon,
+            lat = birth_data$NestLat,
+            label = paste0("Birth nest: ", birth_data$Month, ", ", birth_data$Year),
+            color = "darkgreen"
             )
         }
       }
       
-      # Add breeding/reproduction nest markers if selected
+      # Add breeding/reproduction nest markers if selected. Should maybe all be one code block (birth and nesting)
       if ("nest" %in% input$event_filter) {
         breeding_data <- bird_data %>% filter(Event == "nest")
         if (nrow(breeding_data) > 0) {
           m <- m %>%
-            addAwesomeMarkers(
+            #addAwesomeMarkers(
+            #  lng = breeding_data$NestLon,
+            #  lat = breeding_data$NestLat,
+            #  label = paste0("Breeding nest: ", breeding_data$Year),
+            #  icon = awesomeIcons(icon = "leaf", markerColor = "darkblue")#,
+              #clusterOptions = markerClusterOptions() # removing clustering might make timeline clearer?
+            #) 
+            addCircleMarkers(
               lng = breeding_data$NestLon,
               lat = breeding_data$NestLat,
-              label = paste0("Breeding nest: ", breeding_data$Year),
-              icon = awesomeIcons(icon = "leaf", markerColor = "darkblue"),
-              clusterOptions = markerClusterOptions() # removing clustering might make timeline clearer?
-            ) %>%
-            addTimeline(
-              data = bird_data) %>% # not working but look into this from leaftime package
+              label = paste0("Breeding nest: ", birth_data$Month, ", ", breeding_data$Year),
+              color = "darkblue"
+            )
+            #%>%
+            
+            #addTimeline(
+              #data = bird_data) %>% # not working but look into this from leaftime package
             #addPolylines(
              # lat = ~NestLat,
             #  lng = ~NestLon,
@@ -143,7 +149,7 @@ genMapServer <- function(id, location.data, selected_ring) {
         }
       }
       
-      if (nrow(bird_data) > 1) { # this needs to integrate with the tick boxes. Also add a tick box for showing this path
+      if (nrow(bird_data) > 1) { # this needs to integrate with the tick boxes. Also add a tick box for showing this path (show nest timeline?)
         m <- m %>%
           addPolylines(
             lng = bird_data$NestLon,
