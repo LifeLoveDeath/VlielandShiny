@@ -9,6 +9,8 @@ library(dplyr)
 library(reactable)
 library(leaflet.extras2)
 library(leaftime)
+library(leaflet.extras)
+
 
 # UI ----------------------------------------------------
 
@@ -78,9 +80,16 @@ genMapServer <- function(id, location.data, selected_ring) {
         setView(lng = 5.018424, lat = 53.286226, zoom = 12) %>%
         htmlwidgets::onRender("
       function(el, x) {
-        this.zoomControl.setPosition('topright');
+        this.zoomControl.setPosition('topleft');
       }
-    ")
+    ") %>%
+        addEasyButton(
+          easyButton(
+            icon = "fa-rotate-right",    # reset icon? Can also do fa-home?
+            title = "Reset zoom",
+            onClick = JS("function(btn, map){ map.setView([53.286226, 5.018424], 12); }"),
+          )
+        )
     })
     
     observe({ # this means the map updates but isn't re-rendered when inputs change, so zoom stays the same and doesn't reset

@@ -53,7 +53,7 @@ genPreviewMapServer <- function(input, output, search_results, session) { # data
       setView(lng = 5.018424, lat = 53.286226, zoom = 12) %>%
       htmlwidgets::onRender("
     function(el, x) {
-      this.zoomControl.setPosition('topright');
+      this.zoomControl.setPosition('topleft');
     }
   ") %>%
       addAwesomeMarkers(
