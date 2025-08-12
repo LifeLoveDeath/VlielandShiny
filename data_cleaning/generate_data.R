@@ -191,18 +191,32 @@ nestLocationData <- rbind(locationData, nestData)
 
 # This should have been a function
 
+# Real data probably has months/specific dates - add these?
+
+
 # Save
 write.csv(nestLocationData, "data/NestLocationData.csv", row.names = FALSE)
 
 
 
 
+# Real data probably has months/specific dates - add these?
+location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
 
+# Months
+months_vec <- c("March", "April", "May", "June", "July")
 
+# Randomly assign month to each row
+set.seed(123)
+location.data$Month <- sample(months_vec, size = nrow(location.data), replace = TRUE)
 
+# Reorder cols
+location.data <- location.data[, c("RingNumber", "Event", "Month", "Year", "NestNo", "NestLon", "NestLat")]
 
+head(location.data)
 
-
+# Save
+write.csv(location.data, "data/NestLocationData.csv", row.names = FALSE)
 
 
 
