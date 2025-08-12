@@ -26,6 +26,7 @@ mapUI <- function(id) {
         checkboxGroupInput(ns("event_filter"), "Show locations for:", 
                            choices = c("Birth nest" = "birth", "Breeding nests" = "nest"),
                            selected = c("birth", "nest")),
+        tags$label("Timeline:", style = "margin-bottom: 0; display: block;"),
         checkboxInput(ns("timeline"), "Show timeline path", value = FALSE, width = NULL),
         
         uiOutput(ns("year_slider")
@@ -105,7 +106,7 @@ genMapServer <- function(id, location.data, selected_ring) {
             addCircleMarkers(
               lng = birth_data$NestLon,
               lat = birth_data$NestLat,
-              label = paste0("Birth nest: ", birth_data$Month, ", ", birth_data$Year),
+              label = paste0("Birth nest: ", birth_data$Month, " ", birth_data$Year),
               color = "darkgreen"
             )
         }
@@ -119,7 +120,7 @@ genMapServer <- function(id, location.data, selected_ring) {
             addCircleMarkers(
               lng = breeding_data$NestLon,
               lat = breeding_data$NestLat,
-              label = paste0("Breeding nest: ", breeding_data$Month, ", ", breeding_data$Year),
+              label = paste0("Breeding nest: ", breeding_data$Month, " ", breeding_data$Year),
               color = "darkblue"
             )
         }
@@ -135,7 +136,7 @@ genMapServer <- function(id, location.data, selected_ring) {
             color = "darkblue",
             weight = 3,
             opacity = 0.7,
-            label = "Nest timeline"
+            label = "Timeline path"
           ) }
       if ("nest" %in% input$event_filter) {
         breeding_data <- bird_data %>% filter(Event == "nest")
