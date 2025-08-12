@@ -51,109 +51,125 @@ genMapServer <- function(id, location.data, selected_ring) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    # Render UI placeholder for the map
+    valid_ring <- reactive({
+      ring <- selected_ring()
+      if (is.null(ring) || ring == "") return(NULL)
+      ring
+    })
+    
+    # Always render UI, but show message if no valid ring
     output$map_ind_ui <- renderUI({
-      req(selected_ring())
-      leafletOutput(session$ns("map_individual"), width = "100%", height = "600px")
+      if (is.null(valid_ring())) {
+        # Show a message when no ring selected
+        tagList(
+          tags$p("Please select an individual to show the map."),
+          leafletOutput(ns("map_individual"), width = "100%", height = "600px")
+        )
+      } else {
+        leafletOutput(ns("map_individual"), width = "100%", height = "600px")
+      }
     })
     
     map_ready <- reactiveVal(FALSE)
     
-    # Render Leaflet map
     output$map_individual <- renderLeaflet({
-      m <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
+      leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
         addTiles() %>%
         setView(lng = 5.018424, lat = 53.286226, zoom = 12) %>%
         htmlwidgets::onRender("
-      function(el, x) {
-        this.zoomControl.setPosition('topleft');
-      }
-    ") %>%
+          function(el, x) {
+            this.zoomControl.setPosition('topleft');
+          }
+        ") %>%
         addEasyButton(
           easyButton(
             icon = "fa-rotate-right", 
             title = "Reset zoom",
             onClick = JS("function(btn, map){ map.setView([53.286226, 5.018424], 12); }")
           )
-        )
+        ) -> m
       
-      map_ready(TRUE)  # reactive value
-      
-      m  # return m explictly so leafletProxy can update it?
+      map_ready(TRUE)
+      m
     })
     
-    observe({ # this means the map updates but isn't re-rendered when inputs change, so zoom stays the same and doesn't reset
-      req(selected_ring())
-      req(input$event_filter) 
+    # Clear map when no valid ring
+    observeEvent(valid_ring(), {
+      if (is.null(valid_ring())) {
+        map_ready(FALSE)
+        leafletProxy(ns("map_individual")) %>%
+          clearMarkers() %>%
+          clearShapes()
+      }
+    }, ignoreNULL = FALSE)
+    
+    observe({
       req(map_ready())
+      req(valid_ring())
+      req(input$event_filter)
       
       bird_data <- location.data %>%
-        filter(RingNumber == selected_ring()) %>%
+        filter(RingNumber == valid_ring()) %>%
         arrange(Year)
       
       validate(need(nrow(bird_data) > 0, "No matching bird data"))
       
-      m <- leafletProxy(ns("map_individual"), session) %>% # could this be the issue
+      m <- leafletProxy(ns("map_individual")) %>%
         clearMarkers() %>%
         clearShapes()
       
-      # Birth nest markers
       if ("birth" %in% input$event_filter) {
         birth_data <- bird_data %>% filter(Event == "birth")
         if (nrow(birth_data) > 0) {
-          m <- m %>%
-            addCircleMarkers(
-              lng = birth_data$NestLon,
-              lat = birth_data$NestLat,
-              label = paste0("Birth nest: ", birth_data$Month, " ", birth_data$Year),
-              color = "darkgreen"
-            )
+          m <- m %>% addCircleMarkers(
+            lng = birth_data$NestLon,
+            lat = birth_data$NestLat,
+            label = paste0("Birth nest: ", birth_data$Month, " ", birth_data$Year),
+            color = "darkgreen"
+          )
         }
       }
       
-      # Breeding nest markers
       if ("nest" %in% input$event_filter) {
         breeding_data <- bird_data %>% filter(Event == "nest")
         if (nrow(breeding_data) > 0) {
-          m <- m %>%
-            addCircleMarkers(
-              lng = breeding_data$NestLon,
-              lat = breeding_data$NestLat,
-              label = paste0("Breeding nest: ", breeding_data$Month, " ", breeding_data$Year),
-              color = "darkblue"
-            )
+          m <- m %>% addCircleMarkers(
+            lng = breeding_data$NestLon,
+            lat = breeding_data$NestLat,
+            label = paste0("Breeding nest: ", breeding_data$Month, " ", breeding_data$Year),
+            color = "darkblue"
+          )
         }
       }
       
-      # Path / timeline
-      if (nrow(bird_data) > 1 && input$timeline == TRUE) {
+      if (nrow(bird_data) > 1 && isTRUE(input$timeline)) {
         if ("birth" %in% input$event_filter & "nest" %in% input$event_filter) {
-          m <- m %>%
-            addPolylines(
-              lng = bird_data$NestLon,
-              lat = bird_data$NestLat,
-              color = "darkblue",
-              weight = 3,
-              opacity = 0.7,
-              label = "Timeline path"
-            ) }
-        if ("nest" %in% input$event_filter) {
+          m <- m %>% addPolylines(
+            lng = bird_data$NestLon,
+            lat = bird_data$NestLat,
+            color = "darkblue",
+            weight = 3,
+            opacity = 0.7,
+            label = "Timeline path"
+          )
+        } else if ("nest" %in% input$event_filter) {
           breeding_data <- bird_data %>% filter(Event == "nest")
-          m <- m %>%
-            addPolylines(
-              lng = breeding_data$NestLon,
-              lat = breeding_data$NestLat,
-              color = "darkblue",
-              weight = 3,
-              opacity = 0.7,
-              label = paste0("Nest timeline")
-            )
+          m <- m %>% addPolylines(
+            lng = breeding_data$NestLon,
+            lat = breeding_data$NestLat,
+            color = "darkblue",
+            weight = 3,
+            opacity = 0.7,
+            label = "Nest timeline"
+          )
         }
       }
-      m # not needed for rendering the map but adding to try and fix return to search issue
+      m
     })
   })
 }
+
+
 
 
 genMapServerOld <- function(id, location.data, selected_ring) {
