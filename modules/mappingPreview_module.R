@@ -50,19 +50,21 @@ genPreviewMapServer <- function(input, output, search_results, session) { # data
     # Create map with marker
     m <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>% 
       addTiles() %>% 
-      setView(lng = 5.018424, lat = 53.286226, zoom = 12) %>%
-      htmlwidgets::onRender("
-    function(el, x) {
-      this.zoomControl.setPosition('topleft');
-    }
-  ") %>%
+      addControl(
+        html = "<div style='font-weight:bold; font-size:16px; background:white; padding:4px; border-radius:4px;'>Birth nest</div>",
+        position = "topleft"
+      ) %>%
       addEasyButton(
         easyButton(
           icon = "fa-rotate-right",    # reset icon? Can also do fa-home?
           title = "Reset zoom",
           onClick = JS("function(btn, map){ map.setView([53.286226, 5.018424], 12); }"),
+          position = "topleft"
         )
       ) %>%
+      setView(lng = 5.018424, lat = 53.286226, zoom = 12) %>%
+      htmlwidgets::onRender("function(el, x) {
+      this.zoomControl.setPosition('topleft');}") %>%
       #addAwesomeMarkers( # change to circles?
        # lng = filtered_data$OriginNestLon,
        # lat = filtered_data$OriginNestLat,
