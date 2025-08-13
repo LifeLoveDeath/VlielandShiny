@@ -9,6 +9,7 @@ library(leaflet)
 library(bslib)
 library(viridis)
 library(reactable)
+library(shinyjs)
 
 
 # Source files/functions -----------------------------------
@@ -32,64 +33,58 @@ lapply(files_to_source, source)
 ui <- navbarPage(
   title = "Great Tits & Blue Tits of Vlieland",
   position = "static-top",
-  #bg = viridis(1)[1], # change background colour
-  #inverse = TRUE,
   
-  # Dropdown menu on the top right
   navbarMenu("Menu", align = "right",
              
-             # Defining the pages
-             ## Project info page
+             # Project info page
              tabPanel("Project info", 
-                      h3("Project info"), # Title
-                      "Project info will appear here"), # Place holder text
-  
-             ## Find an individual page
+                      h3("Project info"), 
+                      "Project info will appear here"),
+             
+             # Find an individual page
              tabPanel("Find an individual",
-                      # Two conditional panels: search and individual view
-                      ## Initial search panel:
-                      conditionalPanel(
-                        condition = "output.birdSelected == false",
-                        h3("Search for an individual"),
-                        sidebarLayout(
-                          sidebarPanel(
-                            # Drop down search bars:
-                            birdFinderUI()
-                          ),
-                          mainPanel(
-                            DT::dataTableOutput("summary_info"),
-                            #verbatimTextOutput("text"),
-                            fluidRow(
-                              #leafletOutput("map", width = "95%", height = "600px") # map area?
-                              uiOutput("map_preview_ui") # map output shows when row is selected (defined in map server function)
-                            )
-                          )
-                        )),
+                      useShinyjs(),  # enable shinyjs
                       
-                      ## Individual view panel - appears when bird selected
-                      conditionalPanel(
-                        condition = "output.birdSelected == true",
-                        tagList (
-                          actionButton("back_to_search", "Return to search"),
-                          uiOutput("selected_bird"),  # <-- dynamic title
-                          #h3("Explore individual info"),
-                          tabsetPanel(
-                            id = "bird_tabs",
-                            tabPanel("General Info"),
-                            tabPanel("Map", value = "Map", mapUI("map_individual")),
-                            tabPanel("Pedigree", plotOutput("bird_pedigree"))
-                          )
+                      # Search panel
+                      hidden(
+                        div(id = "search_panel",
+                            h3("Search for an individual"),
+                            sidebarLayout(
+                              sidebarPanel(
+                                birdFinderUI()
+                              ),
+                              mainPanel(
+                                DT::dataTableOutput("summary_info"),
+                                fluidRow(
+                                  uiOutput("map_preview_ui") # preview map
+                                )
+                              )
+                            )
                         )
-                      )),
+                      ),
+                      
+                      # Individual view panel
+                      hidden(
+                        div(id = "individual_panel",
+                            actionButton("back_to_search", "Return to search"),
+                            uiOutput("selected_bird"),
+                            tabsetPanel(
+                              id = "bird_tabs",
+                              tabPanel("General Info"),
+                              tabPanel("Map", value = "Map", mapUI("map_individual")),
+                              tabPanel("Pedigree", plotOutput("bird_pedigree"))
+                            )
+                        )
+                      )
+             ),
              
              # Population trends page
              tabPanel("Population trends",
-                      h3("Poupulation trends")),
+                      h3("Population trends")),
              
-             # Citizen pages
+             # Citizen science page
              tabPanel("Citizen science",
                       h3("Citizen science"))
-             
   )
 )
 
@@ -97,37 +92,45 @@ ui <- navbarPage(
 # App server ----------------------------------------------
 
 server <- function(input, output, session) {
-  #load data
+  # Load data
   vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
   location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
   
   # Find individual by colour rings
-  #search_results <- birdFinderServer(input, output, vlieland.data, session)
   finder <- birdFinderServer(input, output, vlieland.data, session)
   search_results <- finder$search_results
   selected_ring <- finder$selected_ring
   
-  # birdSelected var for conditional tabs in UI
-  output$birdSelected <- reactive({
-    !is.null(selected_ring())
-  })
-  outputOptions(output, "birdSelected", suspendWhenHidden = FALSE)
-  
   # Reactive title for individual info page
   output$selected_bird <- renderUI({
-    req(selected_ring())  # make sure a bird is selected
+    req(selected_ring())
     h3(paste0("Explore individual info: ", selected_ring()))
+  })
+  
+  # Show/hide panels based on selection
+  observe({
+    if (is.null(selected_ring())) {
+      shinyjs::show("search_panel")
+      shinyjs::hide("individual_panel")
+    } else {
+      shinyjs::hide("search_panel")
+      shinyjs::show("individual_panel")
+    }
+  })
+  
+  # Back button to reset selection
+  observeEvent(input$back_to_search, {
+    selected_ring(NULL)
+    shinyjs::show("search_panel")
+    shinyjs::hide("individual_panel")
   })
   
   # Generate preview map
   map_preview <- genPreviewMapServer(input, output, search_results, location.data, session)
   
-  # Generate interactive map
-  #map_individual <- genMapServer(input, output, location.data, selected_ring, session)
+  # Generate interactive map (always present)
   map_individual <- genMapServer("map_individual", location.data, selected_ring)
-  
 }
-
 
 shinyApp(ui, server)
 
