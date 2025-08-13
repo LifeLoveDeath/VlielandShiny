@@ -214,7 +214,10 @@ birdFinderServer <- function(input, output, data, session) {
     inputs
   }
   
-  # Render datatable with clickable rows and "Select individual" buttons
+  # ReactiveVal to store last selected RingNumber
+  last_selected_ring <- reactiveVal(NULL)
+  
+  # Render datatable with clickable rows and action buttons
   # Clickable rows + action button might be an awkward combo
   output$summary_info <- DT::renderDataTable({
     df <- search_results()
@@ -227,23 +230,25 @@ birdFinderServer <- function(input, output, data, session) {
       FUN = shiny::actionButton,
       len = nrow(df),
       id = "select_",
-      label = "Select individual",
+      label = "See full info", # or select individual?
       onclick = 'Shiny.setInputValue("select_button", this.id, {priority: "event"})'
     )
+
     
     datatable(
       df,
       options = list(dom = 't', ordering = FALSE),
       rownames = FALSE,
       escape = FALSE,  # allow HTML for buttons
-      selection = "single"
+      selection = list(mode = "single")
     )
   })
   
-  # ReactiveVal to store selected bird RingNumber - clicking row
+  
+  # ReactiveVal to store selected bird RingNumber - clicking button
   selected_ring <- reactiveVal(NULL)
   
-  # Update selected_ring when "Select individual" button is clicked
+  # Update selected_ring when action button is clicked
   observeEvent(input$select_button, {
     row_index <- as.numeric(gsub("select_", "", input$select_button))
     df <- search_results()
@@ -262,24 +267,6 @@ birdFinderServer <- function(input, output, data, session) {
   observeEvent(input$back_to_search, {
     selected_ring(NULL)
   }) # After clicking this and returning to the search page, going to an individual page produces map with no icons etc. Preview map still works though
-  
-  # Content for the bird detail tabs
-  #output$bird_general <- renderPrint({
-  #  req(selected_ring())
-  #  # Fetch and display general info for selected_ring()
-  #  paste("General info for bird:", selected_ring())
-  #})
-  
-  #output$bird_map <- leaflet::renderLeaflet({ # these don't need to be here (they are in the app UI)
-  #  req(selected_ring())
-    #uiOutput("map_ind_ui") # don't need this because it's elsewhere?
-    
-  #})
-  
-  #output$bird_pedigree <- renderPlot({
-  #  req(selected_ring())
-  #  
-  #})
   
   # Return reactive expression search_results and selected_ring for use in other functions:
   return(list(search_results = search_results, selected_ring = selected_ring))

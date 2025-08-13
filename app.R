@@ -70,8 +70,9 @@ ui <- navbarPage(
                       conditionalPanel(
                         condition = "output.birdSelected == true",
                         tagList (
-                          h3("Explore individual info"),
                           actionButton("back_to_search", "Return to search"),
+                          uiOutput("selected_bird"),  # <-- dynamic title
+                          #h3("Explore individual info"),
                           tabsetPanel(
                             id = "bird_tabs",
                             tabPanel("General Info"),
@@ -106,15 +107,13 @@ server <- function(input, output, session) {
   search_results <- finder$search_results
   selected_ring <- finder$selected_ring
   
-  
-  # Find individual by colour rings - narrows dropdown options as selections made
-  #birdFinderDropdownsServer(input, vlieland.data, session)
-  
-  # Find individual by colour rings - perform search
-  #search_results <- birdFinderSearchServer(input, output, vlieland.data, session)
+  output$selected_bird <- renderUI({
+    req(selected_ring())  # make sure a bird is selected
+    h3(paste0("Explore individual info: ", selected_ring()))
+  })
   
   # Generate preview map
-  map_preview <- genPreviewMapServer(input, output, search_results, session)
+  map_preview <- genPreviewMapServer(input, output, search_results, location.data, session)
   
   # Generate interactive map
   #map_individual <- genMapServer(input, output, location.data, selected_ring, session)

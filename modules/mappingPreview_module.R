@@ -17,11 +17,22 @@ library(reactable)
 # this could also be where they were last seen?
 # this should maybe go in birdFinderServer
 
-genPreviewMapServer <- function(input, output, search_results, session) { # data intput is search_results from the individual search server function. Is it right to do it like this or should it still be data?
+genPreviewMapServer <- function(input, output, search_results, location.data, session) {
   
-  # Show map if a row is selected
+  # store the last selected RingNumber
+  last_ring <- reactiveVal(NULL)
+  
+  observeEvent(input$summary_info_rows_selected, {
+    if (length(input$summary_info_rows_selected) > 0) {
+      ring <- search_results()[input$summary_info_rows_selected, "RingNumber"]
+      last_ring(ring)
+    }
+  })
+  
+  # Show map if a row has ever been selected
   output$map_preview_ui <- renderUI({
-    req(input$summary_info_rows_selected)  # Only render if a row is selected
+    #req(input$summary_info_rows_selected)  # Only render if a row is selected
+    req(last_ring()) # Render if a row has ever been selected
     leafletOutput("map_preview", width = "95%", height = "600px")
   })
   
@@ -29,16 +40,28 @@ genPreviewMapServer <- function(input, output, search_results, session) { # data
   output$map_preview <- renderLeaflet({
     # Check there is data
     req(search_results()) # i.e. search_results not NULL                
-    req(input$summary_info_rows_selected) # a row has been selected
+    #req(input$summary_info_rows_selected) # a row has been selected
+    req(last_ring()) # a row has ever been selected
     
     # Filer data based on row selection
-    filtered_data <- search_results()[input$summary_info_rows_selected, ]
+    #filtered_data <- search_results()[input$summary_info_rows_selected, ]
     # Should actually filter a second nestboxes dataframe based on bird ring number here
+    # Find the RingNumber from the clicked row
+    #ring <- search_results()[input$summary_info_rows_selected, "RingNumber"]
+        
+    # Filter location.data by this RingNumber
+    #filtered_data <- location.data[location.data$RingNumber == ring & location.data$Event == "birth", ] # if plotting birth
+    #print(filtered_data)  # debugging
+    filtered_data <- location.data %>%
+      filter(RingNumber == last_ring()) %>%
+      arrange(desc(Year), desc(Month)) %>%
+      slice(1) # if last location
+    
     
     # Check location info exists:
     validate(
-      need(!is.null(filtered_data$OriginNestLon), "No location data"),
-      need(!is.null(filtered_data$OriginNestLat), "No location data")
+      need(!is.null(filtered_data$NestLon), "No location data"),
+      need(!is.null(filtered_data$NestLat), "No location data")
     )
     
     # specify markers style
@@ -51,7 +74,7 @@ genPreviewMapServer <- function(input, output, search_results, session) { # data
     m <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>% 
       addTiles() %>% 
       addControl(
-        html = "<div style='font-weight:bold; font-size:16px; background:white; padding:4px; border-radius:4px;'>Birth nest</div>",
+        html = paste0("<div style='font-weight:bold; font-size:16px; background:white; padding:4px; border-radius:4px;'>", filtered_data$RingNumber, " Last known location","</div>"), # change this title depending on what we're plotting
         position = "topleft"
       ) %>%
       addEasyButton(
@@ -75,8 +98,8 @@ genPreviewMapServer <- function(input, output, search_results, session) { # data
         
       #)
       addCircleMarkers(
-        lng = filtered_data$OriginNestLon,
-        lat = filtered_data$OriginNestLat,
+        lng = filtered_data$NestLon,
+        lat = filtered_data$NestLat,
         label = "Birth nest",
         #labelOptions = labelOptions(noHide = TRUE), # Makes labels static but they're in an odd place? Also green probably not the best
         color = "darkgreen"
