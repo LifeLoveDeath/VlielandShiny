@@ -48,6 +48,25 @@ genMapServer <- function(id, location.data, selected_ring) {
     ns <- session$ns
     
     
+    # --- Checkboxes and sliders ---
+    
+  
+    # If the timeline checkbox is checked, ensure 'nest' is selected
+    observeEvent(input$timeline, {
+      if (input$timeline && !("nest" %in% input$event_filter)) {
+        updateCheckboxGroupInput(session, "event_filter",
+                                 selected = c(input$event_filter, "nest"))
+      }
+    })
+    
+    # If 'nest' is unchecked, ensure timeline checkbox is FALSE
+    observeEvent(input$event_filter, {
+      if (!("nest" %in% input$event_filter) && input$timeline) {
+        updateCheckboxInput(session, "timeline", value = FALSE)
+      }
+    })
+    
+    
     # Year slider - year range of selected individual (maybe this should include month)
     output$year_slider <- renderUI({
       req(selected_ring())
@@ -62,6 +81,9 @@ genMapServer <- function(id, location.data, selected_ring) {
                   sep = "", step = 1)
     })
     
+    
+    
+    # --- Rendering map ---
     
     # Render UI placeholder for the map
     output$map_ind_ui <- renderUI({
@@ -89,6 +111,9 @@ genMapServer <- function(id, location.data, selected_ring) {
           )
         )
     })
+    
+    
+    # --- Update maps based on inputs ----
     
     observe({ # this means the map updates but isn't re-rendered when inputs change, so zoom stays the same and doesn't reset
       req(selected_ring(), input$year_range)
