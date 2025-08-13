@@ -34,6 +34,7 @@ mapUI <- function(id) {
     column(
       width = 9,
       uiOutput(ns("map_ind_ui"))  # leafletOutput from server wrapped in renderUI
+      
     )
   )
 }
@@ -50,7 +51,7 @@ genMapServer <- function(id, location.data, selected_ring) {
     
     # --- Checkboxes and sliders ---
     
-  
+    
     # If the timeline checkbox is checked, ensure 'nest' is selected
     observeEvent(input$timeline, {
       if (input$timeline && !("nest" %in% input$event_filter)) {
@@ -70,6 +71,8 @@ genMapServer <- function(id, location.data, selected_ring) {
     # Year slider - year range of selected individual (maybe this should include month)
     output$year_slider <- renderUI({
       req(selected_ring())
+      
+      
       bird_data <- location.data %>%
         filter(RingNumber == selected_ring(), !is.na(Year))
       validate(need(nrow(bird_data) > 0, "No year data"))
@@ -171,29 +174,28 @@ genMapServer <- function(id, location.data, selected_ring) {
       # Path / timeline
       if (nrow(bird_data) > 1 && input$timeline == TRUE) {
         if ("birth" %in% input$event_filter & "nest" %in% input$event_filter) {
-        m <- m %>%
-          addPolylines(
-            lng = bird_data$NestLon,
-            lat = bird_data$NestLat,
-            color = "#3b528b",
-            weight = 3,
-            opacity = 0.7,
-            label = "Timeline path"
-          ) }
-      if ("nest" %in% input$event_filter) {
-        breeding_data <- bird_data %>% filter(Event == "nest")
-        m <- m %>%
-          addPolylines(
-            lng = breeding_data$NestLon,
-            lat = breeding_data$NestLat,
-            color = "#3b528b",
-            weight = 3,
-            opacity = 0.7,
-            label = paste0("Nest timeline")
-          )
+          m <- m %>%
+            addPolylines(
+              lng = bird_data$NestLon,
+              lat = bird_data$NestLat,
+              color = "#3b528b",
+              weight = 3,
+              opacity = 0.7,
+              label = "Timeline path"
+            ) }
+        if ("nest" %in% input$event_filter) {
+          breeding_data <- bird_data %>% filter(Event == "nest")
+          m <- m %>%
+            addPolylines(
+              lng = breeding_data$NestLon,
+              lat = breeding_data$NestLat,
+              color = "#3b528b",
+              weight = 3,
+              opacity = 0.7,
+              label = paste0("Nest timeline")
+            )
+        }
       }
-      }
-      m # not needed for rendering the map but adding to try and fix return to search issue
+    })
   })
-})
 }
