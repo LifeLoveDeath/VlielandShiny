@@ -263,9 +263,8 @@ birdFinderServer <- function(input, output, data, session) {
   })
   outputOptions(output, "birdSelected", suspendWhenHidden = FALSE)
   
-  # Back to search button
   observeEvent(input$back_to_search, {
-    selected_ring(NULL)
+    selected_ring(NULL)  # sets birdSelected to FALSE, returning to search panel
   }) # After clicking this and returning to the search page, going to an individual page produces map with no icons etc. Preview map still works though
   
   # Return reactive expression search_results and selected_ring for use in other functions:

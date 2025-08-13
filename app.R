@@ -76,7 +76,7 @@ ui <- navbarPage(
                           tabsetPanel(
                             id = "bird_tabs",
                             tabPanel("General Info"),
-                            tabPanel("Map", mapUI("map_individual")),
+                            tabPanel("Map", value = "Map", mapUI("map_individual")),
                             tabPanel("Pedigree", plotOutput("bird_pedigree"))
                           )
                         )
@@ -107,6 +107,13 @@ server <- function(input, output, session) {
   search_results <- finder$search_results
   selected_ring <- finder$selected_ring
   
+  # birdSelected var for conditional tabs in UI
+  output$birdSelected <- reactive({
+    !is.null(selected_ring())
+  })
+  outputOptions(output, "birdSelected", suspendWhenHidden = FALSE)
+  
+  # Reactive title for individual info page
   output$selected_bird <- renderUI({
     req(selected_ring())  # make sure a bird is selected
     h3(paste0("Explore individual info: ", selected_ring()))
