@@ -14,9 +14,6 @@ library(leaflet.extras)
 
 # UI ----------------------------------------------------
 
-# Add time slider
-# Could add an animation of them appearing over time
-
 #Side panel with check boxes etc.
 mapUI <- function(id) {
   ns <- NS(id)
@@ -44,7 +41,7 @@ mapUI <- function(id) {
 
 # Server ------------------------------------------------
 
-# If I got back to zoom and then back to ind page map, there are no icons etc. Selected ring must not update/set to NULL?
+# If I go back to zoom and then back to ind page map, there are no icons etc. Selected ring must not update/set to NULL?
 
 genMapServer <- function(id, location.data, selected_ring) {
   moduleServer(id, function(input, output, session) {
@@ -117,7 +114,12 @@ genMapServer <- function(id, location.data, selected_ring) {
               lng = birth_data$NestLon,
               lat = birth_data$NestLat,
               label = paste0("Birth nest: ", birth_data$Month, " ", birth_data$Year),
-              color = "darkgreen"
+              #color = "darkgreen"
+              color = "#440154",
+              fillOpacity = 0.6,
+              opacity = 1,
+              radius = 8,
+              weight = 2
             )
         }
       }
@@ -131,7 +133,12 @@ genMapServer <- function(id, location.data, selected_ring) {
               lng = breeding_data$NestLon,
               lat = breeding_data$NestLat,
               label = paste0("Breeding nest: ", breeding_data$Month, " ", breeding_data$Year),
-              color = "darkblue"
+              #color = "darkblue"
+              color = "#3b528b",
+              fillOpacity = 0.6,
+              opacity = 1,
+              radius = 8,
+              weight = 2
             )
         }
       }
@@ -143,7 +150,7 @@ genMapServer <- function(id, location.data, selected_ring) {
           addPolylines(
             lng = bird_data$NestLon,
             lat = bird_data$NestLat,
-            color = "darkblue",
+            color = "#3b528b",
             weight = 3,
             opacity = 0.7,
             label = "Timeline path"
@@ -154,7 +161,7 @@ genMapServer <- function(id, location.data, selected_ring) {
           addPolylines(
             lng = breeding_data$NestLon,
             lat = breeding_data$NestLat,
-            color = "darkblue",
+            color = "#3b528b",
             weight = 3,
             opacity = 0.7,
             label = paste0("Nest timeline")
