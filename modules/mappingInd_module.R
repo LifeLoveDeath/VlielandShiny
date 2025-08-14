@@ -50,7 +50,7 @@ genMapServer <- function(id, location.data, selected_ring) {
     ns <- session$ns
     
     
-    # --- Checkboxes and sliders ---
+    # --- Check boxes and slider ---
     
     # If the timeline checkbox is checked, ensure 'nest' is selected
     observeEvent(input$timeline, {
@@ -67,17 +67,29 @@ genMapServer <- function(id, location.data, selected_ring) {
       }
     })
     
+    # Year slider UI
+    output$year_slider <- renderUI({
+      req(selected_ring())
+      bird_data <- location.data %>% filter(RingNumber == selected_ring(), !is.na(Year))
+      #validate(need(nrow(bird_data) > 0, "No year data")) # need another way to deal with missing data as this creates errors
+      
+      sliderInput(ns("year_range"), "Year range:",
+                  min = min(bird_data$Year, na.rm = TRUE),
+                  max = max(bird_data$Year, na.rm = TRUE),
+                  value = c(min(bird_data$Year, na.rm = TRUE), max(bird_data$Year, na.rm = TRUE)),
+                  sep = "", step = 1)
+    })
     
     # --- Reset when select_ring changes ---
     
     observeEvent(selected_ring(), {
       req(selected_ring())
-      bird_data <- location.data %>% filter(RingNumber == selected_ring(), !is.na(Year))
+      bird_data <- location.data %>% filter(RingNumber == selected_ring())
       if (nrow(bird_data) == 0) return()
       
       # Reset year slider
       updateSliderInput(session, "year_range",
-                        min = min(bird_data$Year, na.rm = TRUE),
+                        min = min(bird_data$Year, na.rm = TRUE), # what is they're all NA?
                         max = max(bird_data$Year, na.rm = TRUE),
                         value = c(min(bird_data$Year, na.rm = TRUE), max(bird_data$Year, na.rm = TRUE)))
       
@@ -86,22 +98,6 @@ genMapServer <- function(id, location.data, selected_ring) {
       updateCheckboxInput(session, "timeline", value = FALSE)
     }, ignoreInit = TRUE)
     
-    
-    
-    # --- Year slider - move checkbox dependency here? ---
-    
-    # Year slider UI
-    output$year_slider <- renderUI({
-      req(selected_ring())
-      bird_data <- location.data %>% filter(RingNumber == selected_ring(), !is.na(Year))
-      validate(need(nrow(bird_data) > 0, "No year data"))
-      
-      sliderInput(ns("year_range"), "Year range:",
-                  min = min(bird_data$Year, na.rm = TRUE),
-                  max = max(bird_data$Year, na.rm = TRUE),
-                  value = c(min(bird_data$Year, na.rm = TRUE), max(bird_data$Year, na.rm = TRUE)),
-                  sep = "", step = 1)
-    })
     
     
     # --- Render map ---
@@ -130,7 +126,7 @@ genMapServer <- function(id, location.data, selected_ring) {
     # Reactive filtered bird data
     bird_data <- reactive({
       req(selected_ring())
-      req(input$year_range)
+      req(input$year_range) # what if they're all NA?
       location.data %>%
         filter(RingNumber == selected_ring(),
                Year >= input$year_range[1],
@@ -144,7 +140,7 @@ genMapServer <- function(id, location.data, selected_ring) {
     # Observe and update map markers
     observe({
       req(bird_data())
-      validate(need(nrow(bird_data()) > 0, "No matching bird data"))
+      #validate(need(nrow(bird_data()) > 0, "No matching bird data")) # need another way to deal with missing data as this creates errors
       
       m <- leafletProxy("map_individual", session) %>%
         clearMarkers() %>%

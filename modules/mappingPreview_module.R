@@ -58,23 +58,26 @@ genPreviewMapServer <- function(input, output, search_results, location.data, se
       slice(1) # if last location
     
     
-    # Check location info exists:
-    validate(
-      need(!is.null(filtered_data$NestLon), "No location data"),
-      need(!is.null(filtered_data$NestLat), "No location data")
-    )
+    # If no location data, show message on map
+    # Need to check this properly deals with missing data - introduce a row with missing data
+    if (nrow(filtered_data) == 0 || is.na(filtered_data$NestLon) || is.na(filtered_data$NestLat)) {
+      return(
+        leaflet() %>%
+          addTiles() %>%
+          addControl(
+            html = "<div style='font-weight:bold; font-size:16px; background:white; padding:4px; border-radius:4px;'>No location data</div>",
+            position = "topleft"
+          ) %>%
+          setView(lng = 5.018424, lat = 53.286226, zoom = 12)
+      )
+    }
     
-    # specify markers style
-    #originNestIcons <- awesomeIcons(
-    #  iconColor = 'black',
-    #  markerColor = getColor(df.20)
-    #)
     
     # Create map with marker
     m <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>% 
       addTiles() %>% 
       addControl(
-        html = paste0("<div style='font-weight:bold; font-size:16px; background:white; padding:4px; border-radius:4px;'>", filtered_data$RingNumber, " Last known location","</div>"), # change this title depending on what we're plotting
+        html = paste0("<div style='font-weight:bold; font-size:16px; background:white; padding:4px; border-radius:4px;'>", as.character(filtered_data$RingNumber), " Last recorded location","</div>"), # change this title depending on what we're plotting
         position = "topleft"
       ) %>%
       addEasyButton(
@@ -100,10 +103,10 @@ genPreviewMapServer <- function(input, output, search_results, location.data, se
       addCircleMarkers(
         lng = filtered_data$NestLon,
         lat = filtered_data$NestLat,
-        label = "Birth nest",
+        label = "Last location",
         #labelOptions = labelOptions(noHide = TRUE), # Makes labels static but they're in an odd place? Also green probably not the best
         #color = "darkgreen"
-        color = "#440154",
+        color = "#1b0c41",
         fillOpacity = 0.6,
         opacity = 1,
         radius = 8,
