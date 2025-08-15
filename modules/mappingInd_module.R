@@ -73,11 +73,25 @@ genMapServer <- function(id, location.data, selected_ring) {
       bird_data <- location.data %>% filter(RingNumber == selected_ring(), !is.na(Year))
       #validate(need(nrow(bird_data) > 0, "No year data")) # need another way to deal with missing data as this creates errors
       
-      sliderInput(ns("year_range"), "Year range:",
-                  min = min(bird_data$Year, na.rm = TRUE),
-                  max = max(bird_data$Year, na.rm = TRUE),
-                  value = c(min(bird_data$Year, na.rm = TRUE), max(bird_data$Year, na.rm = TRUE)),
-                  sep = "", step = 1)
+      if (nrow(bird_data) == 0) {
+        # No data: show a disabled slider
+        sliderInput(ns("year_range"), "Year range:",
+                    min = 0, max = 0, value = c(0, 0),
+                    sep = "", step = 1,
+                    width = "100%",
+                    ticks = FALSE
+        )
+      } else {
+        # Normal slider
+        sliderInput(ns("year_range"), "Year range:",
+                    min = min(bird_data$Year, na.rm = TRUE),
+                    max = max(bird_data$Year, na.rm = TRUE),
+                    value = c(min(bird_data$Year, na.rm = TRUE),
+                              max(bird_data$Year, na.rm = TRUE)),
+                    sep = "", step = 1,
+                    width = "100%"
+        )
+      }
     })
     
     # --- Reset when select_ring changes ---
@@ -99,6 +113,25 @@ genMapServer <- function(id, location.data, selected_ring) {
     }, ignoreInit = TRUE)
     
     
+    # --- Get data ---
+    
+    # Reactive filtered bird data
+    bird_data <- reactive({
+      req(selected_ring())
+      if (!is.null(input$year_range) && !all(is.na(input$year_range))) {
+        location.data %>%
+          filter(RingNumber == selected_ring(),
+                 Year >= input$year_range[1],
+                 Year <= input$year_range[2]
+          ) %>%
+          arrange(Year)} else {
+            location.data %>%
+              filter(RingNumber == selected_ring())
+            
+          }
+    })
+      
+    
     
     # --- Render map ---
     
@@ -107,9 +140,11 @@ genMapServer <- function(id, location.data, selected_ring) {
       leafletOutput(ns("map_individual"), width = "100%", height = "600px")
     })
     
+    
     # Render Leaflet map
     output$map_individual <- renderLeaflet({
-      leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
+      data <- bird_data() # added this to check for no data
+      map <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>% # added map <-
         addTiles() %>%
         setView(lng = 5.018424, lat = 53.286226, zoom = 12) %>%
         htmlwidgets::onRender("function(el, x) { this.zoomControl.setPosition('topleft'); }") %>%
@@ -120,19 +155,31 @@ genMapServer <- function(id, location.data, selected_ring) {
             onClick = JS("function(btn, map){ map.setView([53.286226, 5.018424], 12); }")
           )
         )
+      
+      # Add message if no location data
+      if (nrow(data) == 0 || all(is.na(data$NestLon)) || all(is.na(data$NestLat))) {
+        map <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
+          addTiles() %>%
+          addControl(
+            html = "<div style='font-weight:bold; font-size:16px; background:white; padding:4px; border-radius:4px;'>No location data for this bird</div>",
+            position = "topleft"
+          ) %>%
+          addEasyButton(
+            easyButton(
+              icon = "fa-rotate-right",    # reset icon? Can also do fa-home?
+              title = "Reset zoom",
+              onClick = JS("function(btn, map){ map.setView([53.286226, 5.018424], 12); }"),
+              position = "topleft"
+            )) %>%
+          setView(lng = 5.018424, lat = 53.286226, zoom = 12) %>%
+          htmlwidgets::onRender("function(el, x) {
+      this.zoomControl.setPosition('topleft');}")
+      } 
+      map
     })
     
     
-    # Reactive filtered bird data
-    bird_data <- reactive({
-      req(selected_ring())
-      req(input$year_range) # what if they're all NA?
-      location.data %>%
-        filter(RingNumber == selected_ring(),
-               Year >= input$year_range[1],
-               Year <= input$year_range[2]) %>%
-        arrange(Year)
-    })
+
     
     
     # --- Update based on checkboxes/sliders ---
@@ -184,5 +231,5 @@ genMapServer <- function(id, location.data, selected_ring) {
       }
     })
     
-  })  # end moduleServer
+  })
 }
