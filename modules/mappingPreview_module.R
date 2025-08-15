@@ -62,15 +62,23 @@ genPreviewMapServer <- function(input, output, search_results, location.data, se
     # Need to check this properly deals with missing data - introduce a row with missing data
     if (nrow(filtered_data) == 0 || is.na(filtered_data$NestLon) || is.na(filtered_data$NestLat)) {
       return(
-        leaflet() %>%
+        leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
           addTiles() %>%
           addControl(
             html = "<div style='font-weight:bold; font-size:16px; background:white; padding:4px; border-radius:4px;'>No location data</div>",
             position = "topleft"
           ) %>%
-          setView(lng = 5.018424, lat = 53.286226, zoom = 12)
-      )
-    }
+          addEasyButton(
+            easyButton(
+              icon = "fa-rotate-right",    # reset icon? Can also do fa-home?
+              title = "Reset zoom",
+              onClick = JS("function(btn, map){ map.setView([53.286226, 5.018424], 12); }"),
+              position = "topleft"
+            )) %>%
+          setView(lng = 5.018424, lat = 53.286226, zoom = 12) %>%
+        htmlwidgets::onRender("function(el, x) {
+      this.zoomControl.setPosition('topleft');}"))
+      }
     
     
     # Create map with marker
