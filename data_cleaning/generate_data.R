@@ -235,10 +235,26 @@ species_list <- c("Great tit", "Blue tit")
 colours <- c("blue","blue/white","green","metal","orange","pink/blue","pink/green",
              "red","red/white","white","white/blue","yellow","yellow/black")
 
+generate_colour_rings <- function() {
+  repeat {
+    #length <- 4  # length always 4
+    base_colours <- sample(colours, 3, replace = FALSE) # sample from colours (3 because one is metal)
+    
+    # metal position
+    metal_pos <- sample(1:4, 1) # get position for metal (can be anywhere in sequence)
+    
+    # insert metal
+    combo <- append(base_colours, "metal", after = metal_pos - 1) # add in metal
+    
+    # paste as string
+    return(paste(combo, collapse = "-"))
+  }
+}
+
 # Generate birds
 birds <- data.table(
   RingNumber = sprintf("RN%05d", 1:n_birds),
-  ColourRing = replicate(n_birds, paste(sample(colours,3), collapse="-")),
+  ColourRing = replicate(n_birds, generate_colour_rings()),
   Species = sample(species_list, n_birds, replace=TRUE),
   Sex = sample(c("M","F"), n_birds, replace=TRUE),
   BirthYear = sample(years, n_birds, replace=TRUE)
