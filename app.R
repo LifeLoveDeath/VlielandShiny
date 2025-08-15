@@ -93,7 +93,7 @@ ui <- navbarPage(
 
 server <- function(input, output, session) {
   # Load data
-  vlieland.data <- read.csv("data/DummyData.csv", row.names = NULL)
+  vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
   location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
   
   # Find individual by colour rings

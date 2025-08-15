@@ -221,5 +221,89 @@ write.csv(location.data, "data/NestLocationData.csv", row.names = FALSE)
 
 
 
+# Creating a new individuals dataset with parents in it --------------------------------------------------------
+# this isn't a fully connected pedigree, which will create missing data, but maybe that's ok
+
+
+library(data.table)
+set.seed(123)
+
+# Parameters
+n_birds <- 500
+years <- 1955:2024
+species_list <- c("Great tit", "Blue tit")
+colours <- c("blue","blue/white","green","metal","orange","pink/blue","pink/green",
+             "red","red/white","white","white/blue","yellow","yellow/black")
+
+# Generate birds
+birds <- data.table(
+  RingNumber = sprintf("RN%05d", 1:n_birds),
+  ColourRing = replicate(n_birds, paste(sample(colours,3), collapse="-")),
+  Species = sample(species_list, n_birds, replace=TRUE),
+  Sex = sample(c("M","F"), n_birds, replace=TRUE),
+  BirthYear = sample(years, n_birds, replace=TRUE)
+)
+birds[, DeathYear := BirthYear + 3]
+
+# Separate colour rings into cols
+colourCombCols <- str_split_fixed(birds$ColourRing, '-', 4) # get columns
+birds <- cbind(birds[,1:2], colourCombCols, birds[ ,3:6]) # add to full_data
+colnames(birds) <- c("RingNumber", "ColourRingCombo", "ColourRingLeft1", "ColourRingLeft2", "ColourRingRight1", "ColourRingRight2", "Species", "Sex", "BirthYear", "DeathYear") # rename cols
+
+
+# Initialize pedigree
+pedigree <- birds[, .(RingNumber)]
+pedigree[, c("Parent1","Parent2") := .(NA_character_, NA_character_)]
+
+# Assign parents per year and species
+for(spec in species_list) {
+  species_birds <- birds[Species == spec]
+  
+  # Group by birth year
+  years_present <- sort(unique(species_birds$BirthYear))
+  for(y in years_present) {
+    
+    # Birds born this year
+    born <- species_birds[BirthYear==y]
+    n <- nrow(born)
+    if(n==0) next
+    
+    # Generate random clutches sizes 3-5
+    clutch_sizes <- c()
+    remaining <- n
+    while(remaining>0) {
+      s <- sample(3:5,1)
+      s <- min(s, remaining)
+      clutch_sizes <- c(clutch_sizes, s)
+      remaining <- remaining - s
+    }
+    
+    # Split RingNumbers into clutches
+    clutches <- split(born$RingNumber, rep(1:length(clutch_sizes), clutch_sizes))
+    
+    # Precompute eligible parents (alive, age 1-3, opposite sex)
+    parents <- species_birds[BirthYear <= y-1 & DeathYear >= y]
+    males <- parents[Sex=="M", RingNumber]
+    females <- parents[Sex=="F", RingNumber]
+    
+    if(length(males)==0 | length(females)==0) next
+    
+    # Assign parents to each clutch
+    for(cl in clutches) {
+      p1 <- sample(males,1)
+      p2 <- sample(females,1)
+      pedigree[RingNumber %in% cl, `:=`(Parent1=p1, Parent2=p2)]
+    }
+  }
+}
+
+# Merge with bird info
+full_data <- merge(birds, pedigree, by="RingNumber")
+head(full_data)
+
+
+
+# Save
+write.csv(full_data, "data/IndividualsData.csv", row.names = FALSE)
 
 
