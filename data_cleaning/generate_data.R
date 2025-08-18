@@ -93,7 +93,7 @@ head(data)
 summary(data)
 
 # Save
-write.csv(data, "data/DummyData.csv", row.names = FALSE)
+#write.csv(data, "data/DummyData.csv", row.names = FALSE)
 
 
 
@@ -195,7 +195,7 @@ nestLocationData <- rbind(locationData, nestData)
 
 
 # Save
-write.csv(nestLocationData, "data/NestLocationData.csv", row.names = FALSE)
+#write.csv(nestLocationData, "data/NestLocationData.csv", row.names = FALSE)
 
 
 
@@ -216,7 +216,7 @@ location.data <- location.data[, c("RingNumber", "Event", "Month", "Year", "Nest
 head(location.data)
 
 # Save
-write.csv(location.data, "data/NestLocationData.csv", row.names = FALSE)
+#write.csv(location.data, "data/NestLocationData.csv", row.names = FALSE)
 
 
 
@@ -320,6 +320,4 @@ head(full_data)
 
 
 # Save
-write.csv(full_data, "data/IndividualsData.csv", row.names = FALSE)
-
-
+#write.csv(full_data, "data/IndividualsData.csv", row.names = FALSE)
