@@ -263,5 +263,61 @@ write.csv(data, "data/IndividualsData.csv", row.names = FALSE)
 
 # Locations dataset long ----------------------------------------------------------
 
+vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
 
+# Create empty list to collect rows
+location.list <- list()
+
+# Add birth events for everyone
+for(i in 1:nrow(vlieland.data)) {
+  location.list[[length(location.list) + 1]] <- data.frame(
+    RingNumber = vlieland.data$RingNumber[i],
+    Event      = "birth",
+    Month      = vlieland.data$BirthMonth[i],
+    Year       = vlieland.data$BirthYear[i],
+    NestNo     = vlieland.data$Nestbox[i],
+    NestLon    = vlieland.data$Lon[i],
+    NestLat    = vlieland.data$Lat[i],
+    stringsAsFactors = FALSE
+  )
+}
+
+# Add reproduction events (as "nest") for each offspring born to this individual
+# For this, we go through all rows and add a row for each nest the individual produced
+for(i in 1:nrow(vlieland.data)) {
+  parent <- vlieland.data[i, ]
+  
+  # Find offspring where this individual is Parent1 or Parent2
+  kids <- vlieland.data[vlieland.data$Parent1 == parent$RingNumber | vlieland.data$Parent2 == parent$RingNumber, ]
+  
+  if(nrow(kids) == 0) next
+  
+  # For each unique nest event (BirthYear + BirthMonth + Parent pair), assign the same location
+  nest.events <- unique(kids[, c("BirthYear", "BirthMonth", "Parent1", "Parent2", "Nestbox", "Lon", "Lat")])
+  
+  for(j in 1:nrow(nest.events)) {
+    location.list[[length(location.list) + 1]] <- data.frame(
+      RingNumber = parent$RingNumber,
+      Event      = "nest",
+      Month      = nest.events$BirthMonth[j],
+      Year       = nest.events$BirthYear[j],
+      NestNo     = nest.events$Nestbox[j],
+      NestLon    = nest.events$Lon[j],
+      NestLat    = nest.events$Lat[j],
+      stringsAsFactors = FALSE
+    )
+  }
+}
+
+# Combine all rows into a single data frame
+location.data <- do.call(rbind, location.list)
+
+# Sort by RingNumber and Year (optional)
+location.data <- location.data[order(location.data$RingNumber, location.data$Year), ]
+
+# Inspect
+head(location.data, 20)
+
+# Save
+write.csv(location.data, "data/NestLocationData.csv", row.names = FALSE)
 
