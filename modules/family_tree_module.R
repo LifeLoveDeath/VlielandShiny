@@ -21,18 +21,20 @@ ped.data$sex <- as.numeric(ped.data$sex)
 summary(ped.data)
 
 ggPedigree(
-  ped.data,
+  data,
   #famID    = "famID",
   personID = "RingNumber",
   momID    = "Parent2",
   dadID    = "Parent1")
 
 ggPedigreeInteractive(
-  ped.data,
+  data,
   #famID    = "famID",
   personID = "RingNumber",
   momID    = "Parent2",
-  dadID    = "Parent1")
+  dadID    = "Parent1",
+  tooltip  = c("RingNumber", "BirthYear")
+  )
 
 # Too much data - very slow!
 
