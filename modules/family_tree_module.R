@@ -27,13 +27,40 @@ ggPedigree(
   momID    = "Parent2",
   dadID    = "Parent1")
 
+ggPedigreeInteractive(
+  ped.data,
+  #famID    = "famID",
+  personID = "RingNumber",
+  momID    = "Parent2",
+  dadID    = "Parent1")
+
 # Too much data - very slow!
 
 
 # Get family tree data for an individual: RN00122
-ids.data <- ped.data[which(ped.data$RingNumber == "RN00122" | ped.data$Parent1 == "RN00122" | ped.data$Parent2 == "RN00122"), ]
+ind <- "RN00122"
+
+# Get parents
+p1 <- ped.data$Parent1[ped.data$RingNumber == ind]
+p2 <- ped.data$Parent2[ped.data$RingNumber == ind]
+
+# Get ind + direct children
+ids.data <- ped.data[
+  which(ped.data$RingNumber == ind |
+          ped.data$Parent1 == ind |
+          ped.data$Parent2 == ind), ]
+
+# ids of rel individuals
 ids <- unique(c(ids.data$RingNumber, ids.data$Parent1, ids.data$Parent2))
-fam.data <- ped.data[which(ped.data$RingNumber %in% ids), ]
+
+# Add siblings (share either parent)
+sibs <- ped.data[
+  which(ped.data$Parent1 %in% c(p1, p2) |
+          ped.data$Parent2 %in% c(p1, p2)), ]
+
+# Get all relevant data
+fam.data <- ped.data[ped.data$RingNumber %in% unique(c(ids, sibs$RingNumber)), ]
+
 
 # Anyone who appears in parent cols but not RingNumber needs an empty col?
 # Identify all IDs that appear as parents
@@ -89,10 +116,51 @@ ggPedigreeInteractive(
   #famID    = "famID",
   personID = "RingNumber",
   momID    = "Parent2",
-  dadID    = "Parent1")
+  dadID    = "Parent1",
+  tooltip  = c("RingNumber", "BirthYear", "DeathYear"))
 
+
+
+# Example from vignette
+plt <- ggPedigreeInteractive(
+  potter,
+  famID    = "famID",
+  personID = "personID",
+  momID    = "momID",
+  dadID    = "dadID"
+) |> plotly::hide_legend()
+plt
 
 # visNetwork --------------------------------------------------------------------------
+
+library(visNetwork)
+
+nodes <- data.frame(id = ped.data$RingNumber,
+                    label = ped.data$RingNumber,
+                    group = ifelse(ped.data$sex == 1, "male", "female"))
+
+edges <- data.frame(from = ped.data$Parent1, to = ped.data$RingNumber) %>%
+  rbind(data.frame(from = ped.data$Parent2, to = ped.data$RingNumber))
+
+visNetwork(nodes, edges) %>%
+  visNodes(shape = "ellipse") %>%
+  visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE)
+
+# Too much data - slow
+
+nodes <- data.frame(id = fam.data$RingNumber,
+                    label = fam.data$RingNumber,
+                    group = ifelse(fam.data$sex == 1, "male", "female"))
+
+edges <- data.frame(from = fam.data$Parent1, to = fam.data$RingNumber) %>%
+  rbind(data.frame(from = fam.data$Parent2, to = fam.data$RingNumber))
+
+visNetwork(nodes, edges) %>%
+  visNodes(shape = "ellipse") %>%
+  visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE)
+
+# Complicated to make it a family tree rather than a network
+
 
 
 # collapsibleTree ---------------------------------------------------------------------
