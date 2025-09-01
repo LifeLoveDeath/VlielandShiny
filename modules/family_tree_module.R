@@ -9,6 +9,7 @@ library(BGmisc) # helper utilities & example data
 library(ggplot2) # ggplot2 for plotting
 library(viridis) # viridis for color palettes
 library(tidyverse) # for data wrangling
+library(plotly)
 
 
 vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
@@ -66,35 +67,79 @@ fam.data <- ped.data[ped.data$RingNumber %in% unique(c(ids, sibs$RingNumber)), ]
 
 # Anyone who appears in parent cols but not RingNumber needs an empty col?
 # Identify all IDs that appear as parents
-all_parents <- unique(c(fam.data$Parent1, fam.data$Parent2))
+#all_parents <- unique(c(fam.data$Parent1, fam.data$Parent2))
 
 # Find which of those are missing from the RingNumber list
-missing_parents <- setdiff(all_parents, fam.data$RingNumber)
+#missing_parents <- setdiff(all_parents, fam.data$RingNumber)
 
 # Create placeholder rows for missing parents
-sex_vals <- ifelse(
-  missing_parents %in% fam.data$Parent1, 1,
-  ifelse(missing_parents %in% fam.data$Parent2, 0, NA)
-)
-missing_rows <- data.frame(
-  RingNumber = missing_parents,
-  ColourRingCombo = NA,
-  ColourRingLeft1 = NA,
-  ColourRingLeft2 = NA,
-  ColourRingRight1 = NA,
-  ColourRingRight2 = NA,
-  Species = NA,
-  Sex = NA,
-  sex = sex_vals,     
-  BirthYear = NA,
-  DeathYear = NA,
-  Parent1 = NA,
-  Parent2 = NA
-)
+#sex_vals <- ifelse(
+#  missing_parents %in% fam.data$Parent1, 1,
+#  ifelse(missing_parents %in% fam.data$Parent2, 0, NA)
+#)
+#missing_rows <- data.frame(
+#  RingNumber = missing_parents,
+#  ColourRingCombo = NA,
+#  ColourRingLeft1 = NA,
+#  ColourRingLeft2 = NA,
+#  ColourRingRight1 = NA,
+#  ColourRingRight2 = NA,
+#  Species = NA,
+#  Sex = NA,
+#  sex = sex_vals,     
+#  BirthYear = NA,
+#  DeathYear = NA,
+#  Parent1 = NA,
+#  Parent2 = NA
+#)
 
 # Combine with original
-fam.data <- bind_rows(fam.data, missing_rows)
-summary(fam.data)
+#fam.data <- bind_rows(fam.data, missing_rows)
+#summary(fam.data)
+
+
+# All parents mentioned in the family subset
+all_parents <- unique(c(fam.data$Parent1, fam.data$Parent2))
+all_parents <- all_parents[!is.na(all_parents)]   # drop NA
+
+# Which are missing from the RingNumber column?
+missing_parents <- setdiff(all_parents, fam.data$RingNumber)
+
+# Skip if none missing
+if (length(missing_parents) > 0) {
+  
+  # Helper: assign sex safely
+  get_parent_sex <- function(id, df) {
+    in_dad <- id %in% df$Parent1
+    in_mom <- id %in% df$Parent2
+    
+    if (in_dad && !in_mom) return(1)   # male
+    if (in_mom && !in_dad) return(0)   # female
+    return(NA)                         # ambiguous or both
+  }
+  
+  sex_vals <- vapply(missing_parents, get_parent_sex, numeric(1), df = fam.data)
+  
+  # Build placeholder rows with only required columns
+  missing_rows <- tibble(
+    RingNumber      = missing_parents,
+    Parent1         = NA_character_,
+    Parent2         = NA_character_,
+    BirthYear       = NA_integer_,
+    DeathYear       = NA_integer_,
+    Sex             = NA,        # original sex col (if present)
+    sex             = sex_vals,  # pedigree sex coding: 1=male, 0=female
+    ColourRingCombo = NA,
+    ColourRingLeft1 = NA,
+    ColourRingLeft2 = NA,
+    ColourRingRight1= NA,
+    ColourRingRight2= NA,
+    Species         = NA
+  )
+  
+  fam.data <- bind_rows(fam.data, missing_rows)
+}
+
 
 # Function to get data
 #getFamData <- function(x, data) {
@@ -104,14 +149,22 @@ summary(fam.data)
 #}
 #getFamData("RN00122", ped.data)
 
-#fam.data
+head(fam.data)
+fam.data
 
-ggPedigree(
+# Make sex a factor with meaningful labels
+fam.data$sex <- factor(
+  fam.data$sex,
+  levels = c(0, 1),
+  labels = c("Female", "Male")
+)
+
+ggplotly(ggPedigree(
   fam.data,
   #famID    = "famID",
   personID = "RingNumber",
   momID    = "Parent2",
-  dadID    = "Parent1")
+  dadID    = "Parent1"))
 
 ggPedigreeInteractive(
   fam.data,
@@ -119,7 +172,22 @@ ggPedigreeInteractive(
   personID = "RingNumber",
   momID    = "Parent2",
   dadID    = "Parent1",
-  tooltip  = c("RingNumber", "BirthYear", "DeathYear"))
+  tooltip  = c("RingNumber", "BirthYear", "DeathYear"),
+  config = list(
+    sex_color_palette = c("#440154", "#5ec962"),
+    sex_colour_include = T)) %>%
+  config(
+    displaylogo = FALSE,                 # remove plotly logo
+    modeBarButtonsToRemove = c(
+      "lasso2d", "select2d",
+      "hoverClosestCartesian", "hoverCompareCartesian",
+      "toggleSpikelines",
+      "sendDataToCloud", "toImage"
+    )
+  )
+
+
+
 
 
 
@@ -132,6 +200,18 @@ plt <- ggPedigreeInteractive(
   dadID    = "dadID"
 ) |> plotly::hide_legend()
 plt
+
+
+
+# Plot firectly with kinship?
+library(kinship2)
+foo <- pedigree(id = fam.data$RingNumber, dadid = fam.data$Parent1, momid = fam.data$Parent2, sex = fam.data$sex, relation = relation1)
+
+ped <- foo['1']
+plot(ped)
+
+
+
 
 # visNetwork --------------------------------------------------------------------------
 
