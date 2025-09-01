@@ -13,14 +13,15 @@ library(shinyjs)
 
 
 # Source files/functions -----------------------------------
-files_to_source <- c(#"individual_search/find_ind_ui_functions.R",
+#files_to_source <- c(#"individual_search/find_ind_ui_functions.R",
                      #"individual_search/find_ind_server_functions.R",
-                     "modules/birdFinder_module.R",
-                     "modules/mappingPreview_module.R",
-                     "modules/mappingInd_module.R",
+#                     "modules/birdFinder_module.R",
+#                     "modules/mappingPreview_module.R",
+#                     "modules/mappingInd_module.R",
                      #"mapping/generate_map_server_functions.R",
-                     "helpers/colour_ring_data_func.R")  # Can add more files as needed
-lapply(files_to_source, source)
+#                     "helpers/colour_ring_data_func.R")  # Can add more files as needed
+#lapply(files_to_source, source)
+# It sources everything in "R" folder automatically
 
 
 # App UI ---------------------------------------------------
