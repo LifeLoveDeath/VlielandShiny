@@ -1,9 +1,4 @@
 
-# Functions
-
-
-# Bird finder module ----------------------------
-
 # colour_ring_data_func
 
 
@@ -23,5 +18,3 @@ get_colour_rings <- function() {
   
   data.frame(val = val, img = img, stringsAsFactors = FALSE)
 }
-
-# Family tree module ----------------------------
