@@ -178,16 +178,16 @@ df_potter <- df_potter %>%
 # focal
 focal_id <- 7 
 
-# # Tooltip text
-# # Add tooltip
-# df_potter <- df_potter %>%
-#   mutate(
-#     tooltip_text = paste0(
-#       "Name: ", name, "\n",
-#       "Sex: ", ifelse(sex == 0, "Female", ifelse(sex == 1, "Male", "Unknown")), "\n",
-#       "Clutch: ", clutchID
-#     )
-#   )
+# Tooltip text
+# Add tooltip
+df_potter <- df_potter %>%
+  mutate(
+    tooltip_text = paste0(
+      "Name: ", name, "\n",
+      "Sex: ", ifelse(sex == 0, "Female", ifelse(sex == 1, "Male", "Unknown")), "\n",
+      "Clutch: ", clutchID
+    )
+  )
 
 
 # Base pedigree
@@ -220,15 +220,6 @@ nodes <- p$data %>%
 head(nodes)
 
 
-f <- p +
-  geom_point(
-    data = nodes,
-    aes(x = x_pos, y = y_pos, fill = clutchID.y),
-    shape = 21, size = 6, colour = "black"
-  ) +
-  scale_fill_brewer(palette = "Set2", na.value = "grey80")
-
-
 # keeping shape to depict sex
 p +
   geom_point(
@@ -252,7 +243,7 @@ ggplotly(p)
 clutch_nodes <- nodes %>% filter(clutchID.y != "Other")
 other_nodes   <- nodes %>% filter(clutchID.y == "Other")
 
-library(ggpattern) # for hatching
+
 
 a <- p +
   # Step 1: all nodes in beige

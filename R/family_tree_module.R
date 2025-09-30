@@ -205,8 +205,8 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
         geom_point(
           data = nodes %>% filter(RingNumber == focal_id),
           aes(x = x_pos, y = y_pos),
-          shape = 21, size = 8, fill = NA,
-          colour = "#d55e00", stroke = 2
+          shape = 21, size = 10, fill = NA,
+          colour = "black", stroke = 2
         )
       
       ggplotly(a, tooltip = "text") %>%

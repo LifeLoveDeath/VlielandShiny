@@ -73,7 +73,7 @@ ui <- navbarPage(
                               id = "bird_tabs",
                               tabPanel("General Info"),
                               tabPanel("Map", value = "Map", mapUI("map_individual")),
-                              tabPanel("Pedigree", plotOutput("bird_pedigree"))
+                              tabPanel("Pedigree", familyTreeUI("pedigree_module"))
                             )
                         )
                       )
@@ -131,6 +131,13 @@ server <- function(input, output, session) {
   
   # Generate interactive map (always present)
   map_individual <- genMapServer("map_individual", location.data, selected_ring)
+  
+  # Generate pedigree
+  familyTreeServer(
+    id = "pedigree_module",
+    ped.data = vlieland.data,
+    selected_ring = selected_ring
+  )
 }
 
 shinyApp(ui, server)
