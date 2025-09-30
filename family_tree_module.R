@@ -11,6 +11,7 @@ library(viridis) # viridis for color palettes
 library(tidyverse) # for data wrangling
 library(plotly)
 
+
 vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
 location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
 
@@ -19,7 +20,7 @@ ped.data <- vlieland.data
 
 # notes
 # ggepedigree is interactive (plotly) but not very customisable (e.g. can't colour in the focal)
-# kinship2/pedtools - notinteractive but more customisable so could be controlled using shiyn tickboxes etc. to change data and redraw tree
+# kinship2/pedtools - notinteractive but more customisable so could be controlled using shiny tickboxes etc. to change data and redraw tree
 # pedtool has these:
 # Add/remove/extract individuals
 #The functions below are used to modify an existing ped object by adding/removing individuals, or extracting a sub-pedigree. For details, see ?ped_modify.
@@ -94,22 +95,106 @@ get_family_subset <- function(ped.data, focal_id) {
 fam.data <- get_family_subset(ped.data, "RN00402")
 
 
-# trying ggpedigreeInteractive -------
 
-ggPedigreeInteractive(
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# trying different packages (continued in testing script)
+
+# trying ggpedigreeInteractive -------
+# Very good vignettes:
+# Can colour individuals, by status, focal relatedness 
+#http://cran.r-project.org/web/packages/ggpedigree/vignettes/v00_plots.html
+
+
+fam.data$personID <- fam.data$RingNumber
+fam.data$personID <- gsub("RN", "", fam.data$personID)
+fam.data$personID <- as.numeric(fam.data$personID)
+fam.data$momID <- fam.data$Parent2
+fam.data$momID <- gsub("RN", "", fam.data$momID)
+fam.data$momID <- as.numeric(fam.data$momID)
+fam.data$dadID <- fam.data$Parent1
+fam.data$dadID <- gsub("RN", "", fam.data$dadID)
+fam.data$dadID <- as.numeric(fam.data$dadID)
+
+# note on status
+data("hazard") # status column
+status_color_palette = c(color_palette_default[1], color_palette_default[2])
+status_color_affected = "black"
+status_color_unaffected = color_palette_default[2]
+
+# add status column for clutches
+fam.data$status <- 0
+ids <- c(401, 402, 403)
+fam.data[which(fam.data$personID %in% ids), "status"] <- 1
+fam.data$status <- as.factor(fam.data$status)
+
+ggPedigree(
   fam.data,
-  personID = "RingNumber",
-  momID    = "Parent2",
-  dadID    = "Parent1",
-  tooltip  = c("RingNumber", "BirthYear", "DeathYear"),
+  personID = "personID",
+  #momID    = "Parent2",
+  #dadID    = "Parent1",
+  status_column = "status",
   config = list(
-    #focal_fill_column = "focal",
-    #focal_fill_include = TRUE,
-    #focal_fill_high_color = "yellow",
-    sex_color_palette = c("#440154", "#5ec962")#,
-    #sex_colour_include = T
-    )
-    ) %>%
+    label_include = TRUE,
+    label_column = "RingNumber",
+    point_size = 6,
+    outline_multiplier = 1.5,
+    segment_linewidth = 0.5,
+    label_text_size = 4.5,
+    label_nudge_y = 0.2,
+    label_nudge_x = 1.3,
+    label_text_angle = -30,
+    focal_fill_personID = 402,
+    focal_fill_include = TRUE,
+    focal_fill_high_color = "#d55e00",
+    focal_fill_mid_color = "pink",
+    focal_fill_low_color = "blue",
+    focal_fill_scale_midpoint = 0.9,
+    focal_fill_component = "additive",
+    focal_fill_method = "steps",
+    focal_fill_force_zero = TRUE,
+    focal_fill_na_value = "grey10",
+    sex_color_include = FALSE#,
+    #status_code_affected = 1,
+    #status_code_unaffected = 0,
+    #status_shape_affected = 4
+    ),
+  ) + 
+  theme(
+      legend.position = "none")
+
+  
+# notes: 
+data("hazard") # status column
+status_color_palette = c(color_palette_default[1], color_palette_default[2])
+status_color_affected = "black"
+status_color_unaffected = color_palette_default[2]
+
+# add status column for clutches
+fam.data$status <- "FALSE"
+ids <- c(401, 402, 403)
+fam.data[which(fam.data$personID %in% ids), "status"] <- "TRUE"
+
+
+
+
+
+# when interactive add:
+tooltip  = c("RingNumber", "BirthYear", "DeathYear"),
+
+#%>%
   config(
     displaylogo = FALSE,                 # remove plotly logo and other controls
     modeBarButtonsToRemove = c(
@@ -193,6 +278,7 @@ ggPedigreeInteractive(
 staticPed
 
 # Add static customisaion using ggplot
+# Colour by clutch?
 
 staticPed + scale_color_viridis(
   discrete = TRUE,
@@ -293,10 +379,11 @@ names(fill_colors) <- fam.data$RingNumber
 as.data.frame(ped)
 
 plot(ped, hatched = "RN00402")
-plot(ped, hatched = "RN00402",
+a <- plot(ped, hatched = "RN00402",
      fill = fill_colors,
      label = FALSE)
 
+ggpedigree(a)
 
 
 
@@ -306,6 +393,8 @@ singleton(id = fam.data[which(fam.data$RingNumber == "RN00402", "RingNumber")],
           mid = ,
           sex = )
 
+
+# Could be singletone, nuclear family, extended family
 
 
 # use subseting
