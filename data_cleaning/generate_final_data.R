@@ -256,7 +256,24 @@ data <- cbind(data, colourCombCols) # add to data
 colnames(data) <- c(colnames(data)[1:12], "ColourRingCombo", "ColourRingLeft1", "ColourRingLeft2", "ColourRingRight1", "ColourRingRight2") # rename cols
 
 
+
+
 ##  Save -------------------------------------------------------
+write.csv(data, "data/IndividualsData.csv", row.names = FALSE)
+
+
+
+## Add clutch id -----------------------------------------------
+# read in data previously saved
+data <- read.csv("data/IndividualsData.csv", row.names = NULL)
+
+ped.data <- data %>%
+  group_by(Parent1, Parent2, BirthYear, BirthMonth) %>%
+  mutate(clutchID = paste0("C", sprintf("%04d", cur_group_id()))) %>%
+  ungroup()
+
+
+##  Save again -------------------------------------------------------
 write.csv(data, "data/IndividualsData.csv", row.names = FALSE)
 
 
