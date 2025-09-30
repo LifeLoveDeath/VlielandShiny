@@ -210,7 +210,22 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
         )
       
       ggplotly(a, tooltip = "text") %>%
-        style(showlegend = FALSE)
+        style(showlegend = FALSE) %>%
+        layout(dragmode = "pan") %>%   # <-- sets default click-drag to pan
+        config(
+          displaylogo = FALSE,
+          modeBarButtonsToRemove = c(
+            "lasso2d",
+            "select2d",
+            "zoom2d",
+            "autoScale2d",
+            "hoverClosestCartesian",
+            "hoverCompareCartesian",
+            "toggleSpikelines",
+            "sendDataToCloud",
+            "toImage"
+          )
+        )
     })
     
   })
