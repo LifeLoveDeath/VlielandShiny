@@ -274,7 +274,7 @@ ped.data <- data %>%
 
 
 ##  Save again -------------------------------------------------------
-write.csv(data, "data/IndividualsData.csv", row.names = FALSE)
+write.csv(ped.data, "data/IndividualsData.csv", row.names = FALSE)
 
 
 
