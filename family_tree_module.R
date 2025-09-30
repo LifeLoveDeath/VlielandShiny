@@ -5,6 +5,7 @@
 # https://r-computing-lab.github.io/ggpedigree/
 # https://github.com/R-Computing-Lab/ggpedigree/
 
+library(shiny)
 library(ggpedigree)
 library(ggplot2) # ggplot2 for plotting
 library(viridis) # viridis for color palettes
@@ -92,14 +93,115 @@ get_family_subset <- function(ped.data, focal_id) {
 }
 
 
-fam.data <- get_family_subset(ped.data, "RN00402")
+family_data <- get_family_subset(ped.data, "RN00402")
 
 
 
 
 
 
+# UI -----------------------------------------
+familyTreeUI <- function(id) {
+  ns <- NS(id)
+  
+  tagList(
+    uiOutput(ns("tree_ui"))  # output for the pedigree
+  )
+}
 
+
+
+
+# Server --------------------------------------
+# Server function
+familyTreeServer <- function(id, ped.data, selected_ring) {
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+    
+    # Reactive: subset family tree data for focal bird
+    family_data <- reactive({
+      req(selected_ring())
+      get_family_subset(ped.data, selected_ring())
+    })
+    
+    
+    # Render the pedigree plot
+    output$tree_ui <- renderUI({
+      req(family_data())
+      plotlyOutput(ns("pedigree_plot"), height = "600px")
+    })
+    
+    output$pedigree_plot <- renderPlotly({
+      fam <- family_data()
+      
+      # Base ggPedigreeInteractive plot
+      p <- ggPedigreeInteractive(
+        fam,
+        #famID = "RingNumber",  # each individual as its own familyID here
+        personID = "RingNumber",
+        dadID = "Parent1",
+        momID = "Parent2",
+        sex_color_include = FALSE,  # we want clutch colours, not sex colours
+        config = list(
+          label_include = TRUE,
+          label_column = "RingNumber",
+          point_size = 6,
+          segment_linewidth = 0.5,
+          label_text_size = 3,
+          label_nudge_y = 0.25,
+          label_nudge_x = .1,
+          label_text_angle = -30,
+          return_static = TRUE
+        ),
+        tooltip_columns = c("RingNumber", "BirthYear", "BirthMonth", "DeathYear",  "clutchID")
+      )
+      
+      nodes <- p$data %>%
+        left_join(fam %>% select(RingNumber, clutchID, sex, focal), 
+                  by = "RingNumber")
+    
+      
+      # Separate clutch nodes from others
+      clutch_nodes <- nodes %>% filter(!is.na(clutchID.x))
+      other_nodes   <- nodes %>% filter(is.na(clutchID.x))
+      
+      # Add base plot + colouring
+      a <- p +
+        # all other nodes in beige
+        geom_point(
+          data = other_nodes,
+          aes(x = x_pos, y = y_pos, shape = factor(sex.x), text = tooltip_text),
+          size = 6, fill = "#F0E1C6", colour = "black"
+        ) +
+        # clutch nodes coloured with viridis
+        geom_point(
+          data = clutch_nodes,
+          aes(x = x_pos, y = y_pos, fill = clutchID, shape = factor(sex.x), text = tooltip_text),
+          size = 6, colour = "black", show.legend = FALSE
+        ) +
+        scale_shape_manual(
+          name = "Sex",
+          values = c("0" = 21, "1" = 22, "NA" = 23),
+          labels = c("Female", "Male", "Unknown")
+        ) +
+        scale_fill_viridis_d(option = "C", end = 0.85)
+      
+      # Highlight focal bird (thick black border)
+      focal_id <- selected_ring()
+      a <- a +
+        geom_point(
+          data = nodes %>% filter(RingNumber == focal_id),
+          aes(x = x_pos, y = y_pos),
+          shape = 21, size = 8, fill = NA,
+          colour = "#d55e00", stroke = 2
+        )
+      
+      ggplotly(a, tooltip = "text") %>%
+        style(showlegend = FALSE)
+    })
+    
+  })
+}
 
 
 
