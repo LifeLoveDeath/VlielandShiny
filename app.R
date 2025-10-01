@@ -71,7 +71,8 @@ ui <- navbarPage(
                             uiOutput("selected_bird"),
                             tabsetPanel(
                               id = "bird_tabs",
-                              tabPanel("General Info", individualInfoUI("individual_info")),
+                              tabPanel("General Info"#, individualInfoUI("individual_info")
+                                       ),
                               tabPanel("Map", value = "Map", mapUI("map_individual")),
                               tabPanel("Pedigree", familyTreeUI("pedigree_module"))
                             )
@@ -140,11 +141,11 @@ server <- function(input, output, session) {
   )
   
   # Generate individual info table
-  individualInfoServer(
-    id = "individual_info",
-    vlieland.data = vlieland.data,
-    selected_ring = selected_ring
-  )
+  # individualInfoServer(
+  #   id = "individual_info",
+  #   vlieland.data = vlieland.data,
+  #   selected_ring = selected_ring
+  # )
 }
 
 shinyApp(ui, server)

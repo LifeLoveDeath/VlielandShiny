@@ -8,6 +8,11 @@ vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
 location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
 
 
+# Functions ----------------------------------
+# Function for getting data
+
+
+
 # UI -----------------------------------------
 individualInfoUI <- function(id) {
   ns <- NS(id)
@@ -33,7 +38,7 @@ individualInfoServer <- function(id, vlieland.data, selected_ring) {
       vlieland.data[which(vlieland.data$RingNumber == selected_ring()), ]
     })
     
-    # Sort data
+    # Sort data - put this into a function
     # Change order of vars
     colnames(individual.data)
     individual.data <- individual.data[ , c("RingNumber", "ColourRingCombo", "Species", "Sex", "BirthMonth", "BirthYear", "DeathYear", "Parent1", "Parent2", "Nestbox", "Lon", "Lat")]
