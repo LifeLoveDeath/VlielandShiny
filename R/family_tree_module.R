@@ -197,7 +197,8 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
           values = c("0" = 21, "1" = 22, "NA" = 23),
           labels = c("Female", "Male", "Unknown")
         ) +
-        scale_fill_viridis_d(option = "C", end = 0.85)
+        #scale_fill_viridis_d(option = "C", end = 0.85) 
+        scale_fill_brewer(palette = "Paired")
       
       # Highlight focal bird (thick black border)
       focal_id <- selected_ring()
