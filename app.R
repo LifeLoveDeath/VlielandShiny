@@ -71,7 +71,7 @@ ui <- navbarPage(
                             uiOutput("selected_bird"),
                             tabsetPanel(
                               id = "bird_tabs",
-                              tabPanel("General Info"),
+                              tabPanel("General Info", individualInfoUI("individual_info")),
                               tabPanel("Map", value = "Map", mapUI("map_individual")),
                               tabPanel("Pedigree", familyTreeUI("pedigree_module"))
                             )
@@ -136,6 +136,13 @@ server <- function(input, output, session) {
   familyTreeServer(
     id = "pedigree_module",
     ped.data = vlieland.data,
+    selected_ring = selected_ring
+  )
+  
+  # Generate individual info table
+  individualInfoServer(
+    id = "individual_info",
+    vlieland.data = vlieland.data,
     selected_ring = selected_ring
   )
 }
