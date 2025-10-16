@@ -27,6 +27,15 @@ birdFinderUI <- function(data) {
     #               choices =  c("", colours), selected = ""
     #              ),
     
+    
+    # Instructions text:
+    helpText(HTML("<b>Use the dropdowns to search for a bird by its colour rings</b><br>
+                  Select rings from top to bottom on each leg<br>
+                  Each bird has one metal ring<br>
+                  Leave dropdown blank if the ring is unknown")),
+    
+    
+    
     #Formatting for icons - would be better if they were aligned to the far right?
     tags$head(tags$style(HTML("
   .picker-item {
@@ -47,9 +56,6 @@ birdFinderUI <- function(data) {
   }
 "))),
     
-    # new dropdown format - icons work but search doesn't work anymore (and issues with starting selection/placeholder text)
-    # Search actually working ok but option in the dropdown containing icons is not narrowing down
-    # Also, for the other format, the "Select colour..." came from somewhere else so this might interfere with the search functions
     
     pickerInput(inputId = "Left1",
                 label = "Left leg - top ring",
@@ -75,23 +81,17 @@ birdFinderUI <- function(data) {
                 choicesOpt = list(content = c("Select colour...", colour_rings$img)),
                 selected = "Select colour..."),
     
-    # Old dropdown format
-    #selectizeInput(
-    #  "Left2", "Left leg - bottom ring", 
-    #  choices =  c("", colours), selected = ""
-    
-    #),
-    
-    #selectizeInput(
-    #  "Right1", "Right leg - top ring", choices =  c("", colours), selected = ""
-    #),
-    
-    #selectizeInput(
-    #  "Right2", "Right leg - bottom ring", choices =  c("", colours), selected = ""
-    #),
-    
-    actionButton("reset_filters", "Reset filters"),
-    helpText(HTML("placeholder instructions text")))
+    actionButton("reset_filters", "Reset filters",
+                 style = "margin-bottom: 10px;"), # leave some space between button and text below
+    # Example search text
+    helpText(HTML("<b>Example:</b><br>
+                  Try searching for the colour rings:<br>
+                  Left leg - top ring: <b>blue/white</b><br>
+                  Left leg - bottom ring: <b>pink/green</b><br>
+                  Right leg - top ring: <b>metal</b><br>
+                  Right leg - bottom ring: <b>blue</b>")),
+    # Diagram placeholder
+    helpText(HTML("Diagram showing order of rings on bird")))
 }
 
 
