@@ -4,13 +4,13 @@
 # Setup ----------------------------------------------------
 
 # Load packages 
-library(shiny)
-library(leaflet)
-library(bslib)
-library(viridis)
-library(reactable)
-library(shinyjs)
+# Required packages
+required_packages <- c("shiny", "tidyverse", "bslib", "leaflet", "viridis", "reactable", "shinyjs", "shinyWidgets", "reactable", "DT", "ggpedigree", "ggplot2", "plotly", "imager", "grid", "leaflet.extras2", "leaftime", "leaflet.extras")
 
+
+# Install any missing packages
+new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
+if(length(new_packages)) install.packages(new_packages)
 
 # Source files/functions -----------------------------------
 #files_to_source <- c(#"individual_search/find_ind_ui_functions.R",

@@ -1,16 +1,19 @@
 
-# move to R folder when finished
+# Family tree module
+
 # ggPedigree ---------------------------------------------------------------------------
 # https://cran.r-project.org/web/packages/ggpedigree/vignettes/v10_interactiveplots.html
 # https://r-computing-lab.github.io/ggpedigree/
 # https://github.com/R-Computing-Lab/ggpedigree/
 
-library(shiny)
-library(ggpedigree)
-library(ggplot2) # ggplot2 for plotting
-library(viridis) # viridis for color palettes
-library(tidyverse) # for data wrangling
-library(plotly)
+
+# Load packages - moved to app.r
+# library(shiny)
+# library(ggpedigree)
+# library(ggplot2)
+# library(viridis) 
+# library(tidyverse)
+# library(plotly)
 
 
 vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)

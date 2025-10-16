@@ -1,8 +1,9 @@
 
 # Individual info table module
 
-library(shiny)
-library(DT)
+# Load packages - moved to app.r
+# library(shiny)
+# library(DT)
 
 vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
 location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)

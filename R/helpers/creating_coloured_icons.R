@@ -5,8 +5,9 @@
 # For making the icons? https://www.datanovia.com/en/blog/how-to-create-icon-in-r/
 # Or grid?
 
-library(imager)
-library(grid)
+# Load packages - moved to app.r
+# library(imager)
+# library(grid)
 
 # Function to specify the three colours and create and save the icon ------------------------------------------------
 # Could update it to accept one colour as well

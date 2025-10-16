@@ -1,15 +1,16 @@
 
 # Mapping individuals module
 
-library(shiny)
-library(leaflet)
-library(bslib)
-library(viridis)
-library(dplyr)
-library(reactable)
-library(leaflet.extras2)
-library(leaftime)
-library(leaflet.extras)
+# Load packages - moved to app.r
+# library(shiny)
+# library(leaflet)
+# library(bslib)
+# library(viridis)
+# library(dplyr)
+# library(reactable)
+# library(leaflet.extras2)
+# library(leaftime)
+# library(leaflet.extras)
 
 
 # UI ----------------------------------------------------

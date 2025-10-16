@@ -3,12 +3,13 @@
 
 # Probably need a separate dataframe in long format for nestboxes associated with ring numbers
 
-library(shiny)
-library(leaflet)
-library(bslib)
-library(viridis)
-library(dplyr)
-library(reactable)
+# Load packages - moved to app.r
+# library(shiny)
+# library(leaflet)
+# library(bslib)
+# library(viridis)
+# library(dplyr)
+# library(reactable)
 
 # UI ----------------------------------------------------
 

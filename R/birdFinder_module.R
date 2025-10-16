@@ -1,19 +1,16 @@
 
 # birdFinder module
 
-# Need to amalgamate server functions
-# Could still split UI and server functions into separate scripts within a birdFinder_module/ folder, then just source the folder in app.R?
-
-# Load packages 
-library(shiny)
-library(leaflet)
-library(bslib)
-library(viridis)
-library(dplyr)
-library(shinyWidgets)
-library(reactable)
-library(DT)
-library(tidyverse)
+# Load packages - moved all to app.r
+# library(shiny)
+# library(leaflet)
+# library(bslib)
+# library(viridis)
+# library(dplyr)
+# library(shinyWidgets)
+# library(reactable)
+# library(DT)
+# library(tidyverse)
 
 
 # UI function --------------------------------------------------------------
