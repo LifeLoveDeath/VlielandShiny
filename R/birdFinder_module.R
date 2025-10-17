@@ -220,6 +220,7 @@ birdFinderServer <- function(input, output, data, session) {
     if (is.null(df) || nrow(df) == 0) return(NULL)
     
     df <- df[, c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
+    df$ColourRingCombo <- gsub("-", ", ", df$ColourRingCombo)
     colnames(df) <- c("Ring number", "Colour rings", "Birth year", "Species")
     
     # Add action buttons column to datatable
