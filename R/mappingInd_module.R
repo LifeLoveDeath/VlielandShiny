@@ -13,6 +13,7 @@
 # library(leaflet.extras)
 
 
+
 # UI ----------------------------------------------------
 
 #Side panel with check boxes etc.
@@ -201,7 +202,7 @@ genMapServer <- function(id, location.data, selected_ring) {
           m <- m %>% addCircleMarkers(
             lng = birth_data$NestLon, lat = birth_data$NestLat,
             label = paste0("Birth nest: ", birth_data$Month, " ", birth_data$Year),
-            color = "#440154", fillOpacity = 0.6, opacity = 1, radius = 8, weight = 2
+            color = "#e97158", fillOpacity = 0.9, opacity = 1, radius = 8, weight = 2
           )
         }
       }
@@ -213,7 +214,7 @@ genMapServer <- function(id, location.data, selected_ring) {
           m <- m %>% addCircleMarkers(
             lng = nest_data$NestLon, lat = nest_data$NestLat,
             label = paste0("Breeding nest: ", nest_data$Month, " ", nest_data$Year),
-            color = "#3b528b", fillOpacity = 0.6, opacity = 1, radius = 8, weight = 2
+            color = "#0d0887", fillOpacity = 0.6, opacity = 1, radius = 8, weight = 2
           )
         }
       }
@@ -226,7 +227,7 @@ genMapServer <- function(id, location.data, selected_ring) {
           m <- m %>% addPolylines(
             lng = timeline_data$NestLon,
             lat = timeline_data$NestLat,
-            color = "#3b528b", weight = 3, opacity = 0.7
+            color = "#0d0887", weight = 3, opacity = 0.7
           )
         }
       }
