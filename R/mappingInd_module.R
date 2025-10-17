@@ -229,6 +229,16 @@ genMapServer <- function(id, location.data, selected_ring) {
             lat = timeline_data$NestLat,
             color = "#0d0887", weight = 3, opacity = 0.7
           )
+          # m <- m %>% addArrowhead(
+          #   lng = timeline_data$NestLon,
+          #   lat = timeline_data$NestLat,
+          #   color = "#0d0887", weight = 3, opacity = 0.7,
+          #   options = arrowheadOptions(yawn = 90,
+          #                              offsets: { 
+          #                                start: '5000m', 
+          #                                end: '15px' 
+          #                              }) # need to figure out offsets
+          )
         }
       }
     })
