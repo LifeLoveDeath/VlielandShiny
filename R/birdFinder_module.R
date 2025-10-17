@@ -29,10 +29,10 @@ birdFinderUI <- function(data) {
     
     
     # Instructions text:
-    helpText(HTML("<b>Use the dropdowns to search for a bird by its colour rings</b><br>
-                  Select rings from top to bottom on each leg<br>
-                  Each bird has one metal ring<br>
-                  Leave dropdown blank if the ring is unknown")),
+    helpText(HTML("<b>Search for a bird by its colour rings:</b><br>
+    • Select ring colours <b>top to bottom</b> on each leg.<br>
+    • Each bird has <b>one metal ring</b>.<br>
+    • Leave a dropdown blank if a ring is <b>unknown</b>.<br><br>")),
     
     
     
@@ -84,14 +84,13 @@ birdFinderUI <- function(data) {
     actionButton("reset_filters", "Reset filters",
                  style = "margin-bottom: 10px;"), # leave some space between button and text below
     # Example search text
-    helpText(HTML("<b>Example:</b><br>
-                  Try searching for the colour rings:<br>
+    helpText(HTML("<b>Try searching:</b><br>
                   Left leg - top ring: <b>blue/white</b><br>
                   Left leg - bottom ring: <b>pink/green</b><br>
                   Right leg - top ring: <b>metal</b><br>
                   Right leg - bottom ring: <b>blue</b>")),
     # Diagram placeholder
-    helpText(HTML("Diagram showing order of rings on bird")))
+    helpText(HTML("<i>(Placeholder: Diagram showing order of rings on bird)</i>")))
 }
 
 
@@ -221,6 +220,7 @@ birdFinderServer <- function(input, output, data, session) {
     if (is.null(df) || nrow(df) == 0) return(NULL)
     
     df <- df[, c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
+    colnames(df) <- c("Ring number", "Colour rings", "Birth year", "Species")
     
     # Add action buttons column to datatable
     df$Select <- buttonInput(
