@@ -32,7 +32,7 @@ birdFinderUI <- function(data) {
     helpText(HTML("<b>Search for a bird by its colour rings:</b><br>
     • Select ring colours <b>top to bottom</b> on each leg.<br>
     • Each bird has <b>one metal ring</b>.<br>
-    • Leave a dropdown blank if a ring is <b>unknown</b>.<br><br>")),
+    • Leave a dropdown blank if a ring is <b>unknown</b>.<br>")),
     
     
     
