@@ -5,12 +5,15 @@
 
 # Load packages 
 # Required packages
-required_packages <- c("shiny", "tidyverse", "bslib", "leaflet", "viridis", "reactable", "shinyjs", "shinyWidgets", "reactable", "DT", "ggpedigree", "ggplot2", "plotly", "imager", "grid", "leaflet.extras2", "leaftime", "leaflet.extras")
+required_packages <- c("shiny", "tidyverse", "bslib", "leaflet", "viridis", "reactable", "shinyjs", "shinyWidgets", "reactable", "DT", "ggpedigree", "ggplot2", "plotly", "imager", "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "bslib", "tools")
 
 
 # Install any missing packages
 new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
 if(length(new_packages)) install.packages(new_packages)
+
+# Load the packages
+lapply(required_packages, library, character.only = TRUE)
 
 # Source files/functions -----------------------------------
 #files_to_source <- c(#"individual_search/find_ind_ui_functions.R",
@@ -32,6 +35,9 @@ if(length(new_packages)) install.packages(new_packages)
 # I think some of this could be moved into the functions
 
 ui <- navbarPage(
+  # theme
+  #theme = bs_theme(), 
+  
   title = "Great Tits & Blue Tits of Vlieland",
   position = "static-top",
   
@@ -94,6 +100,9 @@ ui <- navbarPage(
 # App server ----------------------------------------------
 
 server <- function(input, output, session) {
+  # Experimenting with themes
+  #bs_themer()
+  
   # Load data
   vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
   location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
