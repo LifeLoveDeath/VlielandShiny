@@ -1,16 +1,17 @@
 
 # Mapping individuals module
 
-# Load packages - moved to app.r
-# library(shiny)
-# library(leaflet)
-# library(bslib)
-# library(viridis)
-# library(dplyr)
-# library(reactable)
-# library(leaflet.extras2)
-# library(leaftime)
-# library(leaflet.extras)
+# Load packages
+library(shiny)
+library(leaflet)
+library(bslib)
+library(viridis)
+library(dplyr)
+library(reactable)
+library(leaflet.extras2)
+library(leaftime)
+library(leaflet.extras)
+library(sf)
 
 
 
@@ -223,23 +224,30 @@ genMapServer <- function(id, location.data, selected_ring) {
       if (input$timeline && nrow(bird_data()) > 1) {
         timeline_data <- bird_data() %>%
           filter(Event %in% input$event_filter)
+        
         if (nrow(timeline_data) > 1) {
           m <- m %>% addPolylines(
             lng = timeline_data$NestLon,
             lat = timeline_data$NestLat,
-            color = "#0d0887", weight = 3, opacity = 0.7
+            color = "#0d0887", weight = 3, opacity = 0.7,
+            layerId = "timeline"
+          ) %>%
+        #   m <- m %>%
+            addArrowhead(
+            layerId = "timeline",
+            lng = timeline_data$NestLon,
+            lat = timeline_data$NestLat,
+            color = "#0d0887", weight = 3, opacity = 0.7,
+            options = arrowheadOptions(yawn = 50, size = "7%",
+                                       frequency = 10,
+                                       #frequency = "allvertices"
+                                       # offsets = list(     # to offset arrow from end or line
+                                       #   start = "100m",   # or "100m" or "50px"
+                                       #   end   = "15px"    # or "15px"
+                                       # )
+                                       )
           )
-          # m <- m %>% addArrowhead(
-          #   lng = timeline_data$NestLon,
-          #   lat = timeline_data$NestLat,
-          #   color = "#0d0887", weight = 3, opacity = 0.7,
-          #   options = arrowheadOptions(yawn = 90,
-          #                              offsets: { 
-          #                                start: '5000m', 
-          #                                end: '15px' 
-          #                              }) # need to figure out offsets
-          )
-        }
+          }
       }
     })
     
