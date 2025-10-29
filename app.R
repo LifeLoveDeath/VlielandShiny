@@ -244,7 +244,7 @@ ui <- div(
 
   
   ### Formatting menu item text (both versions) ----------
-  # --- Non-collapsed menu (horizontal) --------------------------
+  # Non-collapsed menu (horizontal)
   tags$style(HTML("
 /* Normal menu items */
 .navbar-default .navbar-nav > li > a {
@@ -252,7 +252,6 @@ ui <- div(
   font-size: 16px;
   font-weight: 500;
   text-decoration: none;       /* no underline */
-  letter-spacing: 1px;
 }
 
 /* Hover state: underline and color change */
@@ -274,7 +273,7 @@ ui <- div(
 }
 ")),
   
-  # --- Collapsed menu (hamburger) --------------------------
+  ## Collapsed menu (hamburger)
   tags$style(HTML("
 /* Collapsed menu items inside hamburger */
 .navbar-collapse.in .navbar-nav > li > a {
