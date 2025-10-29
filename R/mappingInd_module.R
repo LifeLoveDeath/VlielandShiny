@@ -25,14 +25,26 @@ mapUI <- function(id) {
     column(
       width = 3,
       wellPanel(
+        
+        # Instructions text:
+        helpText(HTML("<b>Explore where the selected bird was born and where it has nested
+        during different breeding seasons.</b><br>
+        • Use the checkboxes to choose the type of location to display.<br>
+        • The timeline path connects nests in chronological order.<br>
+        • Adjust the slider to filter locations by year.")),
+        
         checkboxGroupInput(ns("event_filter"), "Show locations for:", 
                            choices = c("Birth nest" = "birth", "Breeding nests" = "nest"),
                            selected = c("birth", "nest")),
         tags$label("Timeline:", style = "margin-bottom: 0; display: block;"),
         checkboxInput(ns("timeline"), "Show timeline path", value = FALSE, width = NULL),
         
-        uiOutput(ns("year_slider")
-      )
+        uiOutput(ns("year_slider")),
+      
+      # Placeholder further info text:
+      helpText(HTML("Placeholder further info text.<br>
+                    E.g. General info about dispersal.<br>
+                    Or interpretation of map: Clusters of points suggest repeated nesting in the same area.<br>"))
     )),
     column(
       width = 9,
@@ -222,6 +234,7 @@ genMapServer <- function(id, location.data, selected_ring) {
       
       # Timeline path
       if (input$timeline && nrow(bird_data()) > 1) {
+        freq <- nrow(bird_data()) * 3
         timeline_data <- bird_data() %>%
           filter(Event %in% input$event_filter)
         
@@ -239,7 +252,7 @@ genMapServer <- function(id, location.data, selected_ring) {
             lat = timeline_data$NestLat,
             color = "#0d0887", weight = 3, opacity = 0.7,
             options = arrowheadOptions(yawn = 50, size = "7%",
-                                       frequency = 10,
+                                       frequency = freq,
                                        #frequency = "allvertices"
                                        # offsets = list(     # to offset arrow from end or line
                                        #   start = "100m",   # or "100m" or "50px"
