@@ -2,16 +2,16 @@
 # Mapping individuals module
 
 # Load packages
-library(shiny)
-library(leaflet)
-library(bslib)
-library(viridis)
-library(dplyr)
-library(reactable)
-library(leaflet.extras2)
-library(leaftime)
-library(leaflet.extras)
-library(sf)
+# library(shiny)
+# library(leaflet)
+# library(bslib)
+# library(viridis)
+# library(dplyr)
+# library(reactable)
+# library(leaflet.extras2)
+# library(leaftime)
+# library(leaflet.extras)
+# library(sf)
 
 
 
@@ -234,7 +234,7 @@ genMapServer <- function(id, location.data, selected_ring) {
       
       # Timeline path
       if (input$timeline && nrow(bird_data()) > 1) {
-        freq <- nrow(bird_data()) * 3
+        freq <- nrow(bird_data()) * 2
         timeline_data <- bird_data() %>%
           filter(Event %in% input$event_filter)
         

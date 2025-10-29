@@ -50,7 +50,7 @@ ui <- navbarPage(
              
              # Find an individual page
              tabPanel("Find an individual",
-                      useShinyjs(),  # enable shinyjs
+                      useShinyjs(),  # enable shinyjs - needed for hidden tabs
                       
                       # Search panel
                       hidden(
