@@ -414,13 +414,192 @@ ui <- div(
     ),
     
     ## --- Tab panels -------------------------------------
-    # (aligned right)
+
+    ### --- Project info homepage -------------------------
     tabPanel("Project info",
-             h3("Project info", style = "color:#3f5262; font-weight:500;"),
-             "Project info will appear here."
+             #h3("Project info", style = "color:#3f5262; font-weight:500;"),
+             # Page wrapper
+             div(
+               style = "padding: 20px; background-color: #ffffff;",
+               
+               #### --- Top section with optional image ----
+          #      fluidRow(
+          #        column(
+          #          width = 12,
+          #          style = "position: relative; text-align: center; margin-bottom: 30px;",
+          #          # Placeholder for hero image or banner
+          #          tags$img(
+          #            src = "passerine_proj_background.jpg",
+          #            alt = "Project background image",
+          #            style = "width: 100%; max-height: 300px; object-fit: cover; border-radius: 5px;"
+          #          ),
+          #          # Overlayed title text
+          #          tags$div(
+          #            style = "
+          #   position: absolute;
+          #   top: 50%;
+          #   left: 50%;
+          #   transform: translate(-50%, -50%);
+          #   color: white;
+          #   font-size: 32px;
+          #   font-weight: 700;
+          #   text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+          # ",
+          #            "Vlieland Great Tits & Blue Tits"
+          #          )
+          #        )
+          #      ),
+          
+          
+          fluidRow(
+            column(
+              width = 12,
+              style = "position: relative; padding: 0;",  # remove padding so image spans full width
+              # Full-width hero image
+              tags$img(
+                src = "passerine_proj_background.jpg",
+                alt = "Project background image",
+                style = "width: 100%; height: 400px; object-fit: cover;"  # full width, fixed height
+              ),
+              
+              # Overlayed info card on the left
+              tags$div(
+                style = "
+        position: absolute;
+        top: 50%;
+        left: 5%;
+        transform: translateY(-50%);
+        background-color: rgba(255, 255, 255, 0.85);  /* semi-transparent white */
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 400px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      ",
+                h2("About the Project", style = "color: #3f5262;"),
+                p("Placeholder for a brief introduction to the research project.",
+                  style = "font-size: 16px; line-height: 1.6;")
+              )
+            )
+          ),
+               
+               #### --- Intro / overview section ----
+               # fluidRow(
+               #   column(
+               #     width = 12,
+               #     h2("About the Project", style = "color: #3f5262;"),
+               #     p("Placeholder for a brief introduction to the research project.", 
+               #       style = "font-size: 16px; line-height: 1.6;")
+               #   )
+               # ),
+               
+               fluidRow(
+                 column(
+                   width = 6,
+                   h2("About the Project", style = "color: #3f5262;"),
+                   p("Placeholder for a brief introduction to the research project.", 
+                     style = "font-size: 16px; line-height: 1.6;")
+                 ),
+                 column(
+                   width = 6,
+                   tags$img(
+                     src = "passerine_proj_background.jpg",  # replace with your image filename
+                     style = "width: 100%; height: auto; border-radius: 8px;"
+                   )
+                 )
+               ),
+               
+               #### --- What the App Does section ----
+               fluidRow(
+                 column(
+                   width = 12,
+                   h2("About This App", style = "color: #3f5262; margin-top: 30px;"),
+                   p("Placeholder describing the app's functionality: searching for individual birds, exploring population trends and contributing to citizen science.", 
+                     style = "font-size: 16px; line-height: 1.6;")
+                 )
+               ),
+               
+               #### --- Features / cards section ----
+               fluidRow(
+                 column(
+                   width = 4,
+                   wellPanel(
+                     h4("Find an individual"),
+                     p("Search for a bird by its color rings and explore its data, including general information, a map of its breeding sites and its family tree."),
+                     style = "display: flex;
+                     flex-direction: column;
+                     justify-content: center;  /* vertical centering */
+                     align-items: center;      /* horizontal centering */
+                     text-align: center;
+                     background-color: #f8f9fa;
+                     height: 170px;"
+                   )
+                 ),
+                 column(
+                   width = 4,
+                   wellPanel(
+                     h4("Population Trends"),
+                     p("Placeholder: view population trends and visualise analysis."),
+                     style = "display: flex;
+                     flex-direction: column;
+                     justify-content: center;  /* vertical centering */
+                     align-items: center;      /* horizontal centering */
+                     text-align: center;
+                     background-color: #f8f9fa;
+                     height: 170px;"
+                   )
+                 ),
+                 column(
+                   width = 4,
+                   wellPanel(
+                     h4("Citizen Science"),
+                     p("Placeholder: contribute data or observations to citizen science."),
+                     style = "display: flex;
+                     flex-direction: column;
+                     justify-content: center;  /* vertical centering */
+                     align-items: center;      /* horizontal centering */
+                     text-align: center;
+                     background-color: #f8f9fa;
+                     height: 170px;"
+                   )
+                 )
+               ),
+               
+               #### --- Optional image section ----
+               fluidRow(
+                 column(
+                   width = 6,
+                   tags$img(
+                     src = "passerine_proj_background.jpg",
+                     alt = "Image 1",
+                     style = "width: 100%; border-radius: 5px; margin-top: 30px;"
+                   )
+                 ),
+                 column(
+                   width = 6,
+                   tags$img(
+                     src = "passerine_proj_background.jpg",
+                     alt = "Image 2",
+                     style = "width: 100%; border-radius: 5px; margin-top: 30px;"
+                   )
+                 )
+               ),
+               
+               #### --- Footer / contact section ----
+               fluidRow(
+                 column(
+                   width = 12,
+                   style = "margin-top: 40px; padding: 20px; background-color: #f8f9fa; border-radius: 5px;",
+                   h4("Contact / References"),
+                   p("Placeholder for contact info, acknowledgements, or references.", style = "font-size: 14px;")
+                 )
+               )
+             )
     ),
     
-    tabPanel("Find an individual",
+    
+ ### --- Find an individual page -------------------------
+   
+  tabPanel("Find an individual",
              useShinyjs(),
              hidden(
                div(id = "search_panel",
@@ -451,11 +630,16 @@ ui <- div(
                )
              )
     ),
-    
+
+ ### --- Population trends page -------------------------
+ 
     tabPanel("Population trends",
              h3("Population trends", style = "color:#3f5262; font-weight:500;")
     ),
-    
+
+ 
+ ### --- Citizen science page -------------------------   
+ 
     tabPanel("Citizen science",
              h3("Citizen science", style = "color:#3f5262; font-weight:500;")
     ),
