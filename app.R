@@ -27,7 +27,7 @@ lapply(required_packages, library, character.only = TRUE)
 # It sources everything in "R" folder automatically
 
 
-# App UI ---------------------------------------------------
+# App UI (old - no formatting) ---------------------------------------------------
 
 # Notes and fixes:
 # Using conditional tabs so bird info appears when individual selected. Alternative it to dynamically add tabs
@@ -121,10 +121,22 @@ lapply(required_packages, library, character.only = TRUE)
 # )
 
 
+
+# App UI (with formatting) ---------------------------------------------------
+
+
 ui <- div(
   
   ## --- Formatting  -------------------------------------------------
+  # Shiny theme won't override custom title panel formatting marked "!important" but will apply to the rest of the app
+  # To change title theme, edit custom formatting or remove custom formatting and apply the theme to the whole app
   tags$style(HTML("
+  
+    /* title bar background colour */
+    .navbar.navbar-default {
+    background-color: #ffffff !important;
+    border-color: #e7e7e7 !important;
+  }
 
     /* spacing between navbar and page content */
     body > div > .container-fluid:nth-of-type(1) {
@@ -206,9 +218,29 @@ ui <- div(
     });
   ")),
   
+  
   ### Make this dropdown background blue -----------
   tags$style(HTML("
   @media (max-width: 1150px) {
+  
+    /* Hamburger icon background colour */
+    .navbar-toggle {
+      background-color: transparent !important;
+      border-color: #cccccc !important;
+    }
+
+    /* Hamburger bars colour */
+    .navbar-toggle .icon-bar {
+      background-color: #888 !important;
+    }
+    
+      /* Hover and focus state */
+    .navbar-default .navbar-toggle:hover,
+    .navbar-default .navbar-toggle:focus {
+        background-color: #e7e7e7 !important; 
+        border-color: #cccccc !important; 
+    }
+    
 
     /* force background before/during/after collapse */
     .navbar-default .navbar-collapse,
@@ -246,63 +278,106 @@ ui <- div(
   ### Formatting menu item text (both versions) ----------
   # Non-collapsed menu (horizontal)
   tags$style(HTML("
-/* Normal menu items */
-.navbar-default .navbar-nav > li > a {
-  color: #3f5262 !important;  /* default text color */
-  font-size: 16px;
-  font-weight: 500;
-  text-decoration: none;       /* no underline */
-}
+    /* Normal menu items */
+    .navbar-default .navbar-nav > li > a {
+      color: #3f5262 !important;  /* default text color */
+      font-size: 16px;
+      font-weight: 500;
+      text-decoration: none;       /* no underline */
+      letter-spacing:0.5px
+    }
+    
+    /* Hover state: underline and color change */
+    .navbar-default .navbar-nav > li > a:hover {
+      text-decoration: underline !important;
+      color: #0d5088 !important;
+      background-color: #e7e7e7 !important;
+    }
+    
+    /* Active (selected) tab: underline and color change */
+    .navbar-default .navbar-nav:not(.in) > .active > a {
+      text-decoration: underline !important;
+      color: #0d5088 !important;
+      background-color: #e7e7e7 !important;
+    }
+    
+    /* Active tab on hover */
+    .navbar-default .navbar-nav:not(.in) > .active > a:hover {
+      text-decoration: underline !important;
+      color: #0d5088 !important;
+      background-color: #e7e7e7 !important;
+    }
+    ")),
+      
+      ## Collapsed menu (hamburger)
+      tags$style(HTML("
+    /* Collapsed menu items inside hamburger */
+    .navbar-collapse.in .navbar-nav > li > a {
+      color: white !important;  /* keep white text */
+      background-color: #004b84 !important;  /* dark blue background */
+      text-decoration: none !important;
+    }
+    
+    /* Hover state in hamburger */
+    .navbar-collapse.in .navbar-nav > li > a:hover {
+      background-color: #033a67 !important;
+      color: white !important;
+      text-decoration: underline !important;
+    }
+    
+    /* Active item in hamburger */
+    .navbar-collapse.in .navbar-nav > .active > a {
+      background-color: #033a67 !important;
+      color: white !important;
+      text-decoration: underline !important;
+    }
+    
+    /* Active item hover in hamburger */
+    .navbar-collapse.in .navbar-nav > .active > a:hover {
+      background-color: #033a67 !important;
+      color: white !important;
+      text-decoration: underline !important;
+    }
+    
+    
+    # Make sure formatting is correct during collapsing animation:
+        /* Collapsed menu items (hamburger) */
+    .navbar-collapse.in .navbar-nav > li > a,
+    .navbar-collapse.collapsing .navbar-nav > li > a {
+      color: white !important;
+      background-color: #004b84 !important; /* dark blue background */
+      text-decoration: none !important;
+    }
 
-/* Hover state: underline and color change */
-.navbar-default .navbar-nav > li > a:hover {
-  text-decoration: underline !important;
-  color: #0d5088 !important;  
-}
-
-/* Active (selected) tab: underline and color change */
-.navbar-default .navbar-nav > .active > a {
-  text-decoration: underline !important;
-  color: #0d5088 !important;
-}
-
-/* Active tab on hover */
-.navbar-default .navbar-nav > .active > a:hover {
-  text-decoration: underline !important;
-  color: #0d5088 !important;
-}
-")),
-  
-  ## Collapsed menu (hamburger)
-  tags$style(HTML("
-/* Collapsed menu items inside hamburger */
-.navbar-collapse.in .navbar-nav > li > a {
-  color: white !important;  /* keep white text */
-  background-color: #004b84 !important;  /* dark blue background */
-  text-decoration: none !important;
-}
-
-/* Hover state in hamburger */
-.navbar-collapse.in .navbar-nav > li > a:hover {
-  background-color: #033a67 !important;
-  color: white !important;
-  text-decoration: underline !important;
-}
-
-/* Active item in hamburger */
-.navbar-collapse.in .navbar-nav > .active > a {
-  background-color: #033a67 !important;
-  color: white !important;
-  text-decoration: underline !important;
-}
-
-/* Active item hover in hamburger */
-.navbar-collapse.in .navbar-nav > .active > a:hover {
-  background-color: #033a67 !important;
-  color: white !important;
-  text-decoration: underline !important;
-}
-")),
+    /* Hover state in hamburger */
+    .navbar-collapse.in .navbar-nav > li > a:hover,
+    .navbar-collapse.collapsing .navbar-nav > li > a:hover {
+      background-color: #033a67 !important;
+      color: white !important;
+      text-decoration: underline !important;
+    }
+    
+    /* Active item in hamburger */
+    .navbar-collapse.in .navbar-nav > .active > a,
+    .navbar-collapse.collapsing .navbar-nav > .active > a {
+      background-color: #033a67 !important;
+      color: white !important;
+      text-decoration: underline !important;
+    }
+    
+    /* Active item hover in hamburger */
+    .navbar-collapse.in .navbar-nav > .active > a:hover,
+    .navbar-collapse.collapsing .navbar-nav > .active > a:hover {
+      background-color: #033a67 !important;
+      color: white !important;
+      text-decoration: underline !important;
+    }
+    
+      /* Force text white during collapse animation */
+    .navbar-collapse.collapsing .navbar-nav > li > a {
+        color: white !important;
+    }
+    ")),
 
   
   ## --- Navbar ----------------------------------------------
@@ -312,6 +387,7 @@ ui <- div(
     windowTitle = "Vlieland Great Tits & Blue Tits",
     fluid = TRUE,
     collapsible = TRUE,
+    theme = shinytheme("flatly"), # change theme here - shouldn't overide custom css formatting above (as it is marked "!important" but will apply to rest of app)
     
     ### --- Title section-------
 
