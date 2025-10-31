@@ -630,7 +630,7 @@ ui <- div(
               fluidRow(
                 column(
                   width = 6,
-                  p("Placeholder text about hole-breeding passerines or study species.",
+                  p("Placeholder text about hole-breeding passerines or study species. Or make this more detailed project info and change first section title to 'Vlieland'",
                     style = "font-size: 16px; color: #3f5262; line-height: 1.6;")
                 ),
                 column(
