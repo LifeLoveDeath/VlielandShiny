@@ -22,7 +22,7 @@ birdFinderUI <- function(data) {
   colour_rings <- get_colour_rings()
   
   div(
-    style = "background-color: #f2f4f5; padding: 10px;",
+    style = "background-color: #f2f4f5; padding: 5px;",
     
     # --- White panel container ---
     div(
@@ -96,7 +96,8 @@ birdFinderUI <- function(data) {
         column(
           width = 8,
           h4("Matching individuals", style = "color:#3f5262; font-weight:500;"),
-          helpText("Results will appear here once you select colour rings. Click on an individual to see its last observed location on the map."),
+          helpText(HTML("Results will appear here once you select colour rings. Click on an individual to see its last observed location on the map.<br>
+          Click “See full info” to explore its full details, a map of its breeding sites and its family tree.")),
           DT::dataTableOutput("summary_info"),
           br(),
           uiOutput("map_preview_ui")
