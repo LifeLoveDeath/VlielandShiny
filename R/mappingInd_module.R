@@ -21,15 +21,23 @@
 mapUI <- function(id) {
   ns <- NS(id)
   
+  tagList(
+  fluidRow(
+    column(
+      width = 12,
+      h4("Explore location data", style = "color:#3f5262; font-weight:500;")
+    )
+  ),
+  
   fluidRow(
     column(
       width = 4,
         
         # Title text
-        h4("Explore location data", style = "color:#3f5262; font-weight:500;"),
+        #h4("Explore location data", style = "color:#3f5262; font-weight:500;"),
       
         # Instructions text:
-        helpText(HTML("<b>See where the selected bird was born and where it has nested
+        helpText(HTML("<b>See where the selected bird was born and has nested
         during different breeding seasons.</b><br>
         • Use the checkboxes to choose the type of location to display.<br>
         • The timeline path connects nests in chronological order.<br>
@@ -57,6 +65,7 @@ mapUI <- function(id) {
       uiOutput(ns("map_ind_ui"))  # leafletOutput from server wrapped in renderUI
       
     )
+  )
   )
 }
 
