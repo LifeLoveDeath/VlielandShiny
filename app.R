@@ -705,14 +705,16 @@ ui <- div(
  ### --- Population trends page -------------------------
  
     tabPanel("Population trends",
-             h3("Population trends", style = "color:#3f5262; font-weight:500;")
+             #h3("Population trends", style = "color:#3f5262; font-weight:500;"),
+             populationTrendsUI()
     ),
 
  
  ### --- Citizen science page -------------------------   
  
     tabPanel("Citizen science",
-             h3("Citizen science", style = "color:#3f5262; font-weight:500;")
+             #h3("Citizen science", style = "color:#3f5262; font-weight:500;")
+             citizenScienceUI()
     ),
 
   ),
@@ -745,7 +747,10 @@ server <- function(input, output, session) {
   # Reactive title for individual info page
   output$selected_bird <- renderUI({
     req(selected_ring())
-    h3(paste0("Explore individual info: Ring number", selected_ring()), style = "color:#3f5262; font-weight:500;")
+    h3(HTML(paste0(
+      "Explore individual info: Ring number ",
+      "<span style='color:#dd4f2a;'>", selected_ring(), "</span>"
+    )), style = "color:#3f5262; font-weight:500;")
   })
   
   # Show/hide panels based on selection

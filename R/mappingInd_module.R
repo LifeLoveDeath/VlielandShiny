@@ -23,15 +23,19 @@ mapUI <- function(id) {
   
   fluidRow(
     column(
-      width = 3,
-      wellPanel(
+      width = 4,
         
+        # Title text
+        h4("Explore location data", style = "color:#3f5262; font-weight:500;"),
+      
         # Instructions text:
-        helpText(HTML("<b>Explore where the selected bird was born and where it has nested
+        helpText(HTML("<b>See where the selected bird was born and where it has nested
         during different breeding seasons.</b><br>
         • Use the checkboxes to choose the type of location to display.<br>
         • The timeline path connects nests in chronological order.<br>
         • Adjust the slider to filter locations by year.")),
+      
+      br(),
         
         checkboxGroupInput(ns("event_filter"), "Show locations for:", 
                            choices = c("Birth nest" = "birth", "Breeding nests" = "nest"),
@@ -42,12 +46,14 @@ mapUI <- function(id) {
         uiOutput(ns("year_slider")),
       
       # Placeholder further info text:
+      br(),
       helpText(HTML("Placeholder further info text.<br>
                     E.g. General info about dispersal.<br>
                     Or interpretation of map: Clusters of points suggest repeated nesting in the same area.<br>"))
-    )),
+
+    ),
     column(
-      width = 9,
+      width = 8,
       uiOutput(ns("map_ind_ui"))  # leafletOutput from server wrapped in renderUI
       
     )
