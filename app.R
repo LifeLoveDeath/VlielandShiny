@@ -130,7 +130,15 @@ ui <- div(
   ## --- Formatting  -------------------------------------------------
   # Shiny theme won't override custom title panel formatting marked "!important" but will apply to the rest of the app
   # To change title theme, edit custom formatting or remove custom formatting and apply the theme to the whole app
+  # Set app font
   tags$style(HTML("
+                  * {
+                    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+                  }
+                  ")),
+  
+  tags$style(HTML("
+
   
     /* title bar background colour */
     .navbar.navbar-default {
@@ -384,10 +392,10 @@ ui <- div(
   navbarPage(
     id = "navbar_id",
     position = "fixed-top",
-    windowTitle = "Vlieland Great Tits & Blue Tits",
+    windowTitle = "Vlieland Great Tits",
     fluid = TRUE,
     collapsible = TRUE,
-    theme = shinytheme("flatly"), # change theme here - shouldn't overide custom css formatting above (as it is marked "!important" but will apply to rest of app)
+    #theme = shinytheme("flatly"), # change theme here - shouldn't overide custom css formatting above (as it is marked "!important" but will apply to rest of app)
     
     ### --- Title section-------
 
@@ -401,7 +409,7 @@ ui <- div(
       # divider line
       div(class = "divider"),   
       #title text
-      tags$span("Vlieland Great Tits & Blue Tits", 
+      tags$span("Vlieland Great Tits", 
                 style = "
     color:#3f5262;
     font-weight:300;
@@ -416,184 +424,237 @@ ui <- div(
     ## --- Tab panels -------------------------------------
 
     ### --- Project info homepage -------------------------
+
     tabPanel("Project info",
-             #h3("Project info", style = "color:#3f5262; font-weight:500;"),
-             # Page wrapper
-             div(
-               style = "padding: 20px; background-color: #ffffff;",
-               
-               #### --- Top section with optional image ----
-          #      fluidRow(
-          #        column(
-          #          width = 12,
-          #          style = "position: relative; text-align: center; margin-bottom: 30px;",
-          #          # Placeholder for hero image or banner
-          #          tags$img(
-          #            src = "passerine_proj_background.jpg",
-          #            alt = "Project background image",
-          #            style = "width: 100%; max-height: 300px; object-fit: cover; border-radius: 5px;"
-          #          ),
-          #          # Overlayed title text
-          #          tags$div(
-          #            style = "
-          #   position: absolute;
-          #   top: 50%;
-          #   left: 50%;
-          #   transform: translate(-50%, -50%);
-          #   color: white;
-          #   font-size: 32px;
-          #   font-weight: 700;
-          #   text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-          # ",
-          #            "Vlieland Great Tits & Blue Tits"
-          #          )
-          #        )
-          #      ),
-          
-          
-          fluidRow(
-            column(
-              width = 12,
-              style = "position: relative; padding: 0;",  # remove padding so image spans full width
-              # Full-width hero image
-              tags$img(
-                src = "passerine_proj_background.jpg",
-                alt = "Project background image",
-                style = "width: 100%; height: 400px; object-fit: cover;"  # full width, fixed height
-              ),
-              
-              # Overlayed info card on the left
-              tags$div(
-                style = "
-        position: absolute;
-        top: 50%;
-        left: 5%;
-        transform: translateY(-50%);
-        background-color: rgba(255, 255, 255, 0.85);  /* semi-transparent white */
-        padding: 20px;
+             #useShinyjs(), # for making project info container expandable
+             
+             
+    #### Formatting ---------------------------------------
+    
+             tags$style(HTML("
+      /* overall light grey page background */
+      body, .content-wrapper {
+        background-color: #f2f4f5 !important;
+      }
+    
+      /* central white panel */
+      .inner-panel {
+        background-color: #ffffff;
+        max-width: 1000px;          /* change width to taste */
+        margin: 0 auto;             /* center horizontally */
+        padding: 30px 40px;
         border-radius: 8px;
-        max-width: 400px;
+        box-shadow: 0 0 12px rgba(0,0,0,0.08);
+      }
+    ")),
+             
+    #### ---- Page wrapper ----------------------------------------
+    div(style = "padding: 20px; background-color: #f2f4f5;",
+        
+
+               
+    #### --- Top section project info and image ----------------------
+          
+    div(
+      style = "
+    width: 100%;
+    height: 400px;
+    background-image: url('passerine_proj_background.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    margin: -20px 0 20px 0;
+  ",
+      
+      # Centered container with same max width as inner-panel
+      div(
+        style = "
+      max-width: 1000px;    /* same as .inner-panel */
+      margin: 0 auto;
+      height: 100%;
+      display: flex;         /* allows horizontal layout if needed */
+      justify-content: flex-start;  /* align items to left */
+      align-items: flex-start;     /* top-aligned for when aligned to the left */
+      padding-top: 40px;
+      #align-items: flex-end; /* align item to bottom of image background */
+      #padding-bottom: 80px;
+    ",
+        
+        # The overlay card
+        div(
+          style = "
+        background-color: rgba(255, 255, 255, 0.85);
+        padding: 20px; /* when aligned to left */
+        #padding: 20px 5%; /* when aligned to bottom */
+        border-radius: 8px;
+        max-width: 400px;  /* when aligned to left */
+        #width: 95%;       /* when aligned bottom - full width of container */
+        margin: 0 20px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       ",
-                h2("About the Project", style = "color: #3f5262;"),
-                p("Placeholder for a brief introduction to the research project.",
-                  style = "font-size: 16px; line-height: 1.6;")
-              )
-            )
+          h2("About the Project", style = "color: #3f5262;"),
+          p(
+            "Vlieland is one of four areas in NIOO-AnE's long-term monitoring research on great tits and other bird species that started in 1955. It consists of several smaller forest areas, which together cover about 250 ha of mainly conifers and oak on poor sandy soil.",
+            style = "font-size:16px; line-height:1.6; color:#3f5262;"
           ),
-               
-               #### --- Intro / overview section ----
-               # fluidRow(
-               #   column(
-               #     width = 12,
-               #     h2("About the Project", style = "color: #3f5262;"),
-               #     p("Placeholder for a brief introduction to the research project.", 
-               #       style = "font-size: 16px; line-height: 1.6;")
-               #   )
-               # ),
-               
-               fluidRow(
-                 column(
-                   width = 6,
-                   h2("About the Project", style = "color: #3f5262;"),
-                   p("Placeholder for a brief introduction to the research project.", 
-                     style = "font-size: 16px; line-height: 1.6;")
-                 ),
-                 column(
-                   width = 6,
-                   tags$img(
-                     src = "passerine_proj_background.jpg",  # replace with your image filename
-                     style = "width: 100%; height: auto; border-radius: 8px;"
-                   )
-                 )
-               ),
-               
-               #### --- What the App Does section ----
+          # Copyright text
+          tags$div(
+            "© 2025 Henri Bouwmeeter / NIOO-KNAW ",
+            style = "
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      font-size: 12px;
+      color: white;
+      background-color: rgba(63,82,98,0.7);
+      z-index: 10;
+    "
+          )
+        )
+      )
+    ),
+    
+      #     fluidRow(
+      #       column(
+      #         width = 12,
+      #         style = "position: relative; padding: 0;",  # remove padding so image spans full width
+      #         # Full-width image
+      #         tags$img(
+      #           src = "passerine_proj_background.jpg",
+      #           alt = "Project background image",
+      #           style = "width: 100%; height: 300px; object-fit: cover;"  # full width, fixed height
+      #         ),
+      #         
+      #         # Overlayed info card on the left
+      #         tags$div(
+      #           style = "
+      #   position: absolute;
+      #   top: 50%;
+      #   left: 5%;
+      #   transform: translateY(-50%);
+      #   background-color: rgba(255, 255, 255, 0.85);  /* semi-transparent white */
+      #   padding: 20px;
+      #   border-radius: 8px;
+      #   max-width: 400px;
+      #   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      # ",
+      #           h2("About the Project", style = "color: #3f5262;"),
+      #           p("Vlieland is one of four areas in NIOO-AnE's long-term monitoring research on great tits and other bird species that started in 1955. It consists of several smaller forest areas, which together cover about 250 ha of mainly conifers and oak on poor sandy soil.",
+      #             #"Placeholder for a brief introduction to the research project.",
+      #             style = "font-size: 16px; line-height: 1.6; color = #3f5262")
+      #         )
+      #       )
+      #     ),
+    
+    
+    #### ---- Centre panel --------------------------------
+  
+    div(class = "inner-panel",
+        style = "
+      position: relative;    /* allows overlap over previous section */
+      margin-top: -70px;     /* pull panel up over hero image */
+      z-index: 2;            /* ensures it sits on top of the image */
+      padding: 30px 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    ",          
+
+  
+    #### --- What the App Does section ----
+
                fluidRow(
                  column(
                    width = 12,
                    h2("About This App", style = "color: #3f5262; margin-top: 30px;"),
                    p("Placeholder describing the app's functionality: searching for individual birds, exploring population trends and contributing to citizen science.", 
-                     style = "font-size: 16px; line-height: 1.6;")
+                     style = "font-size: 16px; color = #3f5262; line-height: 1.6;")
                  )
                ),
                
-               #### --- Features / cards section ----
+      #### --- Features / cards section ----
                fluidRow(
                  column(
                    width = 4,
                    wellPanel(
-                     h4("Find an individual"),
-                     p("Search for a bird by its color rings and explore its data, including general information, a map of its breeding sites and its family tree."),
+                     h4("Find an individual", style = "color: white"),
+                     p("Search for a bird by its color rings and explore its data, including general information, a map of its breeding sites and its family tree.", style = "color: white"),
                      style = "display: flex;
                      flex-direction: column;
                      justify-content: center;  /* vertical centering */
                      align-items: center;      /* horizontal centering */
                      text-align: center;
-                     background-color: #f8f9fa;
+                     #background-color: #f8f9fa;
+                     background-color: #004b84;
                      height: 170px;"
                    )
                  ),
                  column(
                    width = 4,
                    wellPanel(
-                     h4("Population Trends"),
-                     p("Placeholder: view population trends and visualise analysis."),
+                     h4("Population Trends", style = "color: white"),
+                     p("Placeholder: view population trends and visualise analysis.", style = "color: white"),
                      style = "display: flex;
                      flex-direction: column;
                      justify-content: center;  /* vertical centering */
                      align-items: center;      /* horizontal centering */
                      text-align: center;
-                     background-color: #f8f9fa;
+                     background-color: #004b84;
                      height: 170px;"
                    )
                  ),
                  column(
                    width = 4,
                    wellPanel(
-                     h4("Citizen Science"),
-                     p("Placeholder: contribute data or observations to citizen science."),
+                     h4("Citizen Science", style = "color: white"),
+                     p("Placeholder: contribute data or observations to citizen science.", style = "color: white"),
                      style = "display: flex;
                      flex-direction: column;
                      justify-content: center;  /* vertical centering */
                      align-items: center;      /* horizontal centering */
                      text-align: center;
-                     background-color: #f8f9fa;
+                     background-color: #004b84;
                      height: 170px;"
                    )
                  )
                ),
                
-               #### --- Optional image section ----
-               fluidRow(
-                 column(
-                   width = 6,
-                   tags$img(
-                     src = "passerine_proj_background.jpg",
-                     alt = "Image 1",
-                     style = "width: 100%; border-radius: 5px; margin-top: 30px;"
-                   )
-                 ),
-                 column(
-                   width = 6,
-                   tags$img(
-                     src = "passerine_proj_background.jpg",
-                     alt = "Image 2",
-                     style = "width: 100%; border-radius: 5px; margin-top: 30px;"
-                   )
-                 )
-               ),
+      #### --- Species info ----
+              fluidRow(
+                column(
+                  width = 12,
+                  h2("Hole-breeding passerines",
+                     style = "color: #3f5262; margin-top: 30px;")
+                )
+              ),
+    
+              fluidRow(
+                column(
+                  width = 6,
+                  p("Placeholder text about hole-breeding passerines or study species.",
+                    style = "font-size: 16px; color: #3f5262; line-height: 1.6;")
+                ),
+                column(
+                  width = 6,
+                  style = "text-align: center;",
+                  tags$img(
+                    src = "vlieland.jpg",
+                    alt = "Image",
+                    style = "max-width: 300px; width: 100%; border-radius: 5px;"
+                  )
+                )
+              ),
                
                #### --- Footer / contact section ----
                fluidRow(
                  column(
                    width = 12,
                    style = "margin-top: 40px; padding: 20px; background-color: #f8f9fa; border-radius: 5px;",
-                   h4("Contact / References"),
-                   p("Placeholder for contact info, acknowledgements, or references.", style = "font-size: 14px;")
+                   h4("Contact / links"),
+                   p("Placeholder for contact info, further info etc.", style = "font-size: 14px;")
                  )
                )
              )
+          )
     ),
     
     
