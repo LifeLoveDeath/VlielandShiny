@@ -28,11 +28,12 @@ birdFinderUI <- function(data) {
     div(
       style = "
         background-color: #ffffff;
-        max-width: 100%;        /* wider panel */
-        margin: 0 auto;
-        padding: 30px 40px;
-        border-radius: 8px;
-        box-shadow: 0 0 12px rgba(0,0,0,0.08);
+          max-width: 90%; 
+          min-height: 800px;
+          margin: 0 auto;
+          padding: 30px 40px;
+          border-radius: 8px;
+          box-shadow: 0 0 12px rgba(0,0,0,0.08);
       ",
       
       # --- Page title and instructions ---
@@ -56,6 +57,7 @@ birdFinderUI <- function(data) {
     • Each bird has <b>one metal ring</b>.<br>
     • You can leave a dropdown blank if a ring is <b>unknown</b>.<br>
     • See below for an example and diagram.<br>")),
+          br(),
           
           tags$head(tags$style(HTML("
             .picker-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
