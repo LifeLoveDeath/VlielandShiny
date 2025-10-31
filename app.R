@@ -665,21 +665,41 @@ ui <- div(
            hidden(
              div(
                id = "search_panel",
-               birdFinderUI()  #  birdFinderUI now produces the full layout
+               birdFinderUI()  # birdFinderUI now produces the full layout
              )
            ),
-             hidden(
-               div(id = "individual_panel",
+           
+           hidden(
+             # Sort formatting to match other pages
+             div(id = "individual_panel",
+                 style = "background-color: #f2f4f5; padding: 5px;",
+                 
+                 # --- White panel container ---
+                 div(
+                   style = "
+          background-color: #ffffff;
+          max-width: 90%;   
+          min-height: 800px;
+          margin: 0 auto;
+          padding: 30px 40px;
+          border-radius: 8px;
+          box-shadow: 0 0 12px rgba(0,0,0,0.08);
+        ",
+                   
+                   # --- Back button and selected bird ---
                    actionButton("back_to_search", "Return to search"),
                    uiOutput("selected_bird"),
+                   
+                   # --- Tabs ---
                    tabsetPanel(
                      id = "bird_tabs",
                      tabPanel("General Info"),
                      tabPanel("Map", value = "Map", mapUI("map_individual")),
                      tabPanel("Pedigree", familyTreeUI("pedigree_module"))
                    )
-               )
+                 )
              )
+           )
     ),
 
  ### --- Population trends page -------------------------
