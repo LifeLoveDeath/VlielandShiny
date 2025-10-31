@@ -28,7 +28,7 @@ birdFinderUI <- function(data) {
     div(
       style = "
         background-color: #ffffff;
-          max-width: 90%; 
+          max-width: 90vw; 
           min-height: 800px;
           margin: 0 auto;
           padding: 30px 40px;
