@@ -662,22 +662,12 @@ ui <- div(
    
   tabPanel("Find an individual",
              useShinyjs(),
-             hidden(
-               div(id = "search_panel",
-                   h3("Search for an individual", style = "color:#3f5262; font-weight:500;"),
-                   sidebarLayout(
-                     sidebarPanel(
-                       birdFinderUI()
-                     ),
-                     mainPanel(
-                       DT::dataTableOutput("summary_info"),
-                       fluidRow(
-                         uiOutput("map_preview_ui")
-                       )
-                     )
-                   )
-               )
-             ),
+           hidden(
+             div(
+               id = "search_panel",
+               birdFinderUI()  #  birdFinderUI now produces the full layout
+             )
+           ),
              hidden(
                div(id = "individual_panel",
                    actionButton("back_to_search", "Return to search"),

@@ -21,77 +21,91 @@ birdFinderUI <- function(data) {
   
   colour_rings <- get_colour_rings()
   
-  tagList(
-    # Old drop down
-    #selectizeInput("Left1", "Left leg - top ring", 
-    #               choices =  c("", colours), selected = ""
-    #              ),
+  div(
+    style = "background-color: #f2f4f5; padding: 10px;",
     
-    
-    # Instructions text:
-    helpText(HTML("<b>Search for a bird by its colour rings:</b><br>
+    # --- White panel container ---
+    div(
+      style = "
+        background-color: #ffffff;
+        max-width: 100%;        /* wider panel */
+        margin: 0 auto;
+        padding: 30px 40px;
+        border-radius: 8px;
+        box-shadow: 0 0 12px rgba(0,0,0,0.08);
+      ",
+      
+      # --- Page title and instructions ---
+      fluidRow(
+        column(
+          width = 12,
+          h3("Find an individual", style = "color:#3f5262; font-weight:500;"),
+        )
+      ),
+      
+      br(),
+      
+      # --- Search inputs (left) and results (right) ---
+      fluidRow(
+        # Left column: search inputs
+        column(
+          width = 4,
+          h4("Search using colour rings", style = "color:#3f5262; font-weight:500;"),
+          helpText(HTML("<b>Use the selectors below to search for a bird by its colour rings:</b><br>
     • Select ring colours <b>top to bottom</b> on each leg.<br>
     • Each bird has <b>one metal ring</b>.<br>
-    • Leave a dropdown blank if a ring is <b>unknown</b>.<br>")),
-    
-    
-    
-    #Formatting for icons - would be better if they were aligned to the far right?
-    tags$head(tags$style(HTML("
-  .picker-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-  }
-
-  .picker-item .text {
-    flex-grow: 1;
-  }
-
-  .picker-item .icon {
-    height: 1em; /* Match the text height */
-    width: auto;
-    margin-left: 5px;
-  }
-"))),
-    
-    
-    pickerInput(inputId = "Left1",
-                label = "Left leg - top ring",
-                choices = c("", colour_rings$val),
-                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
-                selected = "Select colour..."),
-    
-    pickerInput(inputId = "Left2",
-                label = "Left leg - bottom ring",
-                choices = c("", colour_rings$val),
-                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
-                selected = "Select colour..."),
-    
-    pickerInput(inputId = "Right1",
-                label = "Right leg - top ring",
-                choices = c("", colour_rings$val),
-                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
-                selected = "Select colour..."),
-    
-    pickerInput(inputId = "Right2",
-                label = "Right leg - bottom ring",
-                choices = c("", colour_rings$val),
-                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
-                selected = "Select colour..."),
-    
-    actionButton("reset_filters", "Reset filters",
-                 style = "margin-bottom: 10px;"), # leave some space between button and text below
-    # Example search text
-    helpText(HTML("<b>Try searching:</b><br>
+    • You can leave a dropdown blank if a ring is <b>unknown</b>.<br>
+    • See below for an example and diagram.<br>")),
+          
+          tags$head(tags$style(HTML("
+            .picker-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+            .picker-item .text { flex-grow: 1; }
+            .picker-item .icon { height: 1em; width: auto; margin-left: 5px; }
+          "))),
+          pickerInput("Left1", "Left leg - top ring",
+                      choices = c("", colour_rings$val),
+                      choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                      selected = "Select colour..."),
+          pickerInput("Left2", "Left leg - bottom ring",
+                      choices = c("", colour_rings$val),
+                      choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                      selected = "Select colour..."),
+          pickerInput("Right1", "Right leg - top ring",
+                      choices = c("", colour_rings$val),
+                      choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                      selected = "Select colour..."),
+          pickerInput("Right2", "Right leg - bottom ring",
+                      choices = c("", colour_rings$val),
+                      choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                      selected = "Select colour..."),
+          actionButton("reset_filters", "Reset filters", style = "margin-top: 10px;"),
+          br(),
+          br(),
+          
+          # Example search text
+          helpText(HTML("<b>Try searching:</b><br>
                   Left leg - top ring: <b>blue/white</b><br>
                   Left leg - bottom ring: <b>pink/green</b><br>
                   Right leg - top ring: <b>metal</b><br>
                   Right leg - bottom ring: <b>blue</b>")),
-    # Diagram placeholder
-    helpText(HTML("<i>(Placeholder: Diagram showing order of rings on bird)</i>")))
+          # Diagram placeholder
+          helpText(HTML("<i>(Placeholder: Diagram showing order of rings on bird)</i>"))
+        ),
+        
+        # Right column: table and map
+        column(
+          width = 8,
+          h4("Matching individuals", style = "color:#3f5262; font-weight:500;"),
+          helpText("Results will appear here once you select colour rings. Click on an individual to see its last observed location on the map."),
+          DT::dataTableOutput("summary_info"),
+          br(),
+          uiOutput("map_preview_ui")
+        )
+      )
+    )
+  )
 }
+
 
 
 
