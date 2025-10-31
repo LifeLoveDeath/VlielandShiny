@@ -678,7 +678,7 @@ ui <- div(
                  div(
                    style = "
           background-color: #ffffff;
-          max-width: 90%;   
+          max-width: 90vw;   
           min-height: 800px;
           margin: 0 auto;
           padding: 30px 40px;
@@ -745,7 +745,7 @@ server <- function(input, output, session) {
   # Reactive title for individual info page
   output$selected_bird <- renderUI({
     req(selected_ring())
-    h3(paste0("Explore individual info: ", selected_ring()))
+    h3(paste0("Explore individual info: Ring number", selected_ring()), style = "color:#3f5262; font-weight:500;")
   })
   
   # Show/hide panels based on selection
