@@ -71,7 +71,7 @@ get_family_subset <- function(ped.data, focal_id) {
     
     sex_vals <- vapply(missing_parents, get_parent_sex, numeric(1), df = fam.data)
     
-    missing_rows <- tibble(
+    missing_rows <- data.frame(
       RingNumber      = missing_parents,
       Parent1         = NA_character_,
       Parent2         = NA_character_,
