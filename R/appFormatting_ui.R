@@ -2,7 +2,7 @@
 # App formatting
 
 
-navbarThemeUI <- function(id) {
+appThemeUI <- function(id) {
   ns <- NS(id)
   
   tagList(

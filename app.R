@@ -20,7 +20,7 @@ lapply(required_packages, library, character.only = TRUE)
 
 ui <- div(
   
-  navbarThemeUI("appFormat"), # app formatting
+  appThemeUI("appFormat"), # app formatting
   
   
   ## --- Navbar ----------------------------------------------
@@ -30,7 +30,8 @@ ui <- div(
     windowTitle = "Vlieland Great Tits",
     fluid = TRUE,
     collapsible = TRUE,
-    #theme = shinytheme("flatly"), # change theme here - shouldn't overide custom css formatting above (as it is marked "!important" but will apply to rest of app)
+    #theme = shinytheme("flatly"), # change theme here - shouldn't override custom css formatting (as it is marked "!important") but will apply to rest of app
+    # To change theme, remove 
     
     ### --- Title section-------
     
