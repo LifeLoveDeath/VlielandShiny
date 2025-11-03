@@ -5,8 +5,7 @@
 
 # Load packages 
 # Required packages
-required_packages <- c("shiny", "tidyverse", "bslib", "leaflet", "viridis", "reactable", "shinyjs", "shinyWidgets", "reactable", "DT", "ggpedigree", "ggplot2", "plotly", "imager", "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "bslib", "tools", "shinythemes", "fontawesome")
-
+required_packages <- c("shiny", "tidyverse", "bslib", "leaflet", "viridis", "reactable", "shinyjs", "shinyWidgets", "reactable", "DT", "ggpedigree", "ggplot2", "plotly", "imager", "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "bslib", "tools", "shinythemes", "fontawesome", "tibble")
 
 # Install any missing packages
 new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
@@ -135,7 +134,15 @@ ui <- div(
                   * {
                     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
                   }
-                  ")),
+                  "),
+             
+    # Make sure drop downs appear above other elements         
+   tags$head(tags$style(HTML("
+  .dropdown-menu {
+    z-index: 2000 !important;
+  }
+")))
+             ),
   
   tags$style(HTML("
 

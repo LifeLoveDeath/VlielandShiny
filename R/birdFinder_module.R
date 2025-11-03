@@ -98,7 +98,7 @@ birdFinderUI <- function(data) {
         column(
           width = 8,
           h4("Matching individuals", style = "color:#3f5262; font-weight:500;"),
-          helpText(HTML("Results will appear here once you select colour rings. Click on an individual to see its last observed location on the map.<br>
+          helpText(HTML("Search results will appear here once you select colour rings. Click on an individual to see its last observed location on the map.<br>
           Click “See full info” to explore its full details, a map of its nesting sites and its family tree.")),
           DT::dataTableOutput("summary_info"),
           br(),
