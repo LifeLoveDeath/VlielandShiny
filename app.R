@@ -432,7 +432,7 @@ ui <- div(
 
     ### --- Project info homepage -------------------------
 
-    tabPanel("Project info",
+    tabPanel("About this project and app",
              #useShinyjs(), # for making project info container expandable
              
              
