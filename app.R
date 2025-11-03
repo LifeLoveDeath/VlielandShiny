@@ -74,7 +74,7 @@ ui <- div(
              hidden(
                div(
                  id = "search_panel",
-                 birdFinderUI()  # birdFinderUI now produces the full layout
+                 birdFinderUI("birdFinder")  # birdFinderUI now produces the full layout
                )
              ),
              

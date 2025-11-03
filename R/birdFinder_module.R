@@ -17,7 +17,10 @@
 
 # Old name: findIndividualUI_withIcons
 # This doesn't need the data input?
-birdFinderUI <- function(data) {
+birdFinderUI <- function(id) {
+  
+  ns <- NS(id)
+  
   
   colour_rings <- get_colour_rings()
   
