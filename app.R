@@ -5,7 +5,7 @@
 
 # Load packages 
 # Required packages
-required_packages <- c("shiny", "tidyverse", "bslib", "leaflet", "viridis", "reactable", "shinyjs", "shinyWidgets", "reactable", "DT", "ggpedigree", "ggplot2", "plotly", "imager", "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "bslib", "tools", "shinythemes", "fontawesome", "tibble")
+required_packages <- c("shiny", "tidyverse", "bslib", "leaflet", "viridis", "reactable", "shinyjs", "shinyWidgets", "reactable", "DT", "ggpedigree", "ggplot2", "plotly", "imager", "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "bslib", "tools", "shinythemes", "fontawesome", "tibble", "fontawesome", "htmltools")
 
 # Install any missing packages
 new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
@@ -24,7 +24,7 @@ ui <- div(
   appThemeUI("appFormat"), # app formatting
   navbarUI("navbarFormat"), # use this for custom title bar
   #navbarShinyThemeUI("navbarShinyTheme"),  # use this navbar formatting if using a shiny theme (below)
-  
+
   
   ## --- Navbar ----------------------------------------------
   navbarPage(
@@ -72,7 +72,7 @@ ui <- div(
     ### --- Find an individual page -------------------------
     
     tabPanel("Find an individual",
-             useShinyjs(),
+             useShinyjs(), # for allowing hidden panels
              hidden(
                div(
                  id = "search_panel",
@@ -135,9 +135,16 @@ ui <- div(
   
   ## --- Fixed footer text --------------------------------------
   tags$footer(
+    # Share this app text
+    #tags$span("Share this app: "),
+    #add custom buttons or use AddThis
+    
+    
+    # Footer text
     HTML("<p>Footer text e.g. Contact or Copyright © 2025 — All Rights Reserved.</p>"),
     align = "right"
   )
+  
 )
 
 
