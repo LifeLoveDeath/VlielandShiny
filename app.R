@@ -22,17 +22,19 @@ ui <- div(
   
   ## --- Formatting -------------------------------------------
   appThemeUI("appFormat"), # app formatting
+  navbarUI("navbarFormat"), # use this for custom title bar
+  #navbarShinyThemeUI("navbarShinyTheme"),  # use this navbar formatting if using a shiny theme (below)
   
   
   ## --- Navbar ----------------------------------------------
   navbarPage(
-    id = "navbar_id",
+    #id = "navbar_id",
     position = "fixed-top",
     windowTitle = "Vlieland Great Tits",
     fluid = TRUE,
     collapsible = TRUE,
-    #theme = shinytheme("sandstone"), # change theme here - shouldn't override custom css formatting (as it is marked "!important") but will apply to rest of app
-    # To change theme, remove appThemeUI and apply theme? Messes up spacing a bit - need to fix this
+    #theme = shinytheme("flatly"), # change theme here
+    # To change theme, use navbarShinyThemeUI above instead of navbarUI and apply theme
     
     ### --- Title section-------
     
@@ -44,9 +46,9 @@ ui <- div(
         tags$img(src = "nioo_logo.svg", height = "30px")
       ),
       # divider line
-      div(class = "divider"),   
+      div(class = "divider"),
       #title text
-      tags$span("Vlieland Great Tits", 
+      tags$span("Vlieland Great Tits",
                 style = "
     color:#3f5262;
     font-weight:300;
@@ -102,7 +104,7 @@ ui <- div(
                      # --- Tabs ---
                      tabsetPanel(
                        id = "bird_tabs",
-                       tabPanel("General Info"),
+                       tabPanel("General Info", individualInfoUI("individual_info")),
                        tabPanel("Map", value = "Map", mapUI("map_individual")),
                        tabPanel("Pedigree", familyTreeUI("pedigree_module"))
                      )
@@ -192,11 +194,11 @@ server <- function(input, output, session) {
   )
   
   # Generate individual info table
-  # individualInfoServer(
-  #   id = "individual_info",
-  #   vlieland.data = vlieland.data,
-  #   selected_ring = selected_ring
-  # )
+  individualInfoServer(
+    id = "individual_info",
+    vlieland.data = vlieland.data,
+    selected_ring = selected_ring
+  )
 }
 
 shinyApp(ui, server)

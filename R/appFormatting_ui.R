@@ -1,6 +1,5 @@
 
-# App formatting
-
+# --- General app formatting -----------------------
 
 appThemeUI <- function(id) {
   ns <- NS(id)
@@ -22,8 +21,22 @@ appThemeUI <- function(id) {
     .dropdown-menu {
     z-index: 2000 !important;
     }
+    "))
+  )
+}
+
+
+
+
+# --- Navbar formatting ----------------------------------
+navbarUI <- function(id) {
+  ns <- NS(id)
   
-  /* title bar background colour */
+  tagList(
+    
+    tags$style(HTML("
+    
+    /* title bar background colour */
     .navbar.navbar-default {
     background-color: #ffffff !important;
     border-color: #e7e7e7 !important;
@@ -32,7 +45,7 @@ appThemeUI <- function(id) {
     /* spacing between navbar and page content */
     body > div > .container-fluid:nth-of-type(1) {
         margin: 0 auto;
-        padding-top: 65px;
+        padding-top: 55px;
     }
 
     /* align menu to the right */
@@ -65,47 +78,46 @@ appThemeUI <- function(id) {
         margin-bottom: -1px;
         padding-right: 100px;
     }
+    
     ")),
-    
-    
-    
     
     
     
     ### --- Collapse menu when screen is narrow ------------
     tags$style(HTML("
-  /* collapse navbar earlier */
-  @media (max-width: 1150px) {
-
-    /* show hamburger toggle button */
-    .navbar-toggle {
-      display: block !important;
-    }
-
-    /* prevent nav items staying on one line */
-    .navbar-nav {
-      float: none !important;
-    }
-
-    /* stacked menu items */
-    .navbar-nav > li {
-      float: none !important;
-    }
-
-    /* title area centered on collapse */
-    .navbar-header {
-      float: none !important;
-    }
-
-    /* ensure menu actually collapses/expands */
-    .navbar-collapse.collapse {
-      display: none !important;
-    }
-    .navbar-collapse.in {
-      display: block !important;
-    }
-  }
-")),
+          /* collapse navbar earlier */
+          @media (max-width: 1150px) {
+        
+            /* show hamburger toggle button */
+            .navbar-toggle {
+              display: block !important;
+            }
+        
+            /* prevent nav items staying on one line */
+            .navbar-nav {
+              float: none !important;
+            }
+        
+            /* stacked menu items */
+            .navbar-nav > li {
+              float: none !important;
+            }
+        
+            /* title area centered on collapse */
+            .navbar-header {
+              float: none !important;
+            }
+        
+            /* ensure menu actually collapses/expands */
+            .navbar-collapse.collapse {
+              display: none !important;
+            }
+            .navbar-collapse.in {
+              display: block !important;
+            }
+          }
+        ")),
+    
     
     # Close dropdown when menu item selected
     tags$script(HTML("
@@ -116,61 +128,58 @@ appThemeUI <- function(id) {
     
     ### Make this dropdown background blue -----------
     tags$style(HTML("
-  @media (max-width: 1150px) {
-  
-    /* Hamburger icon background colour */
-    .navbar-toggle {
-      background-color: transparent !important;
-      border-color: #cccccc !important;
-    }
-
-    /* Hamburger bars colour */
-    .navbar-toggle .icon-bar {
-      background-color: #888 !important;
-    }
-    
-      /* Hover and focus state */
-    .navbar-default .navbar-toggle:hover,
-    .navbar-default .navbar-toggle:focus {
-        background-color: #e7e7e7 !important; 
-        border-color: #cccccc !important; 
-    }
-    
-
-    /* force background before/during/after collapse */
-    .navbar-default .navbar-collapse,
-    .navbar-default .navbar-collapse.collapsing,
-    .navbar-default .navbar-collapse.in {
-      background-color: #004b84 !important;
-    }
-
-    /* menu link colors */
-    .navbar-default .navbar-nav > li > a {
-      color: white !important;
-    }
-
-    .navbar-default .navbar-nav > li > a:hover {
-      background-color: #033a67 !important;
-      color: #ffffff !important;
-    }
-    
-     /* selected menu item formatting */
-    .navbar-default .navbar-nav > .active > a {
-      background-color: #033a67 !important;
-      color: white !important;
-    }
-
-    /* hover state for active tab formatting */
-    .navbar-default .navbar-nav > .active > a:hover {
-      background-color: #033a67 !important;
-      color: white !important;
-    }
-
-  }
-")), 
-    
-    
-    
+          @media (max-width: 1150px) {
+          
+            /* Hamburger icon background colour */
+            .navbar-toggle {
+              background-color: transparent !important;
+              border-color: #cccccc !important;
+            }
+        
+            /* Hamburger bars colour */
+            .navbar-toggle .icon-bar {
+              background-color: #888 !important;
+            }
+            
+              /* Hover and focus state */
+            .navbar-default .navbar-toggle:hover,
+            .navbar-default .navbar-toggle:focus {
+                background-color: #e7e7e7 !important; 
+                border-color: #cccccc !important; 
+            }
+            
+        
+            /* force background before/during/after collapse */
+            .navbar-default .navbar-collapse,
+            .navbar-default .navbar-collapse.collapsing,
+            .navbar-default .navbar-collapse.in {
+              background-color: #004b84 !important;
+            }
+        
+            /* menu link colors */
+            .navbar-default .navbar-nav > li > a {
+              color: white !important;
+            }
+        
+            .navbar-default .navbar-nav > li > a:hover {
+              background-color: #033a67 !important;
+              color: #ffffff !important;
+            }
+            
+             /* selected menu item formatting */
+            .navbar-default .navbar-nav > .active > a {
+              background-color: #033a67 !important;
+              color: white !important;
+            }
+        
+            /* hover state for active tab formatting */
+            .navbar-default .navbar-nav > .active > a:hover {
+              background-color: #033a67 !important;
+              color: white !important;
+            }
+        
+          }
+        ")), 
     
     ### Formatting menu item text (both versions) ----------
     # Non-collapsed menu (horizontal)
@@ -275,6 +284,109 @@ appThemeUI <- function(id) {
         color: white !important;
     }"
     ))
+    
+    
   )
 }
 
+
+
+# --- Navbar with shiny theme formatting ----------------------------------
+navbarShinyThemeUI <- function(id) {
+  ns <- NS(id)
+  
+  tagList(
+    
+    tags$style(HTML("
+
+    /* spacing between navbar and page content */
+    body > div > .container-fluid:nth-of-type(1) {
+        margin: 0 auto;
+        padding-top: 65px;
+    }
+
+    /* align menu to the right */
+    body > div > nav .nav.navbar-nav {
+        float: right !important;
+    }
+
+    /* keep logo on the left */
+    .navbar-header {
+        float: left !important;
+    }
+
+    /* layout for title+logo */
+    #logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* vertical divider */
+    .divider {
+        border-left: 1px solid #004b84;
+        height: 30px;
+        margin-right: 10px;
+    }
+
+    /* tab menu spacing */
+    .nav-tabs > li {
+        float: left;
+        margin-bottom: -1px;
+        padding-right: 100px;
+    }
+    
+    ")),
+    
+    
+    
+    ### --- Collapse menu when screen is narrow ------------
+    tags$style(HTML("
+          /* collapse navbar earlier */
+          @media (max-width: 1150px) {
+        
+            /* show hamburger toggle button */
+            .navbar-toggle {
+              display: block !important;
+            }
+        
+            /* prevent nav items staying on one line */
+            .navbar-nav {
+              float: none !important;
+            }
+        
+            /* stacked menu items */
+            .navbar-nav > li {
+              float: none !important;
+            }
+        
+            /* title area centered on collapse */
+            .navbar-header {
+              float: none !important;
+            }
+        
+            /* ensure menu actually collapses/expands */
+            .navbar-collapse.collapse {
+              display: none !important;
+            }
+            .navbar-collapse.in {
+              display: block !important;
+            }
+          }
+        ")),
+    
+    
+    # Close dropdown when menu item selected
+    tags$script(HTML("
+    $(document).on('click', '.navbar-collapse.in a', function() {
+      $('.navbar-collapse').collapse('hide');
+    });
+  "))
+    
+    
+  )
+}
+
+
+
+# --- Title bar ----------------------------------
