@@ -25,6 +25,7 @@ mapUI <- function(id) {
   fluidRow(
     column(
       width = 12,
+      br(),
       h4("Explore location data", style = "color:#3f5262; font-weight:500;")
     )
   ),
