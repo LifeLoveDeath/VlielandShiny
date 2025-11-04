@@ -100,13 +100,16 @@ ui <- div(
                      # --- Back button and selected bird ---
                      actionButton("back_to_search", "Return to search"),
                      uiOutput("selected_bird"),
+                     p(HTML("Here you can view the details of your selected bird.<br>
+                            Use the tabs below to explore their general info, location data and family tree."),
+                       style = "font-size:14px; color:#3f5262; margin-bottom: 20px;"),
                      
                      # --- Tabs ---
                      tabsetPanel(
                        id = "bird_tabs",
                        tabPanel("General Info", individualInfoUI("individual_info")),
                        tabPanel("Map", value = "Map", mapUI("map_individual")),
-                       tabPanel("Pedigree", familyTreeUI("pedigree_module"))
+                       tabPanel("Family tree", familyTreeUI("pedigree_module"))
                      )
                    )
                )
