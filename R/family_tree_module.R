@@ -108,7 +108,41 @@ familyTreeUI <- function(id) {
   ns <- NS(id)
   
   tagList(
-    uiOutput(ns("tree_ui"))  # output for the pedigree
+    fluidRow(
+      column(
+        width = 12,
+        br(),
+        h4("Family tree", style = "color:#3f5262; font-weight:500;")
+      )),
+    
+    fluidRow(
+      column(
+        width = 4,
+        
+        # Instructions text:
+        helpText(HTML("<b>Explore the selected bird's family tree.</b><br>
+        • Use the checkboxes to ....<br>
+        • Show recruits.....<br>")),
+        
+        br(),
+        
+       # Add any controls here:
+       
+       
+        # Placeholder further info text:
+        br(),
+        helpText(HTML("Placeholder further info text.<br>
+                    E.g. General info or guide to interpretation of family tree"))
+        
+      ),
+      column(
+        width = 8,
+        uiOutput(ns("tree_ui"))  # output for the pedigree
+        
+      )
+    )
+    
+  
   )
 }
 
