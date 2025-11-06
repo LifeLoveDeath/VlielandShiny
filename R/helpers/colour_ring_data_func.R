@@ -7,6 +7,10 @@ get_colour_rings <- function() {
            "pink/blue", "pink/green", "red", "red/white",
            "white", "white/blue", "yellow", "yellow/black")
   
+  code <- c("bl", "bw", "gr", "al", "or",
+            "pb", "pg", "re", "rw",
+            "wh", "wb", "ye", "yb")
+  
   img <- sprintf(
     "<div class='picker-item'>
        <span class='text'>%s</span>
