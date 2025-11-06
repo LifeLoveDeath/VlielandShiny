@@ -6,8 +6,8 @@
 # Or grid?
 
 # Load packages - moved to app.r
-# library(imager)
-# library(grid)
+ library(imager)
+ library(grid)
 
 # Function to specify the three colours and create and save the icon ------------------------------------------------
 # Could update it to accept one colour as well
@@ -63,7 +63,7 @@ create_ring_icon <- function(cols, name,
 
 
 # Create icons -------------------------------
-# The rings: c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black")
+# The rings: c("blue", "blue/white", "green", "metal", "orange", "pink/blue", "pink/green", "red", "red/white", "white", "white/blue", "yellow", "yellow/black", "pink")
 
 # Blue
 create_ring_icon(c("#2986cc", "#2986cc", "#2986cc"), "blue")
@@ -100,6 +100,9 @@ create_ring_icon(c("Yellow", "Yellow", "Yellow"), "yellow")
 
 # Yellow black
 create_ring_icon(c("yellow", "black"), "yellow_black")
+
+# Pink
+create_ring_icon(c("#E0539B", "#E0539B", "#E0539B"), "pink")
 
 
 
