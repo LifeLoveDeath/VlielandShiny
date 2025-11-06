@@ -104,7 +104,8 @@ create_ring_icon(c("yellow", "black"), "yellow_black")
 # Pink
 create_ring_icon(c("#E0539B", "#E0539B", "#E0539B"), "pink")
 
-
+# Green white
+create_ring_icon(c("#3C8558", "white"), "green_white")
 
 
 

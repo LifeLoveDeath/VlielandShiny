@@ -5,11 +5,13 @@
 get_colour_rings <- function() {
   val <- c("blue", "blue/white", "green", "metal", "orange",
            "pink/blue", "pink/green", "red", "red/white",
-           "white", "white/blue", "yellow", "yellow/black")
+           "white", "white/blue", "yellow", "yellow/black", "pink",
+           "green/white")
   
   code <- c("bl", "bw", "gr", "al", "or",
             "pb", "pg", "re", "rw",
-            "wh", "wb", "ye", "yb")
+            "wh", "wb", "ye", "yb", "pi",
+            "gw")
   
   img <- sprintf(
     "<div class='picker-item'>
@@ -20,5 +22,5 @@ get_colour_rings <- function() {
     gsub("/", "_", val)
   )
   
-  data.frame(val = val, img = img, stringsAsFactors = FALSE)
+  data.frame(val = val, code = code, img = img, stringsAsFactors = FALSE)
 }
