@@ -3,16 +3,43 @@
 
 # Setup ----------------------------------------------------
 
-# Load packages 
-# Required packages
-required_packages <- c("shiny", "tidyverse", "dplyr", "bslib", "leaflet", "viridis", "reactable", "shinyjs", "shinyWidgets", "reactable", "DT", "ggpedigree", "ggplot2", "plotly", "imager", "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "bslib", "tools", "shinythemes", "fontawesome", "tibble", "fontawesome", "htmltools")
+# Load packages - for running locally
+## Required packages
+# required_packages <- c(
+#   "shiny", "tidyverse", "dplyr", "bslib", "leaflet", "viridis", "reactable",
+#   "shinyjs", "shinyWidgets", "DT", "ggpedigree", "ggplot2", "plotly", "imager",
+#   "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "tools", "shinythemes",
+#   "fontawesome", "tibble", "htmltools"
+# )
 
-# Install any missing packages
-new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
-if(length(new_packages)) install.packages(new_packages)
+## Install any missing packages
+# new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
+# if(length(new_packages)) install.packages(new_packages)
 
-# Load the packages
-lapply(required_packages, library, character.only = TRUE)
+## Load the packages
+# lapply(required_packages, library, character.only = TRUE)
+
+# Load pakcages for deployment:
+## Explicitly load packages so shinyapps.io detects them
+library(shiny)
+library(tidyverse)
+library(dplyr)
+library(reactable)
+library(leaflet)
+library(bslib)
+library(viridis)
+library(shinyjs)
+library(shinyWidgets)
+library(DT)
+library(ggpedigree)
+library(plotly)
+library(imager)
+library(leaflet.extras2)
+library(leaftime)
+library(leaflet.extras)
+library(shinythemes)
+library(fontawesome)
+library(htmltools)
 
 
 # App UI ---------------------------------------------------
@@ -43,7 +70,7 @@ ui <- div(
       # nioo logo from /www and link to webpage
       tags$a(
         href = "https://nioo.knaw.nl/en", target = "_blank",
-        tags$img(src = "nioo_logo.svg", height = "30px")
+        tags$img(src = "NIOO_logo.svg", height = "30px")
       ),
       # divider line
       div(class = "divider"),
@@ -155,15 +182,16 @@ server <- function(input, output, session) {
   #bs_themer()
   
   # Load data
-  vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
-  location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
+  vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL) # loading dummy data
+  #location.data <- read.csv("data/NestLocationData.csv", row.names = NULL) # loading dummy data
   
   # Real data
   IndividualDataVlieland <- read.csv('data/IndividualDataVlieland.csv', row.names = NULL)
+  location.data <- read.csv("data/location_data.csv", row.names = NULL) # loading real data
   
   # Find individual by colour rings
-  #finder <- birdFinderServer(input, output, vlieland.data, session) # dummy data
-  finder <- birdFinderServer(input, output, IndividualDataVlieland, session) # trying real data
+  #finder <- birdFinderServer(input, output, vlieland.data, session) # feeding in dummy data
+  finder <- birdFinderServer(input, output, IndividualDataVlieland, session) # feeding in real data
   search_results <- finder$search_results
   selected_ring <- finder$selected_ring
   
