@@ -1,4 +1,5 @@
 
+# Processing data to work with app
 
 # Load dummy data
 vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
@@ -10,10 +11,15 @@ location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
 IndividualData <- read.csv("data/IndividualData.csv", row.names = NULL)
 colnames(IndividualData)
 head(IndividualData)
+# Reduce to just Vlieland
+IndividualDataVlieland <- IndividualData[which(IndividualData$RingPopulationName == "Vlieland"), ]
+
+
 BroodData <- read.csv("data/BroodData.csv", row.names = NULL)
+
 ColourNumberRings <- read.csv("data/ColourNumberRings.csv", row.names = NULL)
 head(ColourNumberRings)
-IndividualDataVlieland <- IndividualData[which(IndividualData$RingPopulationName == "Vlieland"), ]
+
 
 
 # Rows of IndividualData where BroodID appears in BroodData
@@ -25,9 +31,16 @@ missing <- IndividualDataVlieland %>%
 
 
 
-# Data prep
 
-# Add ring number to IndividualData
+
+# Data prep ---------------------------------------------------------------
+
+
+## Individual data ---------------------------------------------------------
+
+
+### Add ring number ---------------------------------------------------------
+
 # Just Vlieland data
 IndividualDataVlieland <- IndividualData[which(IndividualData$RingPopulationName == "Vlieland"), ]
 # Ensure both columns are UTF-8
@@ -37,6 +50,7 @@ IndividualDataVlieland <- IndividualDataVlieland %>%
 ColourNumberRings <- ColourNumberRings %>%
   mutate(RingNumber = iconv(RingNumber, from = "", to = "UTF-8"))
 
+# All ring number from ColourNumberRings
 IndividualDataVlieland <- merge(
   IndividualDataVlieland,
   ColourNumberRings,
@@ -45,7 +59,7 @@ IndividualDataVlieland <- merge(
 )
 
 
-# Add individual colour ring cols to IndividualData
+# Split into separate cols for each ring colour
 
 # Define code-to-colour mapping
 colour_map <- c(
@@ -95,11 +109,6 @@ IndividualDataVlieland <- IndividualDataVlieland %>%
   ungroup()
 
 
-colnames(IndividualDataVlieland)
-# Change Species column name
-IndividualDataVlieland <- IndividualDataVlieland %>%
-  rename(Species = SpeciesName)
-
 # Add colour ring combo column:IndividualDataVlieland <- IndividualDataVlieland %>%
 IndividualDataVlieland <- IndividualDataVlieland %>%
   mutate(
@@ -110,7 +119,18 @@ IndividualDataVlieland <- IndividualDataVlieland %>%
   )
 
 
+### Rename columns ----------------------------------------------------------
 
+colnames(IndividualDataVlieland)
+# Change Species column name
+IndividualDataVlieland <- IndividualDataVlieland %>%
+  rename(Species = SpeciesName)
+
+
+
+
+
+### Save IndividualDataVlieland ---------------------------------------------
 
 # Save
 write.csv(IndividualDataVlieland, file = "data/IndividualDataVlieland.csv", row.names = FALSE)
