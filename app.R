@@ -187,7 +187,8 @@ server <- function(input, output, session) {
   
   # Real data
   IndividualDataVlieland <- read.csv('data/IndividualDataVlieland.csv', row.names = NULL)
-  location.data <- read.csv("data/location_data.csv", row.names = NULL) # loading real data
+  location.data <- read.csv("data/location_data.csv", row.names = NULL) 
+  IndividualInfo <- read.csv('data/IndividualInfo.csv', row.names = NULL)
   
   # Find individual by colour rings
   #finder <- birdFinderServer(input, output, vlieland.data, session) # feeding in dummy data
@@ -238,7 +239,7 @@ server <- function(input, output, session) {
   # Generate individual info table
   individualInfoServer(
     id = "individual_info",
-    vlieland.data = vlieland.data,
+    vlieland.data = IndividualInfo,
     selected_ring = selected_ring
   )
 }
