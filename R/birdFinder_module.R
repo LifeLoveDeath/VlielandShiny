@@ -23,6 +23,7 @@ birdFinderUI <- function(id) {
   
   
   colour_rings <- get_colour_rings()
+  colour_rings$val <- trimws(colour_rings$val)
   
   div(
     style = "background-color: #f2f4f5; padding: 5px;",
@@ -128,10 +129,12 @@ birdFinderServer <- function(input, output, data, session) {
     
     # Functions to get colour ring options and matching icons
     colour_rings <- get_colour_rings()
+    colour_rings$val <- trimws(colour_rings$val)
     get_icons <- function(options) {
       row <- match(options, colour_rings$val)
       colour_rings$img[row]
     }
+    
     
     # Filter options for each dropdown based on other selections (excluding it's own selection)
     options_Left1 <- unique(data[
