@@ -149,6 +149,17 @@ IndividualDataVlieland <- IndividualDataVlieland %>%
 
 ## Save IndividualDataVlieland ---------------------------------------------
 
+# Find duplicates
+IndividualDataVlieland %>%
+  count(RingNumber) %>% filter(n > 1)
+
+IndividualDataVlieland %>%
+  filter(RingNumber %in% c("AH...93589", "AK...73457"))
+
+# Remove duplicates
+IndividualDataVlieland <- IndividualDataVlieland %>% distinct()
+
+
 # Save
 write.csv(IndividualDataVlieland, file = "data/IndividualDataVlieland.csv", row.names = FALSE)
 head(as.data.frame(IndividualDataVlieland))
@@ -186,6 +197,7 @@ ring_events <- IndividualDataVlieland %>%
     NestLat = RingLatitude
   )
 ring_events$LayDate <- NA
+ring_events$ClutchSize <- NA
 
 ## Get birth events --------------------------------------------------------
 
@@ -199,7 +211,8 @@ birth_events <- IndividualDataVlieland %>%
     NestNo = BroodNestBox,
     NestLon = BroodLongitude,
     NestLat = BroodLatitude,
-    LayDate = as.Date(LayDate)  # Add the lay date
+    LayDate = as.Date(LayDate),  
+    ClutchSize = ClutchSize 
   ) %>%
   select(RingNumber, Event, Year, Month, NestNo, NestLon, NestLat, LayDate)
 
@@ -218,7 +231,8 @@ female_nests <- BroodData %>%
     NestNo = BroodNestBox,
     NestLon = BroodLongitude,
     NestLat = BroodLatitude,
-    LayDate = LayDate
+    LayDate = LayDate,
+    ClutchSize = ClutchSize
   )
 
 # Male reproduction
@@ -232,7 +246,8 @@ male_nests <- BroodData %>%
     NestNo = BroodNestBox,
     NestLon = BroodLongitude,
     NestLat = BroodLatitude,
-    LayDate = LayDate
+    LayDate = LayDate,
+    ClutchSize = ClutchSize
   )
 
 reproduction_events <- bind_rows(female_nests, male_nests)
@@ -372,9 +387,6 @@ diff_years <- IndividualDataVlieland %>%
 
 # SKIP IF WRONG 
 
-
-library(dplyr)
-
 location_data <- location_data %>%
   group_by(RingNumber) %>%
   mutate(
@@ -405,9 +417,109 @@ location_data <- location_data %>%
 
 
 
+
+
+
+
 ## Save location_data ------------------------------------------------------
 head(location_data)
 
 
 write.csv(location_data, file = "data/location_data.csv", row.names = FALSE)
+
+
+
+
+
+# Individual info ---------------------------------------------------------
+
+# Add individual info to IndividualDataVlieland
+
+
+## --- Number of nest sites used (distinct nest boxes from nest events) ------
+nest_sites <- location_data %>%
+  filter(Event == "nest" & !is.na(NestNo)) %>%
+  group_by(RingNumber) %>%
+  summarise(
+    NumNestSites = n_distinct(NestNo),
+    .groups = "drop"
+  )
+
+
+## --- Number of breeding attempts ------
+breeding_attempts <- BroodData %>%
+  tidyr::pivot_longer(cols = c(RingNumberFemale, RingNumberMale),
+                      names_to = "ParentSex", values_to = "RingNumber") %>%
+  filter(!is.na(RingNumber)) %>%
+  group_by(RingNumber) %>%
+  summarise(
+    BreedingAttempts = n(),
+    .groups = "drop"
+  )
+
+## --- First & last breeding years, breeding span ------
+breeding_years <- BroodData %>%
+  tidyr::pivot_longer(cols = c(RingNumberFemale, RingNumberMale),
+                      names_to = "ParentSex", values_to = "RingNumber") %>%
+  filter(!is.na(RingNumber)) %>%
+  group_by(RingNumber) %>%
+  summarise(
+    FirstBreedingYear = min(BroodYear),
+    LastBreedingYear  = max(BroodYear),
+    BreedingSpan      = LastBreedingYear - FirstBreedingYear,
+    .groups = "drop"
+  )
+
+##  --- Mean clutch size, range, total eggs produced ------
+clutch_stats <- BroodData %>%
+  tidyr::pivot_longer(
+    cols = c(RingNumberFemale, RingNumberMale),
+    names_to = "ParentSex", values_to = "RingNumber"
+  ) %>%
+  filter(!is.na(RingNumber)) %>%
+  group_by(RingNumber) %>%
+  summarise(
+    MeanClutchSize = if (all(is.na(ClutchSize))) NA_real_ else mean(ClutchSize, na.rm = TRUE),
+    MinClutchSize  = if (all(is.na(ClutchSize))) NA_real_ else min(ClutchSize, na.rm = TRUE),
+    MaxClutchSize  = if (all(is.na(ClutchSize))) NA_real_ else max(ClutchSize, na.rm = TRUE),
+    TotalEggs      = if (all(is.na(ClutchSize))) NA_real_ else sum(ClutchSize, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+
+## --- Is mother colour-ringed? ------
+is_mother_color <- IndividualDataVlieland %>%
+  left_join(
+    IndividualDataVlieland %>%
+      select(Mother = RingNumber, MotherRingColour = RingColour),
+    by = c("Mother" = "Mother")
+  ) %>%
+  select(RingNumber, MotherRingColour)
+
+## --- Is father colour-ringed? ------
+is_father_color <- IndividualDataVlieland %>%
+  left_join(
+    IndividualDataVlieland %>%
+      select(Father = RingNumber, FatherRingColour = RingColour),
+    by = c("Father" = "Father")
+  ) %>%
+  select(RingNumber, FatherRingColour)
+
+
+## Combine into one df ------
+IndividualInfo <- IndividualDataVlieland %>%
+  left_join(nest_sites,        by = "RingNumber") %>%
+  left_join(breeding_attempts, by = "RingNumber") %>%
+  left_join(breeding_years,    by = "RingNumber") %>%
+  left_join(clutch_stats,      by = "RingNumber") %>%
+  left_join(is_mother_color,   by = "RingNumber") %>%
+  left_join(is_father_color,   by = "RingNumber")
+
+
+
+# Save individual info df -------------------------------------------------
+# Save
+write.csv(IndividualInfo, file = "data/IndividualInfo.csv", row.names = FALSE)
+head(as.data.frame(IndividualInfo))
+head(as.data.frame(IndividualInfo[!is.na(IndividualInfo$RingColour), ]))
 
