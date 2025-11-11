@@ -423,17 +423,43 @@ genMapServer <- function(id, location.data, selected_ring) {
         # Nest markers
         if ("nest" %in% input$event_filter) {
           nest_data <- data %>% filter(Event == "nest")
+          # Add a column to nest_data for distance label
+          nest_data <- nest_data %>%
+            mutate(
+              DistanceLabel = ifelse(
+                !is.na(DistanceFromPrev_m),
+                paste0(
+                  ifelse(row_number() == 1, 
+                         "Dispersal distance: ", 
+                         "Distance travelled: "),
+                  round(DistanceFromPrev_m, 1), " m"
+                ),
+                ""
+              )
+            )
+          
           if (nrow(nest_data) > 0) {
             m <- m %>% addCircleMarkers(
               lng = nest_data$NestLon, lat = nest_data$NestLat,
-              label = paste0(
-                "Breeding nest: ",
-                ifelse(!is.na(nest_data$Month), paste0(nest_data$Month, " "), ""),
-                nest_data$Year,
-                ifelse(!is.na(nest_data$ClutchSize),
-                       paste0(" (Clutch size: ", nest_data$ClutchSize, ")"),
-                       "")
-              ),
+              # Label just date and clutch size
+              # label = paste0(
+              #   "Breeding nest: ",
+              #   ifelse(!is.na(nest_data$Month), paste0(nest_data$Month, " "), ""),
+              #   nest_data$Year,
+              #   ifelse(!is.na(nest_data$ClutchSize),
+              #          paste0(" (Clutch size: ", nest_data$ClutchSize, ")"),
+              #          "")
+              # ),
+              # Label date clutch size and distance:
+              label = lapply(1:nrow(nest_data), function(i) {
+                HTML(paste0(
+                  "Breeding nest: ",
+                  if(!is.na(nest_data$Month[i])) paste0(nest_data$Month[i], " ") else "",
+                  nest_data$Year[i],
+                  if(!is.na(nest_data$ClutchSize[i])) paste0(" (Clutch size: ", nest_data$ClutchSize[i], ")") else "",
+                  if(nest_data$DistanceLabel[i] != "") paste0("<br>", nest_data$DistanceLabel[i]) else ""
+                ))
+              }),
               color = "#0d0887", fillOpacity = 0.6, opacity = 1, radius = 8, weight = 2
             )
           }

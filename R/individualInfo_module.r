@@ -70,6 +70,11 @@ individualInfoServer <- function(id, vlieland.data, selected_ring) {
     mutate(`ClutchSizeRange` = paste0(`MinClutchSize`, "–", `MaxClutchSize`)) %>%
     ungroup() %>%
     
+    mutate(
+      DispersalDistance_m = round(DispersalDistance_m),
+      TotalDistance_m = round(TotalDistance_m)
+    ) %>%
+    
     # remove min/max columns if you no longer want them
     select(-MinClutchSize, -MaxClutchSize)
   
@@ -78,13 +83,15 @@ individualInfoServer <- function(id, vlieland.data, selected_ring) {
                "BirthYear", "RingYear",
                "MotherRingColour", "FatherRingColour",
                "BreedingAttempts", "NumNestSites", "FirstBreedingYear", "LastBreedingYear",
-               "MeanClutchSize", "ClutchSizeRange", "TotalEggs")]
+               "MeanClutchSize", "ClutchSizeRange", "TotalEggs",
+               "DispersalDistance_m", "TotalDistance_m")]
   
   colnames(df) <- c("Ring Number", "Colour rings", "Species", "Sex",
                     "Birth year", "Ring year", 
                     "Mother", "Father",
                     "Breeding attempts", "Number of nest sites", "First breeding year", "Last breeding year",
-                    "Mean clutch size", "Clutch size range", "Total eggs")
+                    "Mean clutch size", "Clutch size range", "Total eggs",
+                    "Dispersal distance", "Total distance travelled")
   
   # Convert to long
   long <- data.frame(
@@ -96,6 +103,14 @@ individualInfoServer <- function(id, vlieland.data, selected_ring) {
   # Format colour rings
   long[long$Variable == "Colour rings", "Value"] <- 
     gsub("-", ", ", long[long$Variable == "Colour rings", "Value"])
+  
+  
+  # Format distances
+  long$Value[long$Variable == "Dispersal distance" & !is.na(long$Value)] <- 
+    paste0(long$Value[long$Variable == "Dispersal distance" & !is.na(long$Value)], " meters")
+  
+  long$Value[long$Variable == "Total distance travelled" & !is.na(long$Value)] <- 
+    paste0(long$Value[long$Variable == "Total distance travelled" & !is.na(long$Value)], " meters")
   
   
   # Replace any missing data with "unknown"
@@ -110,8 +125,8 @@ individualInfoServer <- function(id, vlieland.data, selected_ring) {
   
   # Identity header from RingNumber
   identity_header <- data.frame(
-    Variable = paste0("Ring number: ", long$Value[long$Variable == "Ring Number"]),
-    Value = "",
+    Variable = "Ring number",
+    Value = long$Value[long$Variable == "Ring Number"],
     stringsAsFactors = FALSE
   )
   
@@ -119,6 +134,7 @@ individualInfoServer <- function(id, vlieland.data, selected_ring) {
   life_history <- long[long$Variable %in% c("Birth year", "Ring year", "Mother", "Father"), ]
   general <- long[long$Variable %in% c("Colour rings","Species","Sex"), ]
   reproduction <- long[long$Variable %in% c("Breeding attempts", "Number of nest sites", "First breeding year", "Last breeding year", "Mean clutch size", "Clutch size range", "Total eggs"), ]
+  dispersal <- long[long$Variable %in% c("Dispersal distance", "Total distance travelled"), ]
   
   # Combine with section headers
   final_long <- rbind(
@@ -127,7 +143,9 @@ individualInfoServer <- function(id, vlieland.data, selected_ring) {
     data.frame(Variable = "Life history", Value = "", stringsAsFactors = FALSE),
     life_history,
     data.frame(Variable = "Reproduction", Value = "", stringsAsFactors = FALSE),
-    reproduction
+    reproduction,
+    data.frame(Variable = "Dispersal", Value = "", stringsAsFactors = FALSE),
+    dispersal
   )
   
   final_long
@@ -148,8 +166,8 @@ individualInfoServer <- function(id, vlieland.data, selected_ring) {
             ordering = FALSE,
             createdRow = JS(
               "function(row, data, dataIndex) {",
-              "  // Highlight section headers (Value is empty)",
-              "  if(data[1] === '') {",
+              "  // Highlight section headers (Value is empty or first row)",
+              "  if(dataIndex === 0 || data[1] === '') {",
               "    $(row).addClass('dt-header-row');",
               "  }",
               "}"

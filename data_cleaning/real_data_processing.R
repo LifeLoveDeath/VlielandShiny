@@ -4,6 +4,7 @@
 library(tidyverse)
 library(dplyr)
 library(lubridate)
+library(geosphere) # distances
 
 
 # Load dummy data
@@ -418,7 +419,32 @@ location_data <- location_data %>%
 
 
 
+## Add distances travelled -------------------------------------------------
 
+# Ensure numeric
+location_data <- location_data %>%
+  mutate(
+    NestLat = as.numeric(NestLat),
+    NestLon = as.numeric(NestLon)
+  )
+
+# Distance from previous nest
+location_data <- location_data %>%
+  filter(Event %in% c("birth", "nest")) %>% 
+  arrange(RingNumber, Year, Month) %>%
+  group_by(RingNumber) %>%
+  mutate(
+    # Previous nest coordinates
+    PrevLon = lag(NestLon),
+    PrevLat = lag(NestLat),
+    # Distance from previous point in meters
+    DistanceFromPrev_m = ifelse(
+      is.na(PrevLon) | is.na(PrevLat), 
+      NA,  # NA if no previous point
+      distHaversine(cbind(PrevLon, PrevLat), cbind(NestLon, NestLat))
+    )
+  ) %>%
+  ungroup()
 
 
 ## Save location_data ------------------------------------------------------
@@ -506,6 +532,47 @@ is_father_color <- IndividualDataVlieland %>%
   select(RingNumber, FatherRingColour)
 
 
+## ---  Dispersal distance: birth → first nest ------
+dispersal <- location_data %>%
+  filter(Event %in% c("birth", "nest")) %>%
+  arrange(RingNumber, Year, Month) %>%
+  group_by(RingNumber) %>%
+  summarise(
+    BirthLon = NestLon[Event == "birth"][1],
+    BirthLat = NestLat[Event == "birth"][1],
+    FirstNestLon = NestLon[Event == "nest"][1],
+    FirstNestLat = NestLat[Event == "nest"][1],
+    .groups = "drop"
+  ) %>%
+  mutate(
+    DispersalDistance_m = ifelse(
+      !is.na(BirthLon) & !is.na(FirstNestLon),
+      distHaversine(cbind(BirthLon, BirthLat), cbind(FirstNestLon, FirstNestLat)),
+      NA
+    )
+  ) %>%
+  select(RingNumber, DispersalDistance_m)
+
+## --- Total distance travelled --------
+total_distance <- location_data %>%
+  filter(Event %in% c("birth", "nest")) %>%
+  arrange(RingNumber, Year, Month) %>%
+  group_by(RingNumber) %>%
+  mutate(
+    PrevLon = lag(NestLon),
+    PrevLat = lag(NestLat),
+    DistanceFromPrev_m = ifelse(
+      is.na(PrevLon) | is.na(PrevLat),
+      0,  # 0 for first move; we'll handle single locations below
+      distHaversine(cbind(PrevLon, PrevLat), cbind(NestLon, NestLat))
+    )
+  ) %>%
+  summarise(
+    TotalDistance_m = if(n() > 1) sum(DistanceFromPrev_m, na.rm = TRUE) else NA_real_,
+    .groups = "drop"
+  )
+
+
 ## Combine into one df ------
 IndividualInfo <- IndividualDataVlieland %>%
   left_join(nest_sites,        by = "RingNumber") %>%
@@ -513,7 +580,9 @@ IndividualInfo <- IndividualDataVlieland %>%
   left_join(breeding_years,    by = "RingNumber") %>%
   left_join(clutch_stats,      by = "RingNumber") %>%
   left_join(is_mother_color,   by = "RingNumber") %>%
-  left_join(is_father_color,   by = "RingNumber")
+  left_join(is_father_color,   by = "RingNumber") %>%
+  left_join(dispersal, by = "RingNumber") %>%
+  left_join(total_distance, by = "RingNumber")
 
 
 
