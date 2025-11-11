@@ -5,8 +5,8 @@
 # library(shiny)
 # library(DT)
 
-vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
-location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
+#vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
+#location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
 
 
 # Functions ----------------------------------
@@ -60,17 +60,31 @@ individualInfoServer <- function(id, vlieland.data, selected_ring) {
   
   df <- vlieland.data[vlieland.data$RingNumber == selected_ring(), ]
   
-  # reorder columns
-  df <- df[, c("RingNumber", "ColourRingCombo", "Species", "Sex",
-               "BirthMonth", "BirthYear", "DeathYear", "Parent1",
-               "Parent2"#, "Nestbox", "Lon", "Lat"
-               )]
+  # Edit cols
+  df <- df %>%
+    # round mean to nearest whole number
+    mutate(`MeanClutchSize` = round(`MeanClutchSize`)) %>%
+    
+    # create a clutch–size range column
+    rowwise() %>%
+    mutate(`ClutchSizeRange` = paste0(`MinClutchSize`, "–", `MaxClutchSize`)) %>%
+    ungroup() %>%
+    
+    # remove min/max columns if you no longer want them
+    select(-MinClutchSize, -MaxClutchSize)
   
-  # rename columns
-  colnames(df) <- c("RingNumber", "Colour rings", "Species", "Sex",
-                    "Birth month", "Birth year", "Death year",
-                    "Parent 1", "Parent 2"#, "Birth nestbox", "Lon", "Lat"
-                    )
+  
+  df <- df[, c("RingNumber", "ColourRingCombo", "Species", "SexText",
+               "BirthYear", "RingYear",
+               "MotherRingColour", "FatherRingColour",
+               "BreedingAttempts", "NumNestSites", "FirstBreedingYear", "LastBreedingYear",
+               "MeanClutchSize", "ClutchSizeRange", "TotalEggs")]
+  
+  colnames(df) <- c("Ring Number", "Colour rings", "Species", "Sex",
+                    "Birth year", "Ring year", 
+                    "Mother", "Father",
+                    "Breeding attempts", "Number of nest sites", "First breeding year", "Last breeding year",
+                    "Mean clutch size", "Clutch size range", "Total eggs")
   
   # Convert to long
   long <- data.frame(
@@ -83,27 +97,28 @@ individualInfoServer <- function(id, vlieland.data, selected_ring) {
   long[long$Variable == "Colour rings", "Value"] <- 
     gsub("-", ", ", long[long$Variable == "Colour rings", "Value"])
   
-  # Expand sex
-  long[long$Variable == "Sex", "Value"] <- ifelse(
-    long[long$Variable == "Sex", "Value"] == "F", "Female",
-    ifelse(long[long$Variable == "Sex", "Value"] == "M", "Male",
-           long[long$Variable == "Sex", "Value"])
+  
+  # Replace any missing data with "unknown"
+  long$Value <- ifelse(
+    is.na(long$Value) | long$Value == "",
+    "Unknown",
+    long$Value
   )
+  
   
   # --- Section headers ---
   
   # Identity header from RingNumber
   identity_header <- data.frame(
-    Variable = paste0("Ring number: ", long$Value[long$Variable == "RingNumber"]),
+    Variable = paste0("Ring number: ", long$Value[long$Variable == "Ring Number"]),
     Value = "",
     stringsAsFactors = FALSE
   )
   
   # Other sections
-  life_history <- long[long$Variable %in% c("Birth month","Birth year","Death year"), ]
-  parents <- long[long$Variable %in% c("Parent 1","Parent 2"), ]
-  #location <- long[long$Variable %in% c("Nestbox","Lon","Lat"), ]
+  life_history <- long[long$Variable %in% c("Birth year", "Ring year", "Mother", "Father"), ]
   general <- long[long$Variable %in% c("Colour rings","Species","Sex"), ]
+  reproduction <- long[long$Variable %in% c("Breeding attempts", "Number of nest sites", "First breeding year", "Last breeding year", "Mean clutch size", "Clutch size range", "Total eggs"), ]
   
   # Combine with section headers
   final_long <- rbind(
@@ -111,10 +126,8 @@ individualInfoServer <- function(id, vlieland.data, selected_ring) {
     general,
     data.frame(Variable = "Life history", Value = "", stringsAsFactors = FALSE),
     life_history,
-    data.frame(Variable = "Parents", Value = "", stringsAsFactors = FALSE),
-    parents#,
-    #data.frame(Variable = "Location", Value = "", stringsAsFactors = FALSE),
-    #location
+    data.frame(Variable = "Reproduction", Value = "", stringsAsFactors = FALSE),
+    reproduction
   )
   
   final_long
