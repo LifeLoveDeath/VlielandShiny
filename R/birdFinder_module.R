@@ -90,10 +90,10 @@ birdFinderUI <- function(id) {
           
           # Example search text
           helpText(HTML("<b>Try searching:</b><br>
-                  Left leg - top ring: <b>blue/white</b><br>
-                  Left leg - bottom ring: <b>pink/green</b><br>
+                  Left leg - top ring: <b>blue</b><br>
+                  Left leg - bottom ring: <b>red/white</b><br>
                   Right leg - top ring: <b>metal</b><br>
-                  Right leg - bottom ring: <b>blue</b>")),
+                  Right leg - bottom ring: <b>red/white</b>")),
           # Diagram placeholder
           helpText(HTML("<i>(Placeholder: Diagram showing order of rings on bird)</i>"))
         ),
