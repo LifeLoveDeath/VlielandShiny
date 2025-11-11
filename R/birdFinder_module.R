@@ -201,17 +201,17 @@ birdFinderServer <- function(input, output, data, session) {
   search_results <- reactive({
     filtered <- data
     
-    if (input$Left1 != "" && input$Left1 != "clear") {
-      filtered <- filtered[filtered$ColourRingLeft1 == input$Left1, ]
+    if (input$Left1 != "" && !is.na(input$Left1)) {
+      filtered <- filtered[!is.na(filtered$ColourRingLeft1) & filtered$ColourRingLeft1 == input$Left1, ]
     }
-    if (input$Left2 != "" && input$Left2 != "clear") {
-      filtered <- filtered[filtered$ColourRingLeft2 == input$Left2, ]
+    if (input$Left2 != "" && !is.na(input$Left2)) {
+      filtered <- filtered[!is.na(filtered$ColourRingLeft2) & filtered$ColourRingLeft2 == input$Left2, ]
     }
-    if (input$Right1 != "" && input$Right1 != "clear") {
-      filtered <- filtered[filtered$ColourRingRight1 == input$Right1, ]
+    if (input$Right1 != "" && !is.na(input$Right1)) {
+      filtered <- filtered[!is.na(filtered$ColourRingRight1) & filtered$ColourRingRight1 == input$Right1,]
     }
-    if (input$Right2 != "" && input$Right2 != "clear") {
-      filtered <- filtered[filtered$ColourRingRight2 == input$Right2, ]
+    if (input$Right2 != "" && !is.na(input$Right2)) {
+      filtered <- filtered[!is.na(filtered$ColourRingRight2) & filtered$ColourRingRight2 == input$Right2, ]
     }
     
     if (nrow(filtered) < 5) {
@@ -219,6 +219,9 @@ birdFinderServer <- function(input, output, data, session) {
     } else {
       return(NULL)  # No results or too many results: return NULL
     }
+    
+    # Return all matching rows for now while error checking
+    # return(filtered)
   })
   
   # Function to generate action buttons to add to rows
@@ -388,17 +391,17 @@ birdFinderSearchServer <- function(input, output, data, session) {
   search_results <- reactive({
     filtered <- data
     
-    if (input$Left1 != "" && input$Left1 != "clear") {
-      filtered <- filtered[filtered$ColourRingLeft1 == input$Left1, ]
+    if (input$Left1 != "" && !is.na(input$Left1)) {
+      filtered <- filtered[!is.na(filtered$ColourRingLeft1) & filtered$ColourRingLeft1 == input$Left1, ]
     }
-    if (input$Left2 != "" && input$Left2 != "clear") {
-      filtered <- filtered[filtered$ColourRingLeft2 == input$Left2, ]
+    if (input$Left2 != "" && !is.na(input$Left2)) {
+      filtered <- filtered[!is.na(filtered$ColourRingLeft2) & filtered$ColourRingLeft2 == input$Left2, ]
     }
-    if (input$Right1 != "" && input$Right1 != "clear") {
-      filtered <- filtered[filtered$ColourRingRight1 == input$Right1, ]
+    if (input$Right1 != "" && !is.na(input$Right1)) {
+      filtered <- filtered[!is.na(filtered$ColourRingRight1) & filtered$ColourRingRight1 == input$Right1, ]
     }
-    if (input$Right2 != "" && input$Right2 != "clear") {
-      filtered <- filtered[filtered$ColourRingRight2 == input$Right2, ]
+    if (input$Right2 != "" && !is.na(input$Right2)) {
+      filtered <- filtered[!is.na(filtered$ColourRingRight2) & filtered$ColourRingRight2 == input$Right2, ]
     }
     
     if (nrow(filtered) < 5) {
@@ -406,6 +409,9 @@ birdFinderSearchServer <- function(input, output, data, session) {
     } else {
       return(NULL)  # No results or too many results: return NULL
     }
+    
+    # Return all rows for error checking
+    #return(filtered)
   })
   
   # Function to generate action buttons to add to rows
@@ -489,11 +495,3 @@ birdFinderSearchServer <- function(input, output, data, session) {
   
   
 }
-
-
-
-
-
-
-
-
