@@ -96,6 +96,9 @@ IndividualDataVlieland <- IndividualDataVlieland %>%
 
 
 colnames(IndividualDataVlieland)
+# Change Species column name
+IndividualDataVlieland <- IndividualDataVlieland %>%
+  rename(Species = SpeciesName)
 
 # Add colour ring combo column:IndividualDataVlieland <- IndividualDataVlieland %>%
 IndividualDataVlieland <- IndividualDataVlieland %>%
@@ -110,4 +113,5 @@ IndividualDataVlieland <- IndividualDataVlieland %>%
 
 
 # Save
-write.csv(IndividualDataVlieland, file = "data/IndividualDataVlieland.csv")
+write.csv(IndividualDataVlieland, file = "data/IndividualDataVlieland.csv", row.names = FALSE)
+
