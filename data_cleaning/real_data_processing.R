@@ -517,6 +517,19 @@ IndividualInfo <- IndividualDataVlieland %>%
 
 
 
+
+
+## Add sex_text ------
+IndividualInfo <- IndividualInfo %>%
+  mutate(SexText = case_when(
+    Sex == 1 ~ "Female",
+    Sex == 2 ~ "Male",
+    Sex == 0 ~ "Unknown",
+    TRUE     ~ "Unknown"  # any other number
+  ))
+
+
+
 # Save individual info df -------------------------------------------------
 # Save
 write.csv(IndividualInfo, file = "data/IndividualInfo.csv", row.names = FALSE)
