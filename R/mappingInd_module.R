@@ -407,7 +407,14 @@ genMapServer <- function(id, location.data, selected_ring) {
           if (nrow(birth_data) > 0) {
             m <- m %>% addCircleMarkers(
               lng = birth_data$NestLon, lat = birth_data$NestLat,
-              label = paste0("Birth nest: ", birth_data$Month, " ", birth_data$Year),
+              label = paste0(
+                "Birth nest: ",
+                ifelse(!is.na(birth_data$Month), paste0(birth_data$Month, " "), ""),
+                birth_data$Year,
+                ifelse(!is.na(birth_data$ClutchSize),
+                       paste0(" (Birth clutch size: ", birth_data$ClutchSize, ")"),
+                       "")
+                ),
               color = "#e97158", fillOpacity = 0.9, opacity = 1, radius = 8, weight = 2
             )
           }
@@ -419,7 +426,14 @@ genMapServer <- function(id, location.data, selected_ring) {
           if (nrow(nest_data) > 0) {
             m <- m %>% addCircleMarkers(
               lng = nest_data$NestLon, lat = nest_data$NestLat,
-              label = paste0("Breeding nest: ", nest_data$Month, " ", nest_data$Year),
+              label = paste0(
+                "Breeding nest: ",
+                ifelse(!is.na(nest_data$Month), paste0(nest_data$Month, " "), ""),
+                nest_data$Year,
+                ifelse(!is.na(nest_data$ClutchSize),
+                       paste0(" (Clutch size: ", nest_data$ClutchSize, ")"),
+                       "")
+              ),
               color = "#0d0887", fillOpacity = 0.6, opacity = 1, radius = 8, weight = 2
             )
           }
