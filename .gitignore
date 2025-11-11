@@ -5,3 +5,6 @@
 *.DS_Storedata/*.csv
 .DS_Store
 rsconnect/
+# Large data files
+data/location_data.csv
+data/IndividualInfo.csv
