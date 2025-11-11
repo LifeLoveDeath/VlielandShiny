@@ -5,7 +5,7 @@
 
 # Load packages 
 # Required packages
-required_packages <- c("shiny", "tidyverse", "bslib", "leaflet", "viridis", "reactable", "shinyjs", "shinyWidgets", "reactable", "DT", "ggpedigree", "ggplot2", "plotly", "imager", "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "bslib", "tools", "shinythemes", "fontawesome", "tibble", "fontawesome", "htmltools")
+required_packages <- c("shiny", "tidyverse", "dplyr", "bslib", "leaflet", "viridis", "reactable", "shinyjs", "shinyWidgets", "reactable", "DT", "ggpedigree", "ggplot2", "plotly", "imager", "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "bslib", "tools", "shinythemes", "fontawesome", "tibble", "fontawesome", "htmltools")
 
 # Install any missing packages
 new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
@@ -158,8 +158,12 @@ server <- function(input, output, session) {
   vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
   location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
   
+  # Real data
+  IndividualDataVlieland <- read.csv('data/IndividualDataVlieland.csv', row.names = NULL)
+  
   # Find individual by colour rings
-  finder <- birdFinderServer(input, output, vlieland.data, session)
+  #finder <- birdFinderServer(input, output, vlieland.data, session) # dummy data
+  finder <- birdFinderServer(input, output, IndividualDataVlieland, session) # trying real data
   search_results <- finder$search_results
   selected_ring <- finder$selected_ring
   
