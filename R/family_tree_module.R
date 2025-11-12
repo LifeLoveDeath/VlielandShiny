@@ -212,7 +212,7 @@ get_family_subset <- function(ped.data, focal_id, brood_data) {
 # Test
 #family_data <- get_family_subset(ped.data, "F...999544", BroodData) # no half sibs
 #family_data <- get_family_subset(ped.data, "AH...68076", BroodData) # this one has half sibs
-
+# focal_id <- "AH...68076"
 
 
 
@@ -241,8 +241,13 @@ familyTreeUI <- function(id) {
         
        # Add any controls here:
        # Checkboxes to show/hide recruit and half siblings
-       checkboxInput(ns("show_recruits"), "Show recruits", value = TRUE),
-       checkboxInput(ns("show_half_sibs"), "Show half-siblings", value = TRUE),
+       fluidRow(
+         column(
+           width = 12,
+           checkboxInput(ns("show_half_sibs"), "Show half siblings", value = TRUE),
+           checkboxInput(ns("show_recruits"), "Show recruits only", value = FALSE)
+         )
+       ),
        
         # Placeholder further info text:
         br(),
@@ -273,7 +278,7 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
     # Reactive: subset family tree data for focal bird
     family_data <- reactive({
       req(selected_ring())
-      get_family_subset(ped.data, selected_ring())
+      get_family_subset(ped.data, selected_ring(), BroodData)
     })
     
     
@@ -285,6 +290,15 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
     
     output$pedigree_plot <- renderPlotly({
       fam <- family_data()
+      
+      # Apply filters from checkboxes
+      fam <- fam %>%
+        filter(
+          # Half siblings filter
+          (input$show_half_sibs | is.na(sib_type) | sib_type == "full_sib"),
+          # Recruit filter
+          ( !input$show_recruits | is_recruit )
+        )
       
       
       # Add tooltip text
@@ -334,6 +348,7 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
       nodes <- p$data %>%
         left_join(fam %>% select(RingNumber, focal), 
                   by = "RingNumber")
+      
     
       # Define focal
       focal_id <- selected_ring()
