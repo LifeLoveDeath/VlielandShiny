@@ -26,7 +26,9 @@ individualInfoUI <- function(id) {
         width = 12,
         br(),
         h4("Bird profile", style = "color:#3f5262; font-weight:500;"),
-        p("The table below summarizes the key information about this bird including...")
+        p(HTML("The table below summarizes key information about this individual bird, 
+        including its early life, reproduction, and dispersal patterns.<br>
+        <em>Hover over any term to see a short explanation of what it means.</em>"))
       )
     ),
     
@@ -39,6 +41,26 @@ individualInfoUI <- function(id) {
         color: #3f5262 !important;
       }
     ")),
+    
+    # Formatting for tooltips:
+    tags$style(HTML("
+  [title] {
+    position: relative;
+  }
+  [title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    background: #3f5262;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    bottom: 100%;
+    left: 50%;
+    white-space: nowrap;
+    z-index: 1000;
+    font-size: 0.85em;
+  }
+")),
     
     #Table output
     uiOutput(ns("indInfoTab_ui"))
@@ -140,7 +162,7 @@ individualInfoServer <- function(id, vlieland.data, selected_ring) {
   final_long <- rbind(
     identity_header,
     general,
-    data.frame(Variable = "Life history", Value = "", stringsAsFactors = FALSE),
+    data.frame(Variable = "Early life", Value = "", stringsAsFactors = FALSE),
     life_history,
     data.frame(Variable = "Reproduction", Value = "", stringsAsFactors = FALSE),
     reproduction,
@@ -148,7 +170,30 @@ individualInfoServer <- function(id, vlieland.data, selected_ring) {
     dispersal
   )
   
+  # Add tooltips to explain terms
+  # Add tooltips to explain terms
+  final_long <- final_long %>%
+    mutate(
+      Variable = case_when(
+        Variable == "Birth year" ~ '<span title="Year the bird hatched">Birth year</span>',
+        Variable == "Ring year" ~ '<span title="Year the bird was ringed for identification">Ring year</span>',
+        Variable == "Breeding attempts" ~ '<span title="Number of breeding attempts recorded for this bird">Breeding attempts</span>',
+        Variable == "Number of nest sites" ~ '<span title="Total distinct nest sites used by this bird">Number of nest sites</span>',
+        Variable == "First breeding year" ~ '<span title="Year of the bird’s first recorded breeding attempt">First breeding year</span>',
+        Variable == "Last breeding year" ~ '<span title="Most recent year the bird was recorded breeding">Last breeding year</span>',
+        Variable == "Mean clutch size" ~ '<span title="Average number of eggs per breeding attempt">Mean clutch size</span>',
+        Variable == "Clutch size range" ~ '<span title="Smallest to largest clutch sizes recorded">Clutch size range</span>',
+        Variable == "Dispersal distance" ~ '<span title="Distance from the bird’s birth nest to its first breeding site">Dispersal distance</span>',
+        Variable == "Total distance travelled" ~ '<span title="Cumulative distance between all known nest sites">Total distance travelled</span>',
+        TRUE ~ Variable
+      )
+    )
+  
+  
+  
   final_long
+  
+
 })
     
     
@@ -157,6 +202,7 @@ individualInfoServer <- function(id, vlieland.data, selected_ring) {
       renderDT({
         datatable(
           individual.data(),
+          escape = FALSE,
           rownames = FALSE,
           colnames = NULL,  # remove "Variable" / "Value"
           options = list(
