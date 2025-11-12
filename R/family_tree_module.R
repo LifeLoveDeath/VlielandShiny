@@ -9,25 +9,22 @@
 
 # Load packages - moved to app.r
 # library(shiny)
- library(ggpedigree)
- library(ggplot2)
- library(viridis)
- library(tidyverse)
- library(kinship2)
- library(plotly)
- library(RColorBrewer)
+# library(ggpedigree)
+# library(ggplot2)
+# library(tidyverse)
+# library(kinship2)
+# library(plotly)
+# library(RColorBrewer)
 
 # Old dummy data
 #vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
 #location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
 
 # Real data
-IndividualDataVlieland <- read.csv('data/IndividualDataVlieland.csv', row.names = NULL)
-location.data <- read.csv("data/location_data.csv", row.names = NULL) 
-IndividualInfo <- read.csv('data/IndividualInfo.csv', row.names = NULL)
+#IndividualDataVlieland <- read.csv('data/IndividualDataVlieland.csv', row.names = NULL)
+#location.data <- read.csv("data/location_data.csv", row.names = NULL) 
+#IndividualInfo <- read.csv('data/IndividualInfo.csv', row.names = NULL)
 
-ped.data <- IndividualDataVlieland 
-head(as.data.frame(ped.data))
 
 
 
@@ -172,21 +169,7 @@ get_family_subset <- function(ped.data, focal_id, brood_data) {
   
   
   # Step 8: Are they a recruit?
-  
-  # Recruit flag (appears as breeder)
-  # fam.data <- fam.data %>%
-  #   mutate(
-  # is_recruit = if (!is.null(ped.data) && !is.null(brood_data)) {
-  #   RingNumber %in% unique(c(
-  #     ped.data$Mother,
-  #     ped.data$Father,
-  #     brood_data$RingNumberFemale,
-  #     brood_data$RingNumberMale
-  #   ))
-  # } else {
-  #   FALSE
-  # }
-  # )
+
   fam.data <- fam.data %>%
     mutate(
       is_recruit = RingNumber %in% unique(c(
@@ -280,14 +263,14 @@ familyTreeUI <- function(id) {
 
 # Server --------------------------------------
 # Server function
-familyTreeServer <- function(id, ped.data, selected_ring) {
+familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
     # Reactive: subset family tree data for focal bird
     family_data <- reactive({
       req(selected_ring())
-      get_family_subset(ped.data, selected_ring(), BroodData)
+      get_family_subset(ped.data, selected_ring(), brood.data)
     })
     
     
@@ -381,7 +364,7 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
         geom_point(
           data = nodes,
           aes(x = x_pos, y = y_pos, text = tooltip_text, shape = factor(sex)),
-          size = 7, fill = "white", colour = "white",
+          size = 6, fill = "white", colour = "white",
           #alpha = other_nodes$node_alpha
           #show.legend = TRUE  # needed for shape legend
         ) +
@@ -389,7 +372,7 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
       
       
       # Separate out nodes
-      #focal_id <- selected_ring()
+      focal_id <- selected_ring()
       clutch_nodes <- nodes %>% filter(!is.na(BroodID))
       other_nodes   <- nodes %>% filter(is.na(BroodID))
       focal_node    <- nodes %>% filter(RingNumber == focal_id)

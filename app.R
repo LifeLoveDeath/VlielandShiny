@@ -9,7 +9,7 @@ required_packages <- c(
   "shiny", "tidyverse", "dplyr", "bslib", "leaflet", "viridis", "reactable",
   "shinyjs", "shinyWidgets", "DT", "ggpedigree", "ggplot2", "plotly", "imager",
   "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "tools", "shinythemes",
-  "fontawesome", "tibble", "htmltools", "RColorBrewer"
+  "fontawesome", "tibble", "htmltools", "RColorBrewer", "kinship2"
 )
 
 ## Install any missing packages
@@ -41,6 +41,7 @@ lapply(required_packages, library, character.only = TRUE)
 # library(fontawesome)
 # library(htmltools)
 # library(RColorBrewer)
+# library(kinship2)
 
 
 # App UI ---------------------------------------------------
@@ -188,6 +189,7 @@ server <- function(input, output, session) {
   
   # Real data
   IndividualDataVlieland <- read.csv('data/IndividualDataVlieland.csv', row.names = NULL)
+  BroodData <- read.csv("data/BroodData.csv", row.names = NULL)
   location.data <- read.csv("data/location_data.csv", row.names = NULL) 
   IndividualInfo <- read.csv('data/IndividualInfo.csv', row.names = NULL)
   
@@ -234,6 +236,7 @@ server <- function(input, output, session) {
   familyTreeServer(
     id = "pedigree_module",
     ped.data = IndividualDataVlieland,
+    brood.data = BroodData,
     selected_ring = selected_ring
   )
   
