@@ -15,6 +15,7 @@
  library(tidyverse)
  library(kinship2)
  library(plotly)
+ library(RColorBrewer)
 
 # Old dummy data
 #vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
@@ -435,47 +436,59 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
         tooltip_columns = c("RingNumber", "BirthYear", "RingYear", "BroodID")
       )
       
+      
       nodes <- p$data %>%
         left_join(fam %>% select(RingNumber, BroodID, sex, focal), 
                   by = "RingNumber")
     
+      # Define focal
+      focal_id <- selected_ring()
       
       # Separate clutch nodes from others
       clutch_nodes <- nodes %>% filter(!is.na(BroodID.x))
       other_nodes   <- nodes %>% filter(is.na(BroodID.x))
+      focal_node   <- nodes %>% filter(RingNumber == focal_id)
       
-      # Add base plot + colouring
+      # get palette for BroodID
+      brood_levels <- sort(unique(clutch_nodes$BroodID.x))
+      pal <- brewer.pal(n = max(3, length(brood_levels)), name = "Paired")[1:length(brood_levels)]
+      
+      # make a named palette
+      names(pal) <- brood_levels
+      
       a <- p +
-        # all other nodes in beige
+        # other nodes in beige
         geom_point(
           data = other_nodes,
           aes(x = x_pos, y = y_pos, shape = factor(sex.x), text = tooltip_text),
-          size = 6, fill = "#F0E1C6", colour = "black"
+          size = 6, fill = "#F0E1C6", colour = "#F0E1C6"
         ) +
-        # clutch nodes coloured with viridis
+        # clutch nodes with matching fill and border
         geom_point(
           data = clutch_nodes,
+          aes(x = x_pos, y = y_pos, fill = factor(BroodID.x), colour = factor(BroodID.x), shape = factor(sex.x), text = tooltip_text),
+          size = 6,
+          show.legend = FALSE
+        ) +
+        # focal node larger with thick border
+        geom_point(
+          data = focal_node,
           aes(x = x_pos, y = y_pos, fill = factor(BroodID.x), shape = factor(sex.x), text = tooltip_text),
-          size = 6, colour = "black", show.legend = FALSE
+          size = 12,
+          stroke = 1,
+          show.legend = FALSE,
+          colour = "black"
         ) +
         scale_shape_manual(
           name = "Sex",
           values = c("2" = 21, "1" = 22, "3" = 23),
           labels = c("Female", "Male", "Unknown")
         ) +
-        #scale_fill_viridis_d(option = "C", end = 0.85) 
-        scale_fill_brewer(palette = "Paired")
+        scale_fill_manual(values = pal) +
+        scale_colour_manual(values = pal)
       
-      # Highlight focal bird (thick black border)
-      focal_id <- selected_ring()
-      a <- a +
-        geom_point(
-          data = nodes %>% filter(RingNumber == focal_id),
-          aes(x = x_pos, y = y_pos),
-          shape = 8, size = 6, fill = NA#,
-          #colour = "black", stroke = 2
-        )
       
+      # Render interactive plot
       ggplotly(a, tooltip = "text") %>%
         style(showlegend = FALSE) %>%
         layout(dragmode = "pan") %>%   # sets default click-drag to pan

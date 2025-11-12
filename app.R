@@ -9,12 +9,12 @@ required_packages <- c(
   "shiny", "tidyverse", "dplyr", "bslib", "leaflet", "viridis", "reactable",
   "shinyjs", "shinyWidgets", "DT", "ggpedigree", "ggplot2", "plotly", "imager",
   "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "tools", "shinythemes",
-  "fontawesome", "tibble", "htmltools"
+  "fontawesome", "tibble", "htmltools", "RColorBrewer"
 )
 
 ## Install any missing packages
 new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
-if(length(new_packages)) install.packages(new_packages)
+if(length(new_packages)) install.packages(new_packages, repos = "https://cloud.r-project.org")
 
 ## Load the packages
 lapply(required_packages, library, character.only = TRUE)
@@ -40,6 +40,7 @@ lapply(required_packages, library, character.only = TRUE)
 # library(shinythemes)
 # library(fontawesome)
 # library(htmltools)
+# library(RColorBrewer)
 
 
 # App UI ---------------------------------------------------
@@ -182,7 +183,7 @@ server <- function(input, output, session) {
   #bs_themer()
   
   # Load data
-  vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL) # loading dummy data
+  #vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL) # loading dummy data
   #location.data <- read.csv("data/NestLocationData.csv", row.names = NULL) # loading dummy data
   
   # Real data
@@ -232,7 +233,7 @@ server <- function(input, output, session) {
   # Generate pedigree
   familyTreeServer(
     id = "pedigree_module",
-    ped.data = vlieland.data,
+    ped.data = IndividualDataVlieland,
     selected_ring = selected_ring
   )
   
