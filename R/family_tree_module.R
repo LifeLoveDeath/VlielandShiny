@@ -9,18 +9,24 @@
 
 # Load packages - moved to app.r
 # library(shiny)
-# library(ggpedigree)
-# library(ggplot2)
-# library(viridis)
+ library(ggpedigree)
+ library(ggplot2)
+ library(viridis)
  library(tidyverse)
-# library(plotly)
+ library(kinship2)
+ library(plotly)
 
+# Old dummy data
+#vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
+#location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
 
-vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
-location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
+# Real data
+IndividualDataVlieland <- read.csv('data/IndividualDataVlieland.csv', row.names = NULL)
+location.data <- read.csv("data/location_data.csv", row.names = NULL) 
+IndividualInfo <- read.csv('data/IndividualInfo.csv', row.names = NULL)
 
-ped.data <- vlieland.data 
-
+ped.data <- IndividualDataVlieland 
+head(as.data.frame(ped.data))
 
 # notes
 # ggepedigree is interactive (plotly) but not very customisable (e.g. can't colour in the focal)
@@ -36,71 +42,293 @@ ped.data <- vlieland.data
 
 
 # Function to get focal individual family tree data ---------------
+# get_family_subset <- function(ped.data, focal_id) {
+#   # Parents
+#   parents <- ped.data[ped.data$RingNumber == focal_id, c("Mother", "Father")]
+#   mother <- parents$Mother
+#   father <- parents$Father
+#   
+#   # Children
+#   children <- ped.data$RingNumber[ped.data$Mother %in% focal_id | ped.data$Father %in% focal_id]
+#   
+#   # Siblings (share at least one parent)
+#   siblings <- ped.data$RingNumber[ped.data$Mother %in% c(mother, father) | ped.data$Father %in% c(mother, father)]
+#   
+#   # Combine all IDs
+#   ids <- unique(c(focal_id, mother, father, children, siblings))
+#   
+#   # Subset the pedigree
+#   fam.data <- ped.data[ped.data$RingNumber %in% ids, ]
+#   
+#   # Add placeholder rows for missing parents
+#   all_parents <- unique(c(fam.data$Mother, fam.data$Father))
+#   missing_parents <- setdiff(all_parents, fam.data$RingNumber)
+#   missing_parents <- missing_parents[!is.na(missing_parents)]
+#   
+#   if (length(missing_parents) > 0) {
+#     get_parent_sex <- function(id, df) {
+#       in_father <- id %in% df$Mother
+#       in_mother <- id %in% df$Father
+#       
+#       if (in_father && !in_mother) return(2)   # male
+#       if (in_mother && !in_father) return(1)   # female
+#       return(NA)                         
+#     }
+#     
+#     sex_vals <- vapply(missing_parents, get_parent_sex, numeric(1), df = fam.data)
+#     sex_vals[is.na(sex_vals)] <- 0   # fill unknown with 0
+#     
+#     missing_rows <- data.frame(
+#       RingNumber       = missing_parents,
+#       Mother           = NA_character_,
+#       Father           = NA_character_,
+#       BroodID          = NA,
+#       Sex              = as.numeric(sex_vals),     
+#       RingYear         = NA,
+#       BirthYear        = NA,
+#       RingPopulationName = NA_character_,
+#       RingNestBox      = NA_character_,
+#       RingLatitude     = NA,
+#       RingLongitude    = NA,
+#       Species          = NA_character_,
+#       RingColour       = NA_character_,
+#       ColourRingLeft1  = NA_character_,
+#       ColourRingLeft2  = NA_character_,
+#       ColourRingRight1 = NA_character_,
+#       ColourRingRight2 = NA_character_,
+#       ColourRingCombo  = NA_character_,
+#       stringsAsFactors = FALSE
+#     )
+#     
+#     fam.data <- bind_rows(fam.data, missing_rows)
+#   }
+#   
+#   # Deal with missing parents (where one parent is missing)
+#     # Fill in missing parents with unique placeholder IDs
+#     for(parent_type in c("Mother", "Father")) {
+#       missing <- fam.data[[parent_type]][!fam.data[[parent_type]] %in% fam.data$RingNumber & !is.na(fam.data[[parent_type]])]
+#       for(id in missing) {
+#         # Determine sex
+#         sex_val <- if(parent_type == "Father") 2 else 1
+#         # Add placeholder row if it doesn't exist
+#         if(!id %in% fam.data$RingNumber) {
+#           fam.data <- bind_rows(fam.data,
+#                                 data.frame(
+#                                   RingNumber = id,
+#                                   Mother = NA_character_,
+#                                   Father = NA_character_,
+#                                   Sex = sex_val,
+#                                   BirthYear = NA,
+#                                   BroodID = NA,
+#                                   stringsAsFactors = FALSE
+#                                 )
+#           )
+#         }
+#       }
+#     }
+#   
+#   # Handle completely NA parents
+#   fam.data$Mother[is.na(fam.data$Mother)] <- paste0("UnknownMother_", fam.data$RingNumber)
+#   fam.data$Father[is.na(fam.data$Father)] <- paste0("UnknownFather_", fam.data$RingNumber)
+#   
+#   # Add rows for these unique NA parents
+#   missing_moms <- unique(fam.data$Mother[grepl("^UnknownMother_", fam.data$Mother)])
+#   for(mom in missing_moms){
+#     if(!mom %in% fam.data$RingNumber){
+#       fam.data <- bind_rows(fam.data,
+#                             data.frame(
+#                               RingNumber = mom,
+#                               Mother = NA_character_,
+#                               Father = NA_character_,
+#                               Sex = 1,
+#                               BirthYear = NA,
+#                               BroodID = NA,
+#                               stringsAsFactors = FALSE
+#                             )
+#       )
+#     }
+#   }
+#   
+#   missing_dads <- unique(fam.data$Father[grepl("^UnknownFather_", fam.data$Father)])
+#   for(dad in missing_dads){
+#     if(!dad %in% fam.data$RingNumber){
+#       fam.data <- bind_rows(fam.data,
+#                             data.frame(
+#                               RingNumber = dad,
+#                               Mother = NA_character_,
+#                               Father = NA_character_,
+#                               Sex = 2,
+#                               BirthYear = NA,
+#                               BroodID = NA,
+#                               stringsAsFactors = FALSE
+#                             )
+#       )
+#     }
+#   }
+#   
+#   # Create a copy of Sex
+#   fam.data$sex <- as.integer(fam.data$Sex)
+#   fam.data$Sex <- as.integer(fam.data$Sex)
+#   
+#   fam.data$focal <- ifelse(fam.data$RingNumber == focal_id, TRUE, NA)
+#   
+#   fam.data
+# }
+
+focal_id <- "F...999544"
 get_family_subset <- function(ped.data, focal_id) {
-  # Parents
-  parents <- ped.data[ped.data$RingNumber == focal_id, c("Parent1", "Parent2")]
-  p1 <- parents$Parent1
-  p2 <- parents$Parent2
+
+  # Step 1: Find parents
+
+  focal_row <- ped.data %>% filter(RingNumber == focal_id)
+  focal <- ped.data %>% filter(RingNumber == focal_id)
+  brood <- focal_row$BroodID
+  mother <- focal_row$Mother
+  father <- focal_row$Father
+
   
-  # Children
-  children <- ped.data$RingNumber[ped.data$Parent1 %in% focal_id | ped.data$Parent2 %in% focal_id]
+  # Step 2: Find children
+
+  children <- ped.data %>% filter(Mother == focal_id | Father == focal_id) %>% pull(RingNumber)
   
-  # Siblings (share at least one parent)
-  siblings <- ped.data$RingNumber[ped.data$Parent1 %in% c(p1, p2) | ped.data$Parent2 %in% c(p1, p2)]
+
+  # Step 3: Find siblings
+
+  # All siblings - share at least one parent = too many
+  siblings <- ped.data %>%
+    filter(
+      ( !is.na(Mother) & Mother %in% mother ) |
+        ( !is.na(Father) & Father %in% father )
+    ) %>%
+    pull(RingNumber)
   
-  # Combine all IDs
-  ids <- unique(c(focal_id, p1, p2, children, siblings))
+  # Full siblings only (same BroodID)
+  #  siblings <- ped.data %>% 
+  #    filter(BroodID == brood & RingNumber != focal_id)
+  # siblings <- siblings$RingNumber
   
-  # Subset the pedigree
-  fam.data <- ped.data[ped.data$RingNumber %in% ids, ]
+
+  # Step 4: Combine IDs and subset
+
+  ids <- unique(c(focal_id, mother, father, children, siblings))
+  fam.data <- ped.data %>% filter(RingNumber %in% ids)
+
   
-  # Add placeholder rows for missing parents
-  all_parents <- unique(c(fam.data$Parent1, fam.data$Parent2))
+  # Step 5: Add missing parents as unique placeholders
+
+  all_parents <- unique(c(fam.data$Mother, fam.data$Father))
   missing_parents <- setdiff(all_parents, fam.data$RingNumber)
   missing_parents <- missing_parents[!is.na(missing_parents)]
   
-  if (length(missing_parents) > 0) {
-    get_parent_sex <- function(id, df) {
-      in_dad <- id %in% df$Parent1
-      in_mom <- id %in% df$Parent2
-      
-      if (in_dad && !in_mom) return(1)   # male
-      if (in_mom && !in_dad) return(2)   # female
-      return(NA)                         # ambiguous or both
-    }
+  if(length(missing_parents) > 0){
+    # Determine Sex of each missing parent
+    sex_vals <- sapply(missing_parents, function(id){
+      if(id %in% fam.data$Father) return(2)    # male
+      if(id %in% fam.data$Mother) return(1)    # female
+      return(0)                                # unknown (should not occur)
+    })
     
-    sex_vals <- vapply(missing_parents, get_parent_sex, numeric(1), df = fam.data)
-    
+    # Build missing parent rows
     missing_rows <- data.frame(
-      RingNumber      = missing_parents,
-      Parent1         = NA_character_,
-      Parent2         = NA_character_,
-      BirthYear       = NA_integer_,
-      DeathYear       = NA_integer_,
-      Sex             = NA,
-      sex             = sex_vals,
-      ColourRingCombo = NA,
-      ColourRingLeft1 = NA,
-      ColourRingLeft2 = NA,
-      ColourRingRight1= NA,
-      ColourRingRight2= NA,
-      Species         = NA
+      RingNumber        = missing_parents,
+      Mother            = NA_character_,
+      Father            = NA_character_,
+      BroodID           = NA_integer_,
+      Sex               = as.integer(sex_vals),
+      RingYear          = NA_integer_,
+      BirthYear         = NA_integer_,
+      RingPopulationName= NA_character_,
+      RingNestBox       = NA_character_,
+      RingLatitude      = NA_real_,
+      RingLongitude     = NA_real_,
+      Species           = NA_character_,
+      RingColour        = NA_character_,
+      ColourRingLeft1   = NA_character_,
+      ColourRingLeft2   = NA_character_,
+      ColourRingRight1  = NA_character_,
+      ColourRingRight2  = NA_character_,
+      ColourRingCombo   = NA_character_,
+      stringsAsFactors  = FALSE
     )
     
     fam.data <- bind_rows(fam.data, missing_rows)
   }
   
-  fam.data$focal <- ifelse(fam.data$RingNumber == focal_id, TRUE, NA)
+
+  # Step 6: Fill any remaining NA parents with unique IDs
+
+  # Step 6: Fill NA parents with unique per-brood IDs
+  fam.data <- fam.data %>%
+    group_by(BroodID) %>%
+    mutate(
+      Mother = ifelse(is.na(Mother) & !is.na(BroodID), paste0("UnknownMother_", BroodID), Mother),
+      Father = ifelse(is.na(Father) & !is.na(BroodID), paste0("UnknownFather_", BroodID), Father)
+    ) %>%
+    ungroup()
   
+  # Add rows for these unknown parents (one per unique placeholder)
+  missing_moms <- setdiff(unique(fam.data$Mother[grepl("^UnknownMother_", fam.data$Mother)]), fam.data$RingNumber)
+  missing_dads <- setdiff(unique(fam.data$Father[grepl("^UnknownFather_", fam.data$Father)]), fam.data$RingNumber)
+  
+  if(length(missing_moms) > 0){
+    fam.data <- bind_rows(fam.data,
+                          data.frame(
+                            RingNumber = missing_moms,
+                            Mother     = NA_character_,
+                            Father     = NA_character_,
+                            BroodID    = NA_integer_,
+                            Sex        = 1L,  # female
+                            stringsAsFactors = FALSE
+                          ))
+  }
+  
+  if(length(missing_dads) > 0){
+    fam.data <- bind_rows(fam.data,
+                          data.frame(
+                            RingNumber = missing_dads,
+                            Mother     = NA_character_,
+                            Father     = NA_character_,
+                            BroodID    = NA_integer_,
+                            Sex        = 2L,  # male
+                            stringsAsFactors = FALSE
+                          ))
+  }
+  
+
+  # Step 7: Add kinship2-compatible sex columns
+
+  fam.data <- fam.data %>%
+    mutate(
+      # Original Sex: 1=female, 2=male, 0=unknown
+      sex = case_when(
+        Sex == 2 ~ 1L,      # male -> 1
+        Sex == 1 ~ 2L,      # female -> 2
+        TRUE     ~ 3L        # unknown -> 3
+      ),
+      sex_text = case_when(
+        Sex == 2 ~ "male",
+        Sex == 1 ~ "female",
+        TRUE     ~ "unknown"
+      ),
+      focal = RingNumber == focal_id
+    )
+  
+  # Return cleaned family dataset
   fam.data
 }
 
 
-family_data <- get_family_subset(ped.data, "RN00402")
+
+family_data <- get_family_subset(ped.data, "F...999544")
 
 
-
-
+# Error checking sex codes
+# family_data <- fixParents(
+#   id = ped.data[["RingNumber"]], 
+#   dadid = ped.data[["Father"]], 
+#   momid = ped.data[["Mother"]], 
+#   sex = ped.data[["Sex"]]
+# )
 
 
 # UI -----------------------------------------
@@ -176,9 +404,9 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
         mutate(
           tooltip_text = paste0(
             "RingNumber: ", RingNumber, "\n",
-            "Clutch: ", clutchID, "\n",
-            "Birth: ", BirthMonth, ", ", BirthYear, "\n",
-            "Death: ", DeathYear
+            "Clutch: ", BroodID, "\n",
+            "Birth Year: ", BirthYear, "\n",
+            "Ring year: ", RingYear
           )
         )
       
@@ -189,8 +417,9 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
         fam,
         #famID = "RingNumber",  # each individual as its own familyID here
         personID = "RingNumber",
-        dadID = "Parent1",
-        momID = "Parent2",
+        code_male = 1,
+        dadID = "Father",
+        momID = "Mother",
         sex_color_include = FALSE,  # we want clutch colours, not sex colours
         config = list(
           label_include = TRUE,
@@ -203,17 +432,17 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
           label_text_angle = -30,
           return_static = TRUE
         ),
-        tooltip_columns = c("RingNumber", "BirthYear", "BirthMonth", "DeathYear",  "clutchID")
+        tooltip_columns = c("RingNumber", "BirthYear", "RingYear", "BroodID")
       )
       
       nodes <- p$data %>%
-        left_join(fam %>% select(RingNumber, clutchID, sex, focal), 
+        left_join(fam %>% select(RingNumber, BroodID, sex, focal), 
                   by = "RingNumber")
     
       
       # Separate clutch nodes from others
-      clutch_nodes <- nodes %>% filter(!is.na(clutchID.x))
-      other_nodes   <- nodes %>% filter(is.na(clutchID.x))
+      clutch_nodes <- nodes %>% filter(!is.na(BroodID.x))
+      other_nodes   <- nodes %>% filter(is.na(BroodID.x))
       
       # Add base plot + colouring
       a <- p +
@@ -226,12 +455,12 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
         # clutch nodes coloured with viridis
         geom_point(
           data = clutch_nodes,
-          aes(x = x_pos, y = y_pos, fill = clutchID.x, shape = factor(sex.x), text = tooltip_text),
+          aes(x = x_pos, y = y_pos, fill = factor(BroodID.x), shape = factor(sex.x), text = tooltip_text),
           size = 6, colour = "black", show.legend = FALSE
         ) +
         scale_shape_manual(
           name = "Sex",
-          values = c("0" = 21, "1" = 22, "NA" = 23),
+          values = c("2" = 21, "1" = 22, "3" = 23),
           labels = c("Female", "Male", "Unknown")
         ) +
         #scale_fill_viridis_d(option = "C", end = 0.85) 
@@ -249,7 +478,7 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
       
       ggplotly(a, tooltip = "text") %>%
         style(showlegend = FALSE) %>%
-        layout(dragmode = "pan") %>%   # <-- sets default click-drag to pan
+        layout(dragmode = "pan") %>%   # sets default click-drag to pan
         config(
           displaylogo = FALSE,
           modeBarButtonsToRemove = c(
