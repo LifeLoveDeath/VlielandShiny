@@ -33,7 +33,7 @@ head(as.data.frame(ped.data))
 
 # Function to get focal individual family tree data ---------------
 
-get_family_subset <- function(ped.data, focal_id) {
+get_family_subset <- function(ped.data, focal_id, brood_data) {
 
   # Step 1: Find parents
 
@@ -170,13 +170,48 @@ get_family_subset <- function(ped.data, focal_id) {
       focal = RingNumber == focal_id
     )
   
+  
+  # Step 8: Are they a recruit?
+  
+  # Recruit flag (appears as breeder)
+  fam.data <- fam.data %>%
+    mutate(
+  is_recruit = if (!is.null(ped.data) && !is.null(brood_data)) {
+    RingNumber %in% unique(c(
+      ped.data$Mother,
+      ped.data$Father,
+      brood_data$RingNumberFemale,
+      brood_data$RingNumberMale
+    ))
+  } else {
+    FALSE
+  }
+  )
+  
+  
+  # Step 9: are they are half or full sibling?
+  
+  fam.data <- fam.data %>%
+    mutate(
+      sib_type = case_when(
+        RingNumber == focal_id ~ NA_character_,  # focal itself
+        !is.na(BroodID) & BroodID == focal_row$BroodID & RingNumber != focal_id ~ "full_sib",
+        ( (!is.na(Mother) & Mother == focal_row$Mother & Father != focal_row$Father & !is.na(Father)) |
+            (!is.na(Father) & Father == focal_row$Father & Mother != focal_row$Mother & !is.na(Mother)) ) ~ "half_sib",
+        TRUE ~ NA_character_
+      )
+    )
+
+
   # Return cleaned family dataset
   fam.data
+  
 }
 
 
 # Test
-#family_data <- get_family_subset(ped.data, "F...999544")
+#family_data <- get_family_subset(ped.data, "F...999544", BroodData) # no half sibs
+#family_data <- get_family_subset(ped.data, "AH...68076", BroodData) # this one has half sibs
 
 
 
@@ -205,7 +240,9 @@ familyTreeUI <- function(id) {
         br(),
         
        # Add any controls here:
-       
+       # Checkboxes to show/hide recruit and half siblings
+       checkboxInput(ns("show_recruits"), "Show recruits", value = TRUE),
+       checkboxInput(ns("show_half_sibs"), "Show half-siblings", value = TRUE),
        
         # Placeholder further info text:
         br(),
