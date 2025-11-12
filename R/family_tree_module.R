@@ -29,154 +29,10 @@ IndividualInfo <- read.csv('data/IndividualInfo.csv', row.names = NULL)
 ped.data <- IndividualDataVlieland 
 head(as.data.frame(ped.data))
 
-# notes
-# ggepedigree is interactive (plotly) but not very customisable (e.g. can't colour in the focal)
-# kinship2/pedtools - notinteractive but more customisable so could be controlled using shiny tickboxes etc. to change data and redraw tree
-# pedtool has these:
-# Add/remove/extract individuals
-#The functions below are used to modify an existing ped object by adding/removing individuals, or extracting a sub-pedigree. For details, see ?ped_modify.
-#addChildren(), with special cases addSon(), addDaughter(), addChild()
-#addParents()
-#removeIndividuals()
-#branch()
-#subset()
 
 
 # Function to get focal individual family tree data ---------------
-# get_family_subset <- function(ped.data, focal_id) {
-#   # Parents
-#   parents <- ped.data[ped.data$RingNumber == focal_id, c("Mother", "Father")]
-#   mother <- parents$Mother
-#   father <- parents$Father
-#   
-#   # Children
-#   children <- ped.data$RingNumber[ped.data$Mother %in% focal_id | ped.data$Father %in% focal_id]
-#   
-#   # Siblings (share at least one parent)
-#   siblings <- ped.data$RingNumber[ped.data$Mother %in% c(mother, father) | ped.data$Father %in% c(mother, father)]
-#   
-#   # Combine all IDs
-#   ids <- unique(c(focal_id, mother, father, children, siblings))
-#   
-#   # Subset the pedigree
-#   fam.data <- ped.data[ped.data$RingNumber %in% ids, ]
-#   
-#   # Add placeholder rows for missing parents
-#   all_parents <- unique(c(fam.data$Mother, fam.data$Father))
-#   missing_parents <- setdiff(all_parents, fam.data$RingNumber)
-#   missing_parents <- missing_parents[!is.na(missing_parents)]
-#   
-#   if (length(missing_parents) > 0) {
-#     get_parent_sex <- function(id, df) {
-#       in_father <- id %in% df$Mother
-#       in_mother <- id %in% df$Father
-#       
-#       if (in_father && !in_mother) return(2)   # male
-#       if (in_mother && !in_father) return(1)   # female
-#       return(NA)                         
-#     }
-#     
-#     sex_vals <- vapply(missing_parents, get_parent_sex, numeric(1), df = fam.data)
-#     sex_vals[is.na(sex_vals)] <- 0   # fill unknown with 0
-#     
-#     missing_rows <- data.frame(
-#       RingNumber       = missing_parents,
-#       Mother           = NA_character_,
-#       Father           = NA_character_,
-#       BroodID          = NA,
-#       Sex              = as.numeric(sex_vals),     
-#       RingYear         = NA,
-#       BirthYear        = NA,
-#       RingPopulationName = NA_character_,
-#       RingNestBox      = NA_character_,
-#       RingLatitude     = NA,
-#       RingLongitude    = NA,
-#       Species          = NA_character_,
-#       RingColour       = NA_character_,
-#       ColourRingLeft1  = NA_character_,
-#       ColourRingLeft2  = NA_character_,
-#       ColourRingRight1 = NA_character_,
-#       ColourRingRight2 = NA_character_,
-#       ColourRingCombo  = NA_character_,
-#       stringsAsFactors = FALSE
-#     )
-#     
-#     fam.data <- bind_rows(fam.data, missing_rows)
-#   }
-#   
-#   # Deal with missing parents (where one parent is missing)
-#     # Fill in missing parents with unique placeholder IDs
-#     for(parent_type in c("Mother", "Father")) {
-#       missing <- fam.data[[parent_type]][!fam.data[[parent_type]] %in% fam.data$RingNumber & !is.na(fam.data[[parent_type]])]
-#       for(id in missing) {
-#         # Determine sex
-#         sex_val <- if(parent_type == "Father") 2 else 1
-#         # Add placeholder row if it doesn't exist
-#         if(!id %in% fam.data$RingNumber) {
-#           fam.data <- bind_rows(fam.data,
-#                                 data.frame(
-#                                   RingNumber = id,
-#                                   Mother = NA_character_,
-#                                   Father = NA_character_,
-#                                   Sex = sex_val,
-#                                   BirthYear = NA,
-#                                   BroodID = NA,
-#                                   stringsAsFactors = FALSE
-#                                 )
-#           )
-#         }
-#       }
-#     }
-#   
-#   # Handle completely NA parents
-#   fam.data$Mother[is.na(fam.data$Mother)] <- paste0("UnknownMother_", fam.data$RingNumber)
-#   fam.data$Father[is.na(fam.data$Father)] <- paste0("UnknownFather_", fam.data$RingNumber)
-#   
-#   # Add rows for these unique NA parents
-#   missing_moms <- unique(fam.data$Mother[grepl("^UnknownMother_", fam.data$Mother)])
-#   for(mom in missing_moms){
-#     if(!mom %in% fam.data$RingNumber){
-#       fam.data <- bind_rows(fam.data,
-#                             data.frame(
-#                               RingNumber = mom,
-#                               Mother = NA_character_,
-#                               Father = NA_character_,
-#                               Sex = 1,
-#                               BirthYear = NA,
-#                               BroodID = NA,
-#                               stringsAsFactors = FALSE
-#                             )
-#       )
-#     }
-#   }
-#   
-#   missing_dads <- unique(fam.data$Father[grepl("^UnknownFather_", fam.data$Father)])
-#   for(dad in missing_dads){
-#     if(!dad %in% fam.data$RingNumber){
-#       fam.data <- bind_rows(fam.data,
-#                             data.frame(
-#                               RingNumber = dad,
-#                               Mother = NA_character_,
-#                               Father = NA_character_,
-#                               Sex = 2,
-#                               BirthYear = NA,
-#                               BroodID = NA,
-#                               stringsAsFactors = FALSE
-#                             )
-#       )
-#     }
-#   }
-#   
-#   # Create a copy of Sex
-#   fam.data$sex <- as.integer(fam.data$Sex)
-#   fam.data$Sex <- as.integer(fam.data$Sex)
-#   
-#   fam.data$focal <- ifelse(fam.data$RingNumber == focal_id, TRUE, NA)
-#   
-#   fam.data
-# }
 
-focal_id <- "F...999544"
 get_family_subset <- function(ped.data, focal_id) {
 
   # Step 1: Find parents
@@ -268,13 +124,13 @@ get_family_subset <- function(ped.data, focal_id) {
     ungroup()
   
   # Add rows for these unknown parents (one per unique placeholder)
-  missing_moms <- setdiff(unique(fam.data$Mother[grepl("^UnknownMother_", fam.data$Mother)]), fam.data$RingNumber)
-  missing_dads <- setdiff(unique(fam.data$Father[grepl("^UnknownFather_", fam.data$Father)]), fam.data$RingNumber)
+  missing_mothers <- setdiff(unique(fam.data$Mother[grepl("^UnknownMother_", fam.data$Mother)]), fam.data$RingNumber)
+  missing_fathers <- setdiff(unique(fam.data$Father[grepl("^UnknownFather_", fam.data$Father)]), fam.data$RingNumber)
   
-  if(length(missing_moms) > 0){
+  if(length(missing_mothers) > 0){
     fam.data <- bind_rows(fam.data,
                           data.frame(
-                            RingNumber = missing_moms,
+                            RingNumber = missing_mothers,
                             Mother     = NA_character_,
                             Father     = NA_character_,
                             BroodID    = NA_integer_,
@@ -283,10 +139,10 @@ get_family_subset <- function(ped.data, focal_id) {
                           ))
   }
   
-  if(length(missing_dads) > 0){
+  if(length(missing_fathers) > 0){
     fam.data <- bind_rows(fam.data,
                           data.frame(
-                            RingNumber = missing_dads,
+                            RingNumber = missing_fathers,
                             Mother     = NA_character_,
                             Father     = NA_character_,
                             BroodID    = NA_integer_,
@@ -319,17 +175,10 @@ get_family_subset <- function(ped.data, focal_id) {
 }
 
 
+# Test
+#family_data <- get_family_subset(ped.data, "F...999544")
 
-family_data <- get_family_subset(ped.data, "F...999544")
 
-
-# Error checking sex codes
-# family_data <- fixParents(
-#   id = ped.data[["RingNumber"]], 
-#   dadid = ped.data[["Father"]], 
-#   momid = ped.data[["Mother"]], 
-#   sex = ped.data[["Sex"]]
-# )
 
 
 # UI -----------------------------------------
@@ -400,14 +249,17 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
     output$pedigree_plot <- renderPlotly({
       fam <- family_data()
       
+      
       # Add tooltip text
       fam <- fam %>%
         mutate(
+          RNText = ifelse(grepl("^Unknown", RingNumber), "Unknown", RingNumber),
           tooltip_text = paste0(
-            "RingNumber: ", RingNumber, "\n",
-            "Clutch: ", BroodID, "\n",
-            "Birth Year: ", BirthYear, "\n",
-            "Ring year: ", RingYear
+            "RingNumber: ", RNText,
+            ifelse(!is.na(BroodID), paste0("\nClutch: ", BroodID), ""),
+            ifelse((sex != 3), paste0("\nSex: ", sex_text), ""),
+            ifelse(!is.na(BirthYear), paste0("\nBirth Year: ", BirthYear), ""),
+            ifelse(!is.na(RingYear), paste0("\nRing year: ", RingYear), "")
           )
         )
       
@@ -416,81 +268,89 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
       # Base ggPedigreeInteractive plot
       p <- ggPedigreeInteractive(
         fam,
-        #famID = "RingNumber",  # each individual as its own familyID here
         personID = "RingNumber",
-        code_male = 1,
         dadID = "Father",
         momID = "Mother",
         sex_color_include = FALSE,  # we want clutch colours, not sex colours
         config = list(
-          label_include = TRUE,
-          label_column = "RingNumber",
           point_size = 6,
           segment_linewidth = 0.5,
-          label_text_size = 3,
-          label_nudge_y = 0.25,
-          label_nudge_x = .1,
-          label_text_angle = -30,
+          #label_text_size = 3,
+          #label_nudge_y = 0.25,
+          #label_nudge_x = .1,
+          #label_text_angle = -30,
+          #label_include = FALSE,
           return_static = TRUE
         ),
-        tooltip_columns = c("RingNumber", "BirthYear", "RingYear", "BroodID")
+        tooltip_columns = c("RNText", "BirthYear", "RingYear", "BroodID", "Sex_text")
       )
+      # Remove guides - they're wrong?
+      p <- p + guides(shape = "none", fill = "none", colour = "none")
+      p <- p +
+        guides(shape = "none", fill = "none", colour = "none") +
+        scale_shape_identity() +
+        scale_fill_identity() +
+        scale_colour_identity()
       
       
+      # Get node location data to overlay shapes etc. using ggplot
       nodes <- p$data %>%
-        left_join(fam %>% select(RingNumber, BroodID, sex, focal), 
+        left_join(fam %>% select(RingNumber, focal), 
                   by = "RingNumber")
     
       # Define focal
       focal_id <- selected_ring()
       
       # Separate clutch nodes from others
-      clutch_nodes <- nodes %>% filter(!is.na(BroodID.x))
-      other_nodes   <- nodes %>% filter(is.na(BroodID.x))
+      clutch_nodes <- nodes %>% filter(!is.na(BroodID))
+      other_nodes   <- nodes %>% filter(is.na(BroodID))
       focal_node   <- nodes %>% filter(RingNumber == focal_id)
       
       # get palette for BroodID
-      brood_levels <- sort(unique(clutch_nodes$BroodID.x))
+      brood_levels <- sort(unique(clutch_nodes$BroodID))
       pal <- brewer.pal(n = max(3, length(brood_levels)), name = "Paired")[1:length(brood_levels)]
       
       # make a named palette
       names(pal) <- brood_levels
       
+      
       a <- p +
         # other nodes in beige
         geom_point(
           data = other_nodes,
-          aes(x = x_pos, y = y_pos, shape = factor(sex.x), text = tooltip_text),
-          size = 6, fill = "#F0E1C6", colour = "#F0E1C6"
+          aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
+          size = 6, fill = "#F0E1C6", colour = "#F0E1C6"#,
+          #show.legend = TRUE  # needed for shape legend
         ) +
         # clutch nodes with matching fill and border
         geom_point(
           data = clutch_nodes,
-          aes(x = x_pos, y = y_pos, fill = factor(BroodID.x), colour = factor(BroodID.x), shape = factor(sex.x), text = tooltip_text),
-          size = 6,
-          show.legend = FALSE
+          aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
+          fill = pal[as.character(clutch_nodes$BroodID)],
+          colour = pal[as.character(clutch_nodes$BroodID)],
+          size = 6#,
+          #show.legend = FALSE
         ) +
         # focal node larger with thick border
         geom_point(
           data = focal_node,
-          aes(x = x_pos, y = y_pos, fill = factor(BroodID.x), shape = factor(sex.x), text = tooltip_text),
-          size = 12,
-          stroke = 1,
-          show.legend = FALSE,
-          colour = "black"
+          aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
+          fill = pal[as.character(focal_node$BroodID)],
+          colour = "black",
+          size = 8, stroke = 1#,
+          #show.legend = FALSE
         ) +
         scale_shape_manual(
-          name = "Sex",
-          values = c("2" = 21, "1" = 22, "3" = 23),
+          name = "sex",
+          values = c("2" = 21, "1" = 22, "3" = 23),  # circle, square, diamond
           labels = c("Female", "Male", "Unknown")
         ) +
-        scale_fill_manual(values = pal) +
-        scale_colour_manual(values = pal)
+        guides( fill = "none", colour = "none", size = "none")
       
       
       # Render interactive plot
       ggplotly(a, tooltip = "text") %>%
-        style(showlegend = FALSE) %>%
+        #style(showlegend = FALSE) %>%
         layout(dragmode = "pan") %>%   # sets default click-drag to pan
         config(
           displaylogo = FALSE,
