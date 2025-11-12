@@ -19,7 +19,7 @@ if(length(new_packages)) install.packages(new_packages, repos = "https://cloud.r
 ## Load the packages
 lapply(required_packages, library, character.only = TRUE)
 
-# Load pakcages for deployment:
+# Load packages for deployment:
 ## Explicitly load packages so shinyapps.io detects them
 # library(shiny)
 # library(tidyverse)
