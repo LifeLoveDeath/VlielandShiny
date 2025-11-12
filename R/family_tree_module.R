@@ -174,19 +174,28 @@ get_family_subset <- function(ped.data, focal_id, brood_data) {
   # Step 8: Are they a recruit?
   
   # Recruit flag (appears as breeder)
+  # fam.data <- fam.data %>%
+  #   mutate(
+  # is_recruit = if (!is.null(ped.data) && !is.null(brood_data)) {
+  #   RingNumber %in% unique(c(
+  #     ped.data$Mother,
+  #     ped.data$Father,
+  #     brood_data$RingNumberFemale,
+  #     brood_data$RingNumberMale
+  #   ))
+  # } else {
+  #   FALSE
+  # }
+  # )
   fam.data <- fam.data %>%
     mutate(
-  is_recruit = if (!is.null(ped.data) && !is.null(brood_data)) {
-    RingNumber %in% unique(c(
-      ped.data$Mother,
-      ped.data$Father,
-      brood_data$RingNumberFemale,
-      brood_data$RingNumberMale
-    ))
-  } else {
-    FALSE
-  }
-  )
+      is_recruit = RingNumber %in% unique(c(
+        ped.data$Mother,
+        ped.data$Father,
+        brood_data$RingNumberFemale,
+        brood_data$RingNumberMale
+      ))
+    )
   
   
   # Step 9: are they are half or full sibling?
@@ -292,14 +301,65 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
       fam <- family_data()
       
       # Apply filters from checkboxes
+      # Siblings
       fam <- fam %>%
         filter(
           # Half siblings filter
-          (input$show_half_sibs | is.na(sib_type) | sib_type == "full_sib"),
-          # Recruit filter
-          ( !input$show_recruits | is_recruit )
+          (input$show_half_sibs | is.na(sib_type) | sib_type == "full_sib")
         )
       
+      # for testing
+      # fam <- fam %>%
+      #   filter(
+      #     # Half siblings filter
+      #     (is.na(sib_type) | sib_type == "full_sib")
+      #   )
+      
+      # Define palette first
+      brood_levels <- sort(unique(fam$BroodID))
+      pal <- brewer.pal(n = max(3, length(brood_levels)), "Paired")[1:length(brood_levels)]
+      names(pal) <- brood_levels
+      
+      # Assign alpha and fill based on checkbox + recruit status
+      fam <- fam %>%
+        mutate(
+          # Alpha logic
+          node_alpha = case_when(
+            input$show_recruits & is_recruit ~ 1,
+            input$show_recruits & !is_recruit ~ 0.8,
+            TRUE ~ 1
+          ),
+          # Fill color logic
+          node_fill = case_when(
+            input$show_recruits & is_recruit ~ ifelse(!is.na(BroodID),
+                                                      pal[as.character(BroodID)],
+                                                      "#F0E1C6"),  # beige for non-clutch recruits
+            input$show_recruits & !is_recruit ~ "#D3D3D3",         # grey for non-recruits
+            TRUE ~ ifelse(!is.na(BroodID),
+                          pal[as.character(BroodID)],
+                          "#F0E1C6")                               # beige when not showing recruits
+          )
+        )
+      
+      # For testing
+      # fam <- fam %>%
+      #   mutate(
+      #     node_alpha = 1,
+      #     node_fill  = pal[as.character(BroodID)])
+
+      # # Set alpha and fill based on recruits and checkbox
+      # fam <- fam %>%
+      #   mutate(
+      #     node_alpha = ifelse(input$show_recruits, ifelse(is_recruit, 1, 0.7), 1),
+      #     node_fill  = ifelse(input$show_recruits, ifelse(is_recruit, pal[as.character(BroodID)], "#D3D3D3"), pal[as.character(BroodID)])
+      #   )
+      
+      # For testing
+      # fam <- fam %>%
+      #   mutate(
+      #     node_alpha = ifelse(is_recruit, 1, 0.2),
+      #     node_fill  = ifelse(is_recruit, pal[as.character(BroodID)], "#D3D3D3")
+      #   )
       
       # Add tooltip text
       fam <- fam %>%
@@ -313,7 +373,6 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
             ifelse(!is.na(RingYear), paste0("\nRing year: ", RingYear), "")
           )
         )
-      
       
       
       # Base ggPedigreeInteractive plot
@@ -335,69 +394,79 @@ familyTreeServer <- function(id, ped.data, selected_ring) {
         ),
         tooltip_columns = c("RNText", "BirthYear", "RingYear", "BroodID", "Sex_text")
       )
-      # Remove guides - they're wrong?
-      p <- p + guides(shape = "none", fill = "none", colour = "none")
-      p <- p +
-        guides(shape = "none", fill = "none", colour = "none") +
-        scale_shape_identity() +
-        scale_fill_identity() +
-        scale_colour_identity()
       
-      
-      # Get node location data to overlay shapes etc. using ggplot
+      # Get node data to overlay shapes etc. using ggplot
       nodes <- p$data %>%
-        left_join(fam %>% select(RingNumber, focal), 
+        left_join(fam %>% select(RingNumber),
                   by = "RingNumber")
       
-    
-      # Define focal
-      focal_id <- selected_ring()
       
-      # Separate clutch nodes from others
+      # Overlay shapes in white so they are not visible
+      p <- p +
+        geom_point(
+          data = nodes,
+          aes(x = x_pos, y = y_pos, text = tooltip_text, shape = factor(sex)),
+          size = 7, fill = "white", colour = "white",
+          #alpha = other_nodes$node_alpha
+          #show.legend = TRUE  # needed for shape legend
+        ) +
+        guides(shape = "none", fill = "none", colour = "none")
+      
+      
+      
+      # Determine palette for BroodID
+      # brood_levels <- sort(unique(clutch_nodes$BroodID))
+      # pal <- brewer.pal(n = max(3, length(brood_levels)), "Paired")[1:length(brood_levels)]
+      # names(pal) <- brood_levels
+      # 
+      # # Fill in defaults if node_fill / node_alpha are missing
+      # nodes <- nodes %>%
+      #   mutate(
+      #     node_fill  = ifelse(is.na(node_fill),
+      #                         ifelse(!is.na(BroodID), pal[as.character(BroodID)], "#F0E1C6"),
+      #                         node_fill),
+      #     node_alpha = ifelse(is.na(node_alpha), 1, node_alpha)
+      #   )
+      
+      # Separate out nodes
+      #focal_id <- selected_ring()
       clutch_nodes <- nodes %>% filter(!is.na(BroodID))
       other_nodes   <- nodes %>% filter(is.na(BroodID))
-      focal_node   <- nodes %>% filter(RingNumber == focal_id)
+      focal_node    <- nodes %>% filter(RingNumber == focal_id)
       
-      # get palette for BroodID
-      brood_levels <- sort(unique(clutch_nodes$BroodID))
-      pal <- brewer.pal(n = max(3, length(brood_levels)), name = "Paired")[1:length(brood_levels)]
-      
-      # make a named palette
-      names(pal) <- brood_levels
-      
-      
+      # Build plot with dynamic alpha and fill
       a <- p +
-        # other nodes in beige
         geom_point(
           data = other_nodes,
           aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
-          size = 6, fill = "#F0E1C6", colour = "#F0E1C6"#,
-          #show.legend = TRUE  # needed for shape legend
+          fill = other_nodes$node_fill,
+          colour = other_nodes$node_fill,
+          size = 6,
+          alpha = other_nodes$node_alpha
         ) +
-        # clutch nodes with matching fill and border
         geom_point(
           data = clutch_nodes,
           aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
-          fill = pal[as.character(clutch_nodes$BroodID)],
-          colour = pal[as.character(clutch_nodes$BroodID)],
-          size = 6#,
-          #show.legend = FALSE
+          fill = clutch_nodes$node_fill,
+          colour = clutch_nodes$node_fill,
+          size = 6,
+          alpha = clutch_nodes$node_alpha
         ) +
-        # focal node larger with thick border
         geom_point(
           data = focal_node,
           aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
-          fill = pal[as.character(focal_node$BroodID)],
+          fill = focal_node$node_fill,
           colour = "black",
-          size = 8, stroke = 1#,
-          #show.legend = FALSE
+          size = 8,
+          stroke = 1,
+          alpha = focal_node$node_alpha
         ) +
         scale_shape_manual(
           name = "sex",
-          values = c("2" = 21, "1" = 22, "3" = 23),  # circle, square, diamond
+          values = c("2" = 21, "1" = 22, "3" = 23),
           labels = c("Female", "Male", "Unknown")
         ) +
-        guides( fill = "none", colour = "none", size = "none")
+        guides(fill = "none", colour = "none", size = "none")
       
       
       # Render interactive plot
