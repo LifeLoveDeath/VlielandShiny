@@ -19,8 +19,9 @@ if(length(new_packages)) install.packages(new_packages, repos = "https://cloud.r
 ## Load the packages
 lapply(required_packages, library, character.only = TRUE)
 
-# Load packages for deployment:
+# Load packages for deployment
 ## Explicitly load packages so shinyapps.io detects them
+## - this worked for publishing app when above code caused "Shiny application failed (exit status 1)." error
 # library(shiny)
 # library(tidyverse)
 # library(dplyr)
