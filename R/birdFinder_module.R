@@ -89,11 +89,22 @@ birdFinderUI <- function(id) {
           br(),
           
           # Example search text
-          helpText(HTML("<b>Try searching:</b><br>
-                  Left leg - top ring: <b>blue</b><br>
-                  Left leg - bottom ring: <b>red/white</b><br>
-                  Right leg - top ring: <b>metal</b><br>
-                  Right leg - bottom ring: <b>red/white</b>")),
+          # First is good example for mapping
+          # Second is good example for family tree
+          helpText(HTML("<b>Try searching for the following birds:</b><br><br>
+                          
+                          <i>Ring number: F...999544</i><br>
+                          Left leg - top ring: <b>blue</b><br>
+                          Left leg - bottom ring: <b>red/white</b><br>
+                          Right leg - top ring: <b>metal</b><br>
+                          Right leg - bottom ring: <b>red/white</b><br><br>
+                          
+                          <i>Ring number: AH...68076</i><br>
+                          Left leg - top ring: <b>red/white</b><br>
+                          Left leg - bottom ring: <b>metal</b><br>
+                          Right leg - top ring: <b>yellow</b><br>
+                          Right leg - bottom ring: <b>white</b>
+                        ")),
           # Diagram placeholder
           helpText(HTML("<i>(Placeholder: Diagram showing order of rings on bird)</i>"))
         ),
