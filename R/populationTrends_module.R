@@ -137,8 +137,7 @@ populationTrendsUI <- function(id) {
                 checkboxGroupInput(
                   ns("clutch_species_filter"),
                   "Select species:",
-                  choices = str_to_title(unique(BroodData$SpeciesName)),
-                  selected = unique(BroodData$SpeciesName)
+                  choices = NULL
                 ),
                 # Show points checkbox
                 checkboxInput(ns("clutch_show_points"), "Show points", value = TRUE)
@@ -182,6 +181,7 @@ popTrendsServer <- function(id, IndData, BroodData) {
     
     # Initialize species choices dynamically
     observe({
+      req(BroodData)
       species_choices <- str_to_title(unique(BroodData$SpeciesName))
       
       # Update Lay Date species filter
