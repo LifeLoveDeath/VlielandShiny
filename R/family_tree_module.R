@@ -203,8 +203,8 @@ get_family_subset <- function(ped.data, focal_id, brood_data) {
 
 # Test
 #family_data <- get_family_subset(ped.data, "F...999544", BroodData) # no half sibs
-#family_data <- get_family_subset(ped.data, "AH...68076", BroodData) # this one has half sibs
-# focal_id <- "AH...68076"
+#family_data <- get_family_subset(IndividualDataVlieland, "AH...68076", BroodData) # this one has half sibs
+#focal_id <- "AH...68076"
 
 
 
@@ -237,7 +237,7 @@ familyTreeUI <- function(id) {
          column(
            width = 12,
            checkboxInput(ns("show_half_sibs"), "Show half siblings", value = TRUE),
-           checkboxInput(ns("show_recruits"), "Show recruits only", value = FALSE)
+           checkboxInput(ns("show_recruits"), "Colour recruits only", value = FALSE)
          )
        ),
        
@@ -383,7 +383,9 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
           data = other_nodes,
           aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
           fill = other_nodes$node_fill,
-          colour = other_nodes$node_fill,
+          #colour = other_nodes$node_fill,
+          colour = "black",
+          stroke = 0.3,
           size = 6,
           alpha = other_nodes$node_alpha
         ) +
@@ -391,7 +393,9 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
           data = clutch_nodes,
           aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
           fill = clutch_nodes$node_fill,
-          colour = clutch_nodes$node_fill,
+          #colour = clutch_nodes$node_fill,
+          colour = "black",
+          stroke = 0.3,
           size = 6,
           alpha = clutch_nodes$node_alpha
         ) +
@@ -430,6 +434,7 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
             "toImage"
           )
         )
+      
     })
     
   })
