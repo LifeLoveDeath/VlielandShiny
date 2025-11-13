@@ -148,8 +148,9 @@ ui <- div(
     
     ### --- Population trends page -------------------------
     
-    tabPanel("Population trends",
-             populationTrendsUI()
+    tabPanel(
+      "Population trends",
+      populationTrendsUI("popTrends")
     ),
     
     
@@ -247,7 +248,20 @@ server <- function(input, output, session) {
     vlieland.data = IndividualInfo,
     selected_ring = selected_ring
   )
+  
+  
+  # Population trends module
+  popTrendsServer(
+    id = "popTrends",         
+    IndData = IndividualDataVlieland,
+    BroodData = BroodData
+  )
+  
+  
 }
+
+
+
 
 shinyApp(ui, server)
 
