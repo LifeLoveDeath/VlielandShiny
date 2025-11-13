@@ -25,6 +25,13 @@ IndividualDataVlieland <- IndividualData[which(IndividualData$RingPopulationName
 
 
 BroodData <- read.csv("data/BroodData.csv", row.names = NULL)
+head(BroodData)
+# FIXING ERROR - remove this step if needed <-----------
+# One of these is wrong - Year in laydate is 2026 and month is october (next latest month in year is July)
+BroodData <- BroodData[-which(lubridate::year(BroodData$LayDate) != BroodData$BroodYear), ]
+write.csv(BroodData, "data/BroodData.csv", row.names = FALSE)
+
+
 
 ColourNumberRings <- read.csv("data/ColourNumberRings.csv", row.names = NULL)
 head(ColourNumberRings)
