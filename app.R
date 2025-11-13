@@ -5,47 +5,47 @@
 
 # Load packages - for running locally
 ## Required packages
-required_packages <- c(
-  "shiny", "tidyverse", "dplyr", "bslib", "leaflet", "viridis", "reactable",
-  "shinyjs", "shinyWidgets", "DT", "ggpedigree", "ggplot2", "plotly", "imager",
-  "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "tools", "shinythemes",
-  "fontawesome", "tibble", "htmltools", "RColorBrewer", "kinship2"
-)
-
-## Install any missing packages
-new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
-if(length(new_packages)) install.packages(new_packages, repos = "https://cloud.r-project.org")
-
-## Load the packages
-lapply(required_packages, library, character.only = TRUE)
+# required_packages <- c(
+#   "shiny", "tidyverse", "dplyr", "bslib", "leaflet", "viridis", "reactable",
+#   "shinyjs", "shinyWidgets", "DT", "ggpedigree", "ggplot2", "plotly", "imager",
+#   "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "tools", "shinythemes",
+#   "fontawesome", "tibble", "htmltools", "RColorBrewer", "kinship2"
+# )
+# 
+# ## Install any missing packages
+# new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
+# if(length(new_packages)) install.packages(new_packages, repos = "https://cloud.r-project.org")
+# 
+# ## Load the packages
+# lapply(required_packages, library, character.only = TRUE)
 
 # Load packages for deployment
 ## Explicitly load packages so shinyapps.io detects them
 ## - this worked for publishing app when above code caused "Shiny application failed (exit status 1)." error
-# library(shiny)
-# library(tidyverse)
-# library(dplyr)
-# library(reactable)
-# library(leaflet)
-# library(bslib)
-# library(viridis)
-# library(shinyjs)
-# library(shinyWidgets)
-# library(DT)
-# library(ggpedigree)
-# library(plotly)
-# library(imager)
-# library(leaflet.extras2)
-# library(leaftime)
-# library(leaflet.extras)
-# library(shinythemes)
-# library(fontawesome)
-# library(htmltools)
-# library(RColorBrewer)
-# library(kinship2)
+library(shiny)
+library(tidyverse)
+library(dplyr)
+library(reactable)
+library(leaflet)
+library(bslib)
+library(viridis)
+library(shinyjs)
+library(shinyWidgets)
+library(DT)
+library(ggpedigree)
+library(plotly)
+library(imager)
+library(leaflet.extras2)
+library(leaftime)
+library(leaflet.extras)
+library(shinythemes)
+library(fontawesome)
+library(htmltools)
+library(RColorBrewer)
+library(kinship2)
 
 
-# App UI ---------------------------------------------------
+# App UI -----------------------------------------------------
 
 
 ui <- div(
@@ -56,8 +56,12 @@ ui <- div(
   #navbarShinyThemeUI("navbarShinyTheme"),  # use this navbar formatting if using a shiny theme (below)
 
   
-  ## --- Navbar ----------------------------------------------
+  ## --- Navbar -----------------------------------------------
   navbarPage(
+    # To add favicon - not working
+    # header = tags$head(
+    #   tags$link(rel = "icon", type = "image/png", href = "favicon.png")
+    # ),
     #id = "navbar_id",
     position = "fixed-top",
     windowTitle = "Vlieland Great Tits",
