@@ -55,6 +55,16 @@ birdFinderUI <- function(id) {
         # Left column: search inputs
         column(
           width = 4,
+          
+          # Search by RING NUMBER
+          h4("Search using ring number", style = "color:#3f5262; font-weight:500;"),
+          textInput("ring_search", "Search by ring number (optional)",
+                    placeholder = "Enter full or partial ring number"),
+          actionButton("clear_ring_search", "Clear ring number"),
+          br(),
+          br(),
+          
+          # Search by COLOUR RINGS
           h4("Search using colour rings", style = "color:#3f5262; font-weight:500;"),
           helpText(HTML("<b>Use the selectors below to search for a bird by its colour rings:</b><br>
     • Select ring colours <b>top to bottom</b> on each leg.<br>
@@ -134,9 +144,14 @@ birdFinderUI <- function(id) {
 
 birdFinderServer <- function(input, output, data, session) {
   
+  
   # --- Dropdown narrowing ---
+  
   # Reactive observation - triggers output whenever one of the inputs changes
   observe({
+    
+    # Prevent ring number search interferring with dropdown narrowing
+    if (!is.null(input$ring_search) && input$ring_search != "") return()
     
     # Functions to get colour ring options and matching icons
     colour_rings <- get_colour_rings()
@@ -207,13 +222,49 @@ birdFinderServer <- function(input, output, data, session) {
   })
   
   
+  # ---- Clear selection ----
+  # Clear ring number search on clear button click
+  observeEvent(input$clear_ring_search, {
+    updateTextInput(session, "ring_search", value = "")
+  })
+  
+  # Clear dropdowns when a ring number is entered:
+  observeEvent(input$ring_search, {
+    if (!is.null(input$ring_search) && input$ring_search != "") {
+      updatePickerInput(session, "Left1", selected = "")
+      updatePickerInput(session, "Left2", selected = "")
+      updatePickerInput(session, "Right1", selected = "")
+      updatePickerInput(session, "Right2", selected = "")
+    }
+  })
   
   
-  # --- Search logic ---
+  # ---- Search logic ----
   
   # Reactive filtered search results, returns results when fewer than 5 rows
   search_results <- reactive({
     filtered <- data
+    
+    
+    ## ---- Ring number search overrides colour ring selection ----
+    if (!is.null(input$ring_search) && input$ring_search != "") {
+      
+      # term <- trimws(tolower(input$ring_search))
+      # filtered <- filtered[grepl(term, tolower(filtered$RingNumber)), ]
+      
+      # Or to make search work whether user enters the dots or not:
+      term <- trimws(tolower(gsub("\\.", "", input$ring_search)))  # remove dots from user input
+      filtered <- filtered[
+        grepl(term, gsub("\\.", "", tolower(filtered$RingNumber))),  # remove dots from RingNumber
+      ]
+      
+      # Return only when < 5 rows (your original rule)
+      if (nrow(filtered) < 5) return(filtered)
+      return(NULL)
+    }
+    
+    
+    ## ---- Colour ring filtering ----
     
     if (input$Left1 != "" && !is.na(input$Left1)) {
       filtered <- filtered[!is.na(filtered$ColourRingLeft1) & filtered$ColourRingLeft1 == input$Left1, ]
@@ -237,6 +288,11 @@ birdFinderServer <- function(input, output, data, session) {
     # Return all matching rows for now while error checking
     # return(filtered)
   })
+  
+  
+  
+  
+  ## ---- Selection and results ----
   
   # Function to generate action buttons to add to rows
   buttonInput <- function(FUN, len, id, ...) {
