@@ -1,5 +1,11 @@
 
-# Project info page module
+# ----------------------------------------------------------------------
+# Project Info Page Module
+# ----------------------------------------------------------------------
+# Placeholder for the homepage - info about project and app
+# Images and placeholder text taken from website
+# Images must be /www folder
+
 
 
 projectInfoUI <- function(id) {
