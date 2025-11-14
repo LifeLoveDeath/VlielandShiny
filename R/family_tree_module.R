@@ -298,12 +298,19 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
       names(pal) <- brood_levels
       
       # Assign alpha and fill based on checkbox + recruit status
+      # Bypass inputs if running in R
+      if (!exists("input") || is.null(input)) {
+        input <- list(
+          show_recruits = FALSE
+        )
+      }
+      
       fam <- fam %>%
         mutate(
           # Alpha logic
           node_alpha = case_when(
             input$show_recruits & is_recruit ~ 1,
-            input$show_recruits & !is_recruit ~ 0.8,
+            input$show_recruits & !is_recruit ~ 0.4,
             TRUE ~ 1
           ),
           # Fill color logic
@@ -353,22 +360,29 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
         tooltip_columns = c("RNText", "BirthYear", "RingYear", "BroodID", "Sex_text")
       )
       
+      
       # Get node data to overlay shapes etc. using ggplot
       nodes <- p$data %>%
         left_join(fam %>% select(RingNumber),
                   by = "RingNumber")
       
-      
+      # drop NAs
+      nodes <- nodes %>%
+        filter(sex %in% c(1, 2, 3)) %>%     # keep only valid shapes
+        mutate(sex = as.character(sex))     # ensure matching to scale names
+      nodes$Sex <- NULL
+       
       # Overlay shapes in white so they are not visible
       p <- p +
         geom_point(
-          data = nodes,
+          data = nodes %>% filter(sex %in% c(1,2,3)),
           aes(x = x_pos, y = y_pos, text = tooltip_text, shape = factor(sex)),
           size = 6, fill = "white", colour = "white",
           #alpha = other_nodes$node_alpha
           #show.legend = TRUE  # needed for shape legend
         ) +
         guides(shape = "none", fill = "none", colour = "none")
+      
       
       
       # Separate out nodes
@@ -380,7 +394,7 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
       # Build plot with dynamic alpha and fill
       a <- p +
         geom_point(
-          data = other_nodes,
+          data = other_nodes %>% filter(sex %in% c(1,2,3)),
           aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
           fill = other_nodes$node_fill,
           #colour = other_nodes$node_fill,
@@ -390,7 +404,7 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
           alpha = other_nodes$node_alpha
         ) +
         geom_point(
-          data = clutch_nodes,
+          data = clutch_nodes %>% filter(sex %in% c(1,2,3)),
           aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
           fill = clutch_nodes$node_fill,
           #colour = clutch_nodes$node_fill,
@@ -400,7 +414,7 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
           alpha = clutch_nodes$node_alpha
         ) +
         geom_point(
-          data = focal_node,
+          data = focal_node %>% filter(sex %in% c(1,2,3)),
           aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
           fill = focal_node$node_fill,
           colour = "black",
@@ -413,10 +427,12 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
           values = c("2" = 21, "1" = 22, "3" = 23),
           labels = c("Female", "Male", "Unknown")
         ) +
-        guides(fill = "none", colour = "none", size = "none")
+        guides(fill = "none", colour = "none", size = "none") + 
+        scale_fill_identity()
       
       
       # Render interactive plot
+      #a <- a + scale_fill_identity()
       ggplotly(a, tooltip = "text") %>%
         #style(showlegend = FALSE) %>%
         layout(dragmode = "pan") %>%   # sets default click-drag to pan
