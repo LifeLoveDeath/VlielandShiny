@@ -6,7 +6,7 @@ required_packages <- c("shiny", "tidyverse", "osmdata", "leaflet")
 
 # Install any missing packages
 new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
-if(length(new_packages)) install.packages(new_packages)
+if(length(new_packages)) install.packages(new_packages, repos = "https://cloud.r-project.org")
 
 # Load packages
 lapply(required_packages, library, character.only = TRUE)
