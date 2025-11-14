@@ -91,9 +91,9 @@ genMapServer <- function(id, location.data, selected_ring) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    # --- Check boxes and slider ---
-    
-    # If the timeline checkbox is checked, ensure 'nest' is selected
+    # -------------------------
+    # Helper: reset event_filter if timeline changes
+    # -------------------------
     observeEvent(input$timeline, {
       if (input$timeline && !("nest" %in% input$event_filter)) {
         updateCheckboxGroupInput(session, "event_filter",
@@ -101,189 +101,99 @@ genMapServer <- function(id, location.data, selected_ring) {
       }
     })
     
-    # If 'nest' is unchecked, ensure timeline checkbox is FALSE
     observeEvent(input$event_filter, {
       if (!("nest" %in% input$event_filter) && input$timeline) {
         updateCheckboxInput(session, "timeline", value = FALSE)
       }
     })
     
+    # -------------------------
     # Year slider UI
+    # -------------------------
     output$year_slider <- renderUI({
       req(selected_ring())
-      bird_data <- location.data %>% filter(RingNumber == selected_ring(), !is.na(Year))
+      bird_data <- get_bird_data(location.data, selected_ring())
       
       if (nrow(bird_data) == 0) {
-        sliderInput(ns("year_range"), "Year range:",
-                    min = 0, max = 0, value = c(0, 0),
-                    sep = "", step = 1,
-                    width = "100%", ticks = FALSE)
+        sliderInput(ns("year_range"), "Year range:", min = 0, max = 0, value = c(0,0),
+                    sep = "", step = 1, width = "100%", ticks = FALSE)
       } else {
         sliderInput(ns("year_range"), "Year range:",
                     min = min(bird_data$Year, na.rm = TRUE),
                     max = max(bird_data$Year, na.rm = TRUE),
                     value = c(min(bird_data$Year, na.rm = TRUE),
                               max(bird_data$Year, na.rm = TRUE)),
-                    sep = "", step = 1,
-                    width = "100%")
+                    sep = "", step = 1, width = "100%")
       }
     })
     
-    # --- Reset when select_ring changes ---
+    # -------------------------
+    # Reset inputs when selected_ring changes
+    # -------------------------
     observeEvent(selected_ring(), {
       req(selected_ring())
-      bird_data <- location.data %>% filter(RingNumber == selected_ring())
+      bird_data <- get_bird_data(location.data, selected_ring())
       if (nrow(bird_data) == 0) return()
       
-      # Reset year slider
       updateSliderInput(session, "year_range",
                         min = min(bird_data$Year, na.rm = TRUE),
                         max = max(bird_data$Year, na.rm = TRUE),
                         value = c(min(bird_data$Year, na.rm = TRUE),
                                   max(bird_data$Year, na.rm = TRUE)))
       
-      # Reset checkboxes
       updateCheckboxGroupInput(session, "event_filter", selected = c("nest", "birth"))
       updateCheckboxInput(session, "timeline", value = FALSE)
     }, ignoreInit = TRUE)
     
-    # --- Reactive filtered bird data ---
-    bird_data <- reactive({
+    # -------------------------
+    # Reactive filtered data
+    # -------------------------
+    filtered_data <- reactive({
       req(selected_ring())
-      if (!is.null(input$year_range) && !all(is.na(input$year_range))) {
-        location.data %>%
-          filter(RingNumber == selected_ring(),
-                 Year >= input$year_range[1],
-                 Year <= input$year_range[2]) %>%
-          arrange(Year)
-      } else {
-        location.data %>% filter(RingNumber == selected_ring())
-      }
+      get_bird_data(location.data, selected_ring(), input$year_range)
     })
     
-    # --- Render map UI ---
+    # -------------------------
+    # Render map UI
+    # -------------------------
     output$map_ind_ui <- renderUI({
       leafletOutput(ns("map_individual"), width = "100%", height = "600px")
     })
     
-    # --- Render base Leaflet map (once) ---
+    # -------------------------
+    # Render base map (once)
+    # -------------------------
     output$map_individual <- renderLeaflet({
-      leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
-        setView(lng = 5.018424, lat = 53.286226, zoom = 12) %>%
-        addTiles() %>%
-        htmlwidgets::onRender("function(el, x) { this.zoomControl.setPosition('topleft'); }") %>%
-        addEasyButton(
-          easyButton(
-            icon = fontawesome::fa("crosshairs"),
-            title = "Reset zoom",
-            onClick = JS("function(btn, map){ map.setView([53.286226, 5.018424], 12); }")
-          )#,
-          #position = "topright"
-        )
+      build_base_map()
     })
     
-    # --- Update map markers / polylines dynamically ---
+    # -------------------------
+    # Update map markers dynamically
+    # -------------------------
     observe({
-      req(bird_data())
+      data <- filtered_data()
+      req(data)
+      
       m <- leafletProxy("map_individual", session) %>%
         clearMarkers() %>%
         clearShapes()
       
-      data <- bird_data()
-      
-      # Show message if no data
       if (nrow(data) == 0 || all(is.na(data$NestLon)) || all(is.na(data$NestLat))) {
         m %>% addControl(
           html = "<div style='font-weight:bold; font-size:16px; background:white; padding:4px; border-radius:4px;'>No location data for this bird</div>",
-          position = "topleft"
+          position = "topright"
         )
       } else {
-        # Birth markers
         if ("birth" %in% input$event_filter) {
-          birth_data <- data %>% filter(Event == "birth")
-          if (nrow(birth_data) > 0) {
-            m <- m %>% addCircleMarkers(
-              lng = birth_data$NestLon, lat = birth_data$NestLat,
-              label = paste0(
-                "Birth nest: ",
-                ifelse(!is.na(birth_data$Month), paste0(birth_data$Month, " "), ""),
-                birth_data$Year,
-                ifelse(!is.na(birth_data$ClutchSize),
-                       paste0(" (Birth clutch size: ", birth_data$ClutchSize, ")"),
-                       "")
-                ),
-              color = "#e97158", fillOpacity = 0.9, opacity = 1, radius = 8, weight = 2
-            )
-          }
+          m <- add_event_markers(m, data, "birth", "#e97158")
         }
-        
-        # Nest markers
         if ("nest" %in% input$event_filter) {
-          nest_data <- data %>% filter(Event == "nest")
-          # Add a column to nest_data for distance label
-          nest_data <- nest_data %>%
-            mutate(
-              DistanceLabel = ifelse(
-                !is.na(DistanceFromPrev_m),
-                paste0(
-                  ifelse(row_number() == 1, 
-                         "Dispersal distance: ", 
-                         "Distance travelled: "),
-                  round(DistanceFromPrev_m, 1), " m"
-                ),
-                ""
-              )
-            )
-          
-          if (nrow(nest_data) > 0) {
-            m <- m %>% addCircleMarkers(
-              lng = nest_data$NestLon, lat = nest_data$NestLat,
-              # Label just date and clutch size
-              # label = paste0(
-              #   "Breeding nest: ",
-              #   ifelse(!is.na(nest_data$Month), paste0(nest_data$Month, " "), ""),
-              #   nest_data$Year,
-              #   ifelse(!is.na(nest_data$ClutchSize),
-              #          paste0(" (Clutch size: ", nest_data$ClutchSize, ")"),
-              #          "")
-              # ),
-              # Label date clutch size and distance:
-              label = lapply(1:nrow(nest_data), function(i) {
-                HTML(paste0(
-                  "Breeding nest: ",
-                  if(!is.na(nest_data$Month[i])) paste0(nest_data$Month[i], " ") else "",
-                  nest_data$Year[i],
-                  if(!is.na(nest_data$ClutchSize[i])) paste0(" (Clutch size: ", nest_data$ClutchSize[i], ")") else "",
-                  if(nest_data$DistanceLabel[i] != "") paste0("<br>", nest_data$DistanceLabel[i]) else ""
-                ))
-              }),
-              color = "#0d0887", fillOpacity = 0.6, opacity = 1, radius = 8, weight = 2
-            )
-          }
+          m <- add_event_markers(m, data, "nest", "#0d0887")
         }
-        
-        # Timeline path
         if (input$timeline && nrow(data) > 1) {
-          timeline_data <- data %>% filter(Event %in% input$event_filter)
-          if (nrow(timeline_data) > 1) {
-            freq <- nrow(timeline_data) * 2
-            m <- m %>% addPolylines(
-              lng = timeline_data$NestLon,
-              lat = timeline_data$NestLat,
-              color = "#0d0887", weight = 3, opacity = 0.7,
-              layerId = "timeline"
-            ) %>%
-              addArrowhead(
-                layerId = "timeline",
-                lng = timeline_data$NestLon,
-                lat = timeline_data$NestLat,
-                color = "#0d0887", weight = 3, opacity = 0.7,
-                options = arrowheadOptions(yawn = 50, size = "7%", frequency = freq)
-              )
-          }
+          m <- add_timeline(m, data %>% filter(Event %in% input$event_filter))
         }
       }
     })
   })
 }
-
