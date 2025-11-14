@@ -325,6 +325,9 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
           )
         )
       
+      # add border colour - always black
+      fam$border_col <- "black"
+      
       
       # Add tooltip text
       fam <- fam %>%
@@ -398,7 +401,8 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
           aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
           fill = other_nodes$node_fill,
           #colour = other_nodes$node_fill,
-          colour = "black",
+          #colour = "black",
+          colour = other_nodes$border_col, 
           stroke = 0.3,
           size = 6,
           alpha = other_nodes$node_alpha
@@ -408,7 +412,8 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
           aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
           fill = clutch_nodes$node_fill,
           #colour = clutch_nodes$node_fill,
-          colour = "black",
+          #colour = "black",
+          colour = clutch_nodes$border_col, 
           stroke = 0.3,
           size = 6,
           alpha = clutch_nodes$node_alpha
