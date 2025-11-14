@@ -205,10 +205,6 @@ server <- function(input, output, session) {
   search_results <- finder$search_results
   selected_ring <- finder$selected_ring
   
-  # finder <- birdFinderServer("birdFinder", IndividualDataVlieland)
-  # search_results <- finder$search_results
-  # selected_ring <- finder$selected_ring
-  
   # Reactive title for individual info page
   output$selected_bird <- renderUI({
     req(selected_ring())
