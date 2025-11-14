@@ -1,7 +1,20 @@
 
-# Mapping preview module
+# ==========================================================
+# Preview Map Module
+# ==========================================================
+# This module provides a preview map showing the last recorded
+# location of a bird selected in the search results table.
 
-# Probably need a separate dataframe in long format for nestboxes associated with ring numbers
+# Inputs:
+#   - search_results: reactive expression returning filtered bird table
+#   - location.data: data frame of bird locations with columns:
+#       RingNumber, Year, Month, NestLon, NestLat, Event
+#   - input$summary_info_rows_selected: row selection in the search table
+#
+# Outputs:
+#   - map_preview_ui: UI output for the leaflet map
+#   - map_preview: rendered Leaflet map showing last location of selected bird
+
 
 # Load packages - moved to app.r
 # library(shiny)
@@ -20,6 +33,7 @@ genPreviewMapServer <- function(input, output, search_results, location.data, se
   # store the last selected RingNumber
   last_ring <- reactiveVal(NULL)
   
+  # Update last selected ring based on table selection
   observeEvent(input$summary_info_rows_selected, {
     if (length(input$summary_info_rows_selected) > 0) {
       ring <- search_results()[input$summary_info_rows_selected, "RingNumber"]
@@ -27,72 +41,16 @@ genPreviewMapServer <- function(input, output, search_results, location.data, se
     }
   })
   
-  # Show map if a row has ever been selected
+  # Show map only if a bird has been selected
   output$map_preview_ui <- renderUI({
     req(last_ring())
     leafletOutput("map_preview", width = "95%", height = "600px")
   })
   
+  # Render Leaflet map
   output$map_preview <- renderLeaflet({
-    req(search_results(), last_ring())
-    
-    # Filter location.data by selected ring, take last location
-    filtered_data <- location.data %>%
-      filter(RingNumber == last_ring()) %>%
-      arrange(desc(Year), desc(Month)) %>%
-      slice(1)
-    
-    # Default map coordinates
-    default_lat <- 53.286226
-    default_lng <- 5.018424
-    default_zoom <- 12
-    
-    # Build base map
-    m <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
-      addTiles() %>%
-      setView(lng = default_lng, lat = default_lat, zoom = default_zoom) %>%
-      htmlwidgets::onRender("function(el, x) { this.zoomControl.setPosition('topleft'); }") %>%
-      
-      # Add title
-      addControl(
-        html = paste0("<div style='font-weight:bold; font-size:16px; background:white; padding:4px; border-radius:4px;'>",
-                      filtered_data$RingNumber, " Last recorded location</div>"),
-        position = "topleft"
-      ) %>%
-      
-      #Add reset zoom button
-      addEasyButton(
-        easyButton(
-          icon = fontawesome::fa("crosshairs"),
-          title = "Reset zoom",
-          onClick = JS(sprintf("function(btn, map){ map.setView([%s, %s], %s); }",
-                               default_lat, default_lng, default_zoom))
-        )
-      )
-    
-    
-    # Add control or message if no location data
-    if (nrow(filtered_data) == 0 || is.na(filtered_data$NestLon) || is.na(filtered_data$NestLat)) {
-      m <- m %>%
-        addControl(
-          html = "<div style='font-weight:bold; font-size:16px; background:white; padding:4px; border-radius:4px;'>No location data</div>",
-          position = "topleft"
-        )
-    } else {
-      # Add marker for the last location
-      m <- m %>%
-        addCircleMarkers(
-          lng = filtered_data$NestLon,
-          lat = filtered_data$NestLat,
-          label = paste0(filtered_data$Month, " ", filtered_data$Year, ": ", filtered_data$Event),
-          color = "#1b0c41",
-          fillOpacity = 0.6,
-          opacity = 1,
-          radius = 8,
-          weight = 2
-        ) 
-    }
-    
-    m
+    req(last_ring(), search_results())
+    loc_data <- get_last_location(location.data, last_ring())
+    build_preview_map(loc_data)
   })
 }
