@@ -1,5 +1,11 @@
-
-# birdFinder module
+# ==========================================================
+# birdFinder Module
+# ==========================================================
+# Allows searching for birds by ring number or colour rings.
+# Returns:
+#   search_results: reactive filtered data table
+#   selected_ring: reactive value of currently selected bird
+# ----------------------------------------------------------
 
 # Load packages - moved all to app.r
 # library(shiny)
@@ -14,9 +20,6 @@
 
 
 # UI function --------------------------------------------------------------
-
-# Old name: findIndividualUI_withIcons
-# This doesn't need the data input?
 birdFinderUI <- function(id) {
   
   ns <- NS(id)
@@ -145,72 +148,32 @@ birdFinderUI <- function(id) {
 birdFinderServer <- function(input, output, data, session) {
   
   
-  # --- Dropdown narrowing ---
+  # ---- Dropdown narrowing ----
+  # Whenever any colour ring input changes, update available options for the other dropdowns
+  # Excludes current dropdown to prevent circular filtering
+  # Uses get_dropdown_options() from birdFunder_functions
   
   # Reactive observation - triggers output whenever one of the inputs changes
   observe({
-    
-    # Prevent ring number search interferring with dropdown narrowing
     if (!is.null(input$ring_search) && input$ring_search != "") return()
     
-    # Functions to get colour ring options and matching icons
     colour_rings <- get_colour_rings()
     colour_rings$val <- trimws(colour_rings$val)
-    get_icons <- function(options) {
-      row <- match(options, colour_rings$val)
-      colour_rings$img[row]
-    }
+    get_icons <- function(options) colour_rings$img[match(options, colour_rings$val)]
     
+    options <- get_dropdown_options(data, input)
     
-    # Filter options for each dropdown based on other selections (excluding it's own selection)
-    options_Left1 <- unique(data[
-      (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
-        (input$Right1 == "" | data$ColourRingRight1 == input$Right1) &
-        (input$Right2 == "" | data$ColourRingRight2 == input$Right2),
-      "ColourRingLeft1"
-    ])
-    
-    options_Left2 <- unique(data[
-      (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
-        (input$Right1 == "" | data$ColourRingRight1 == input$Right1) &
-        (input$Right2 == "" | data$ColourRingRight2 == input$Right2),
-      "ColourRingLeft2"
-    ])
-    
-    options_Right1 <- unique(data[
-      (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
-        (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
-        (input$Right2 == "" | data$ColourRingRight2 == input$Right2),
-      "ColourRingRight1"
-    ])
-    
-    options_Right2 <- unique(data[
-      (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
-        (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
-        (input$Right1 == "" | data$ColourRingRight1 == input$Right1),
-      "ColourRingRight2"
-    ])
-    
-    
-    # Update the dropdowns (but keep current selection)
-    updatePickerInput(session, "Left1", 
-                      choices = c("", sort(options_Left1)),
-                      choicesOpt = list(content = c("Select a colour...", get_icons(sort(options_Left1)))),
+    updatePickerInput(session, "Left1", choices = c("", sort(options$Left1)),
+                      choicesOpt = list(content = c("Select colour...", get_icons(sort(options$Left1)))),
                       selected = isolate(input$Left1))
-    
-    updatePickerInput(session, "Left2",
-                      choices = c("", sort(options_Left2)),
-                      choicesOpt = list(content = c("Select a colour...", get_icons(sort(options_Left2)))),
+    updatePickerInput(session, "Left2", choices = c("", sort(options$Left2)),
+                      choicesOpt = list(content = c("Select colour...", get_icons(sort(options$Left2)))),
                       selected = isolate(input$Left2))
-    
-    updatePickerInput(session, "Right1", 
-                      choices = c("", sort(options_Right1)),
-                      choicesOpt = list(content = c("Select a colour...", get_icons(sort(options_Right1)))),
+    updatePickerInput(session, "Right1", choices = c("", sort(options$Right1)),
+                      choicesOpt = list(content = c("Select colour...", get_icons(sort(options$Right1)))),
                       selected = isolate(input$Right1))
-    
-    updatePickerInput(session, "Right2", 
-                      choices = c("", sort(options_Right2)),
-                      choicesOpt = list(content = c("Select a colour...", get_icons(sort(options_Right2)))),
+    updatePickerInput(session, "Right2", choices = c("", sort(options$Right2)),
+                      choicesOpt = list(content = c("Select colour...", get_icons(sort(options$Right2)))),
                       selected = isolate(input$Right2))
   })
   
@@ -223,10 +186,10 @@ birdFinderServer <- function(input, output, data, session) {
   
   
   # ---- Clear selection ----
+  # Clears ring number search or resets colour ring dropdowns when relevant buttons are clicked
+  
   # Clear ring number search on clear button click
-  observeEvent(input$clear_ring_search, {
-    updateTextInput(session, "ring_search", value = "")
-  })
+  observeEvent(input$clear_ring_search, { updateTextInput(session, "ring_search", value = "") })
   
   # Clear dropdowns when a ring number is entered:
   observeEvent(input$ring_search, {
@@ -240,74 +203,26 @@ birdFinderServer <- function(input, output, data, session) {
   
   
   # ---- Search logic ----
+  # First filter by ring number if entered (ignores colour ring filters)
+  # Then filter by colour rings only if no ring number entered
+  # Only returns results if <5 rows to avoid cluttering UI
+  # Uses filter_birds() from functions
   
   # Reactive filtered search results, returns results when fewer than 5 rows
   search_results <- reactive({
-    filtered <- data
-    
-    
-    ## ---- Ring number search overrides colour ring selection ----
-    if (!is.null(input$ring_search) && input$ring_search != "") {
-      
-      # term <- trimws(tolower(input$ring_search))
-      # filtered <- filtered[grepl(term, tolower(filtered$RingNumber)), ]
-      
-      # Or to make search work whether user enters the dots or not:
-      term <- trimws(tolower(gsub("\\.", "", input$ring_search)))  # remove dots from user input
-      filtered <- filtered[
-        grepl(term, gsub("\\.", "", tolower(filtered$RingNumber))),  # remove dots from RingNumber
-      ]
-      
-      # Return only when < 5 rows (your original rule)
-      if (nrow(filtered) < 5) return(filtered)
-      return(NULL)
-    }
-    
-    
-    ## ---- Colour ring filtering ----
-    
-    if (input$Left1 != "" && !is.na(input$Left1)) {
-      filtered <- filtered[!is.na(filtered$ColourRingLeft1) & filtered$ColourRingLeft1 == input$Left1, ]
-    }
-    if (input$Left2 != "" && !is.na(input$Left2)) {
-      filtered <- filtered[!is.na(filtered$ColourRingLeft2) & filtered$ColourRingLeft2 == input$Left2, ]
-    }
-    if (input$Right1 != "" && !is.na(input$Right1)) {
-      filtered <- filtered[!is.na(filtered$ColourRingRight1) & filtered$ColourRingRight1 == input$Right1,]
-    }
-    if (input$Right2 != "" && !is.na(input$Right2)) {
-      filtered <- filtered[!is.na(filtered$ColourRingRight2) & filtered$ColourRingRight2 == input$Right2, ]
-    }
-    
-    if (nrow(filtered) < 5) {
-      return(filtered)
-    } else {
-      return(NULL)  # No results or too many results: return NULL
-    }
-    
-    # Return all matching rows for now while error checking
-    # return(filtered)
+    filter_birds(data, input)
   })
   
   
   
   
-  ## ---- Selection and results ----
+  # ---- Selection and results ----
+  # Render DT table of results with clickable "See full info" buttons
+  # Update selected_ring() reactive when a button is clicked
+  # Used by parent UI to show individual bird details
   
-  # Function to generate action buttons to add to rows
-  buttonInput <- function(FUN, len, id, ...) {
-    inputs <- character(len)
-    for (i in seq_len(len)) {
-      inputs[i] <- as.character(FUN(paste0(id, i), ...))
-    }
-    inputs
-  }
+  selected_ring <- reactiveVal(NULL)
   
-  # ReactiveVal to store last selected RingNumber
-  last_selected_ring <- reactiveVal(NULL)
-  
-  # Render datatable with clickable rows and action buttons
-  # Clickable rows + action button might be an awkward combo
   output$summary_info <- DT::renderDataTable({
     df <- search_results()
     if (is.null(df) || nrow(df) == 0) return(NULL)
@@ -316,252 +231,16 @@ birdFinderServer <- function(input, output, data, session) {
     df$ColourRingCombo <- gsub("-", ", ", df$ColourRingCombo)
     colnames(df) <- c("Ring number", "Colour rings", "Birth year", "Species")
     
-    # Add action buttons column to datatable
-    df$Select <- buttonInput(
-      FUN = shiny::actionButton,
-      len = nrow(df),
-      id = "select_",
-      label = "See full info", # or select individual?
-      onclick = 'Shiny.setInputValue("select_button", this.id, {priority: "event"})'
-    )
-
+    df$Select <- make_action_buttons(nrow(df), "select_")
     
-    datatable(
-      df,
-      options = list(dom = 't', ordering = FALSE),
-      rownames = FALSE,
-      escape = FALSE,  # allow HTML for buttons
-      selection = list(mode = "single")
-    )
+    datatable(df, options = list(dom = 't', ordering = FALSE), rownames = FALSE, escape = FALSE)
   })
   
-  
-  # ReactiveVal to store selected bird RingNumber - clicking button
-  selected_ring <- reactiveVal(NULL)
-  
-  # Update selected_ring when action button is clicked
   observeEvent(input$select_button, {
     row_index <- as.numeric(gsub("select_", "", input$select_button))
     df <- search_results()
-    if (!is.null(df) && nrow(df) >= row_index) {
-      selected_ring(df[row_index, "RingNumber"])
-    }
+    if (!is.null(df) && nrow(df) >= row_index) selected_ring(df[row_index, "RingNumber"])
   })
   
-  # Reactive to tell UI whether a bird is selected - changes conditional tabs
-  output$birdSelected <- reactive({
-    !is.null(selected_ring())
-  })
-  outputOptions(output, "birdSelected", suspendWhenHidden = FALSE)
-  
-  observeEvent(input$back_to_search, {
-    selected_ring(NULL)  # sets birdSelected to FALSE, returning to search panel
-  }) # After clicking this and returning to the search page, going to an individual page produces map with no icons etc. Preview map still works though
-  
-  # Return reactive expression search_results and selected_ring for use in other functions:
   return(list(search_results = search_results, selected_ring = selected_ring))
-  
-}
-
-
-
-
-
-
-## Old:: Narrows dropdown options as selections made -----------------------------
-
-
-#Old name: findIndividualServer_updateDropdowns
-birdFinderDropdownsServer <- function(input, data, session) {
-  
-  # Reactive observation - triggers output whenever one of the inputs changes
-  observe({
-    
-    # Functions to get colour ring options and matching icons
-    colour_rings <- get_colour_rings()
-    get_icons <- function(options) {
-      row <- match(options, colour_rings$val)
-      colour_rings$img[row]
-    }
-    
-    # Filter options for each dropdown based on other selections (excluding it's own selection)
-    options_Left1 <- unique(data[
-      (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
-        (input$Right1 == "" | data$ColourRingRight1 == input$Right1) &
-        (input$Right2 == "" | data$ColourRingRight2 == input$Right2),
-      "ColourRingLeft1"
-    ])
-    
-    options_Left2 <- unique(data[
-      (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
-        (input$Right1 == "" | data$ColourRingRight1 == input$Right1) &
-        (input$Right2 == "" | data$ColourRingRight2 == input$Right2),
-      "ColourRingLeft2"
-    ])
-    
-    options_Right1 <- unique(data[
-      (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
-        (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
-        (input$Right2 == "" | data$ColourRingRight2 == input$Right2),
-      "ColourRingRight1"
-    ])
-    
-    options_Right2 <- unique(data[
-      (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
-        (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
-        (input$Right1 == "" | data$ColourRingRight1 == input$Right1),
-      "ColourRingRight2"
-    ])
-    
-    
-    # Update the dropdowns (but keep current selection)
-    updatePickerInput(session, "Left1", 
-                      choices = c("", sort(options_Left1)),
-                      choicesOpt = list(content = c("Select a colour...", get_icons(sort(options_Left1)))),
-                      selected = isolate(input$Left1))
-    
-    updatePickerInput(session, "Left2",
-                      choices = c("", sort(options_Left2)),
-                      choicesOpt = list(content = c("Select a colour...", get_icons(sort(options_Left2)))),
-                      selected = isolate(input$Left2))
-    
-    updatePickerInput(session, "Right1", 
-                      choices = c("", sort(options_Right1)),
-                      choicesOpt = list(content = c("Select a colour...", get_icons(sort(options_Right1)))),
-                      selected = isolate(input$Right1))
-    
-    updatePickerInput(session, "Right2", 
-                      choices = c("", sort(options_Right2)),
-                      choicesOpt = list(content = c("Select a colour...", get_icons(sort(options_Right2)))),
-                      selected = isolate(input$Right2))
-    })
-  
-  observeEvent(input$reset_filters, {
-    updatePickerInput(session, "Left1", selected = "")
-    updatePickerInput(session, "Left2", selected = "")
-    updatePickerInput(session, "Right1", selected = "")
-    updatePickerInput(session, "Right2", selected = "")
-  })
-}
-  
-    
-   
-
-
-
-## Old:: Perform search -----------------------------------------------------------
-
-# New function based on conditional tabs UI
-# Switches tabset when bird is selected
-
-# Old name: findIndividualServer_search
-birdFinderSearchServer <- function(input, output, data, session) {
-  
-  # Reactive filtered search results, returns results when fewer than 5 rows
-  search_results <- reactive({
-    filtered <- data
-    
-    if (input$Left1 != "" && !is.na(input$Left1)) {
-      filtered <- filtered[!is.na(filtered$ColourRingLeft1) & filtered$ColourRingLeft1 == input$Left1, ]
-    }
-    if (input$Left2 != "" && !is.na(input$Left2)) {
-      filtered <- filtered[!is.na(filtered$ColourRingLeft2) & filtered$ColourRingLeft2 == input$Left2, ]
-    }
-    if (input$Right1 != "" && !is.na(input$Right1)) {
-      filtered <- filtered[!is.na(filtered$ColourRingRight1) & filtered$ColourRingRight1 == input$Right1, ]
-    }
-    if (input$Right2 != "" && !is.na(input$Right2)) {
-      filtered <- filtered[!is.na(filtered$ColourRingRight2) & filtered$ColourRingRight2 == input$Right2, ]
-    }
-    
-    if (nrow(filtered) < 5) {
-      return(filtered)
-    } else {
-      return(NULL)  # No results or too many results: return NULL
-    }
-    
-    # Return all rows for error checking
-    #return(filtered)
-  })
-  
-  # Function to generate action buttons to add to rows
-  buttonInput <- function(FUN, len, id, ...) {
-    inputs <- character(len)
-    for (i in seq_len(len)) {
-      inputs[i] <- as.character(FUN(paste0(id, i), ...))
-    }
-    inputs
-  }
-  
-  # Render datatable with clickable rows and "Select individual" buttons
-  # Clickable rows + action button might be an awkward combo
-  output$summary_info <- DT::renderDataTable({
-    df <- search_results()
-    if (is.null(df) || nrow(df) == 0) return(NULL)
-    
-    df <- df[, c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
-    
-    # Add action buttons column to datatable
-    df$Select <- buttonInput(
-      FUN = shiny::actionButton,
-      len = nrow(df),
-      id = "select_",
-      label = "Select individual",
-      onclick = 'Shiny.setInputValue("select_button", this.id, {priority: "event"})'
-    )
-    
-    datatable(
-      df,
-      options = list(dom = 't', ordering = FALSE),
-      rownames = FALSE,
-      escape = FALSE,  # allow HTML for buttons
-      selection = "single"
-    )
-  })
-  
-  # ReactiveVal to store selected bird RingNumber - clicking row
-  selected_ring <- reactiveVal(NULL)
-  
-  # Update selected_ring when "Select individual" button is clicked
-  observeEvent(input$select_button, {
-    row_index <- as.numeric(gsub("select_", "", input$select_button))
-    df <- search_results()
-    if (!is.null(df) && nrow(df) >= row_index) {
-      selected_ring(df[row_index, "RingNumber"])
-    }
-  })
-  
-  # Reactive to tell UI whether a bird is selected - changes conditional tabs
-  output$birdSelected <- reactive({
-    !is.null(selected_ring())
-  })
-  outputOptions(output, "birdSelected", suspendWhenHidden = FALSE)
-  
-  # Back to search button
-  observeEvent(input$back_to_search, {
-    selected_ring(NULL)
-  })
-  
-  # Content for the bird detail tabs
-  output$bird_general <- renderPrint({
-    req(selected_ring())
-    # Fetch and display general info for selected_ring()
-    paste("General info for bird:", selected_ring())
-  })
-  
-  output$bird_map <- leaflet::renderLeaflet({
-    req(selected_ring())
-    uiOutput("map_ui")  # needs updating
-    
-  })
-  
-  output$bird_pedigree <- renderPlot({
-    req(selected_ring())
-    
-  })
-  
-  # Return reactive expression (row number of clicked row) for use in other functions (map):
-  return(search_results)
-  
-  
 }
