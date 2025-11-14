@@ -8,6 +8,9 @@
 # Load packages - moved to app.r
  library(imager)
  library(grid)
+ 
+# Sometime imager doesn't work because you need to install the following first:
+# BASH: /opt/X11/lib/libX11.6.dylib
 
 # Function to specify the three colours and create and save the icon ------------------------------------------------
 # Could update it to accept one colour as well
