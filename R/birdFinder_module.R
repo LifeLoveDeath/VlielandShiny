@@ -61,7 +61,7 @@ birdFinderUI <- function(id) {
           
           # Search by RING NUMBER
           h4("Search using ring number", style = "color:#3f5262; font-weight:500;"),
-          textInput("ring_search", "Search by ring number (optional)",
+          textInput("ring_search", "",
                     placeholder = "Enter ring number"),
           actionButton("clear_ring_search", "Clear ring number"),
           br(),
