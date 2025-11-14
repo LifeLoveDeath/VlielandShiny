@@ -1,5 +1,9 @@
 # Mini mapping app
 
+# A standalone app where you can enter nestbox numbers and see them in a map
+# Created it to figure out the mapping but kept it in case it’s useful for fieldwork
+
+
 # Load packages
 # Required packages
 required_packages <- c("shiny", "tidyverse", "osmdata", "leaflet")
