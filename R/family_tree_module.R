@@ -117,8 +117,8 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
         personID = "RingNumber",
         dadID = "Father",
         momID = "Mother",
-        sex_color_include = FALSE,  # we want clutch colours, not sex colours
         config = list(
+          sex_color_include = FALSE,  # we want clutch colours, not sex colours
           point_size = 6,
           segment_linewidth = 0.5,
           #label_text_size = 3,
