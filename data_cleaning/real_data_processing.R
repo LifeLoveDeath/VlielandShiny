@@ -54,6 +54,9 @@ head(ColourNumberRings)
 # Rows of IndividualDataVlieland where BroodID appears in BroodData
 matches <- IndividualDataVlieland[which(IndividualDataVlieland$BroodID %in% BroodData$ID), ]
 length(matches) # 18
+length(unique(matches$BroodID)) # 92 matching BroodIDs
+length(unique(IndividualDataVlieland$BroodID)) # 662 BroodIDs - IndividualDataVlieland
+length(unique(BroodData$ID)) # 16129 (Brood)IDs
 missing <- IndividualDataVlieland %>%
   filter(!BroodID %in% BroodData$ID)
 
