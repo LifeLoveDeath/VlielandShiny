@@ -6,98 +6,162 @@
 # Create dfs analagous to dummy datasets that I built the modules with
 # But there is probably a simpler way
 
+# Load packages -----------------------------------------------------------
 
 library(tidyverse)
 library(dplyr)
 library(lubridate)
 library(geosphere) # for distances
-
-
-
-# Load dummy data ---------------------------------------------------------
-vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL)
-colnames(vlieland.data)
-head(vlieland.data)
-location.data <- read.csv("data/NestLocationData.csv", row.names = NULL)
-head(location.data)
-
-
+library(magrittr) # for all pipes
 
 
 # Load real data ----------------------------------------------------------
 
-## --- Individual data ---
-IndividualData <- read.csv("data/IndividualData.csv", row.names = NULL)
+## --- Individual data ----
+# Read in data, "UTF-8" allows correct handling of special characters 
+IndividualData.original <- read.csv("data/IndividualData.csv", row.names = NULL, fileEncoding="UTF-8")
+IndividualData <- IndividualData.original
 colnames(IndividualData)
 head(IndividualData)
-# Reduce to just Vlieland
-# Have done this because the colour ring system for other populations seems to be different
-IndividualDataVlieland <- IndividualData[which(IndividualData$RingPopulationName == "Vlieland"), ]
+
+# Are there duplicate rows?
+length(which(duplicated(IndividualData)))
+nrow(IndividualData)
+# Duplicate row removal
+IndividualData <- unique(IndividualData)
+
 
 ## --- Brood data ----
-BroodData <- read.csv("data/BroodData.csv", row.names = NULL)
+BroodData.original <- read.csv("data/BroodData.csv", row.names = NULL, fileEncoding="UTF-8")
+BroodData <- BroodData.original
 head(BroodData)
-# FIXING ERROR - remove this step if needed <-----------
-# One of these is wrong - Year in laydate is 2026 and month is october (next latest month in year is July)
-BroodData <- BroodData[-which(lubridate::year(BroodData$LayDate) != BroodData$BroodYear), ]
-write.csv(BroodData, "data/BroodData.csv", row.names = FALSE)
+# Check all have sensible lay dates
+# Year
+range(lubridate::year(BroodData$LayDate),na.rm=T)
+# Month
+range(lubridate::month(BroodData$LayDate),na.rm=T)
+# Day
+range(lubridate::day(BroodData$LayDate),na.rm=T)
+
+# Are there duplicate rows?
+length(which(duplicated(BroodData)))
+nrow(BroodData)
+# No duplicate rows
 
 
-## --- ColourNumberRings ---
-ColourNumberRings <- read.csv("data/ColourNumberRings.csv", row.names = NULL)
+## --- ColourNumberRings ----
+ColourNumberRings.original <- read.csv("data/ColourNumberRings.csv", row.names = NULL, fileEncoding="UTF-8")
+ColourNumberRings <- ColourNumberRings.original
 head(ColourNumberRings)
 
+# Are there duplicate rows?
+length(which(duplicated(ColourNumberRings)))
+nrow(ColourNumberRings)
+# Duplicate row removal
+ColourNumberRings <- unique(ColourNumberRings)
 
 
 # Exploring data -----------------------------------------------------------
 
-# Rows of IndividualDataVlieland where BroodID appears in BroodData
-matches <- IndividualDataVlieland[which(IndividualDataVlieland$BroodID %in% BroodData$ID), ]
-length(matches) # 18
-length(unique(matches$BroodID)) # 92 matching BroodIDs
-length(unique(IndividualDataVlieland$BroodID)) # 662 BroodIDs - IndividualDataVlieland
-length(unique(BroodData$ID)) # 16129 (Brood)IDs
-missing <- IndividualDataVlieland %>%
-  filter(!BroodID %in% BroodData$ID)
+## --- BroodID overlap ----
+# All BroodIDs need not be in both data sets
+# IndividualData may have a couple more due to BroodData being cutoff at the previous calendar year
+# BroodData may have others IndividualData lacks due to factors including:
+#     - Broods with a clutch size of 0 still have a broodID
+#     - All eggs in a brood not hatching
+#     - All chicks in a brood not making it to ringing
+# However if most broodIDs are not in both data sets there is likely an issue.
+
+# Is there a similar number of BroodIDs in both data sets?
+# Number of unique BroodIDs in IndividualData
+length(unique(IndividualData$RingBroodID))
+# Number of unique BroodIDs in BroodData
+length(unique(BroodData$BroodID))
+# Rows of IndividualData where RingBroodID appears in BroodData
+matches <- IndividualData[which(IndividualData$RingBroodID %in% BroodData$BroodID), ]
+# Number of unique broodIDs from IndividualData found in BroodData
+length(unique(matches$RingBroodID))
+
+# Exploring the BroodIDs in IndividualData but NOT BroodData
+# Rows of IndividualData where RingBroodID DOES NOT appear in BroodData
+missing <- IndividualData %>%
+  filter(!RingBroodID %in% BroodData$BroodID)
+# View the BroodIDs only in IndividualData
+unique(missing$RingBroodID)
+# Are they this year's chicks (BroodData may have been cut off at the previous calendar year)?
+IndividualData[which(IndividualData$RingYear==2026),] %$%
+  {unique(RingBroodID)} %>%
+  {length(unique(c(. , unique(missing$RingBroodID))))}
 
 
+## --- Ring number overlap ----
 # Extract RingNumbers from both dataframes
-individual_rings <- IndividualDataVlieland$RingNumber
+individual_rings <- IndividualData.original$RingNumber
 brood_rings <- c(BroodData$RingNumberFemale, BroodData$RingNumberMale)
 
 # Find which individual rings appear in BroodData
 rings_in_broods <- intersect(individual_rings, brood_rings)
 
 rings_in_broods
-length(rings_in_broods)  # number of rings that appear - 62
+length(rings_in_broods)  # number of rings that appear
+length(unique(brood_rings))
 
 
+## --- Remove objects created for testing ----
+rm(brood_rings, individual_rings, rings_in_broods)
+rm(matches, missing)
 
 # Data prep ---------------------------------------------------------------
 
 
 ## Individual data ---------------------------------------------------------
 
+### Cut to Vlieland birds --------------------------------------------
 
-### Add ring number ---------------------------------------------------------
+# Removal of birds that have neither been ringed nor parented on Vlieland
+# These birds are unlikely ever to be present on Vlieland
+# And some have been colour ringed using different systems
 
-# Limited to just Vlieland data
-IndividualDataVlieland <- IndividualData[which(IndividualData$RingPopulationName == "Vlieland"), ]
+# List of birds ringed or found parenting on Vlieland
+# Migrant parents metal ringed elsewhere have that as their RingAreaGroupName
+# hence taking parental ring list from BroodData as well
+Vlieland_rings <- c(BroodData$RingNumberFemale, BroodData$RingNumberMale,
+                 IndividualData$RingNumber
+                 [IndividualData$RingAreaGroupName == "Vlieland"]) %>%
+  na.omit() %>%
+  unique()
 
-# Ensure both columns are UTF-8
-IndividualDataVlieland <- IndividualDataVlieland %>%
-  mutate(RingNumber = iconv(RingNumber, from = "", to = "UTF-8"))
+# Any parents who don't feature in IndividualData?
+# Will leave them for now and see if they cause issues
+Vlieland_rings[which(!Vlieland_rings %in% IndividualData$RingNumber)]
 
-ColourNumberRings <- ColourNumberRings %>%
-  mutate(RingNumber = iconv(RingNumber, from = "", to = "UTF-8"))
+# Subset IndividualData to the Vlieland birds
+IndividualData <- IndividualData[which(IndividualData$RingNumber %in% Vlieland_rings),]
 
-# All ring number from ColourNumberRings
-IndividualDataVlieland <- merge(
-  IndividualDataVlieland,
+# Find ring number typos in IndividualData (ie >1 bird per ring number)
+TyposIndividual <- sort(IndividualData$RingNumber[which(duplicated(IndividualData$RingNumber))])
+# And remove rows in the typos list
+IndividualData <- IndividualData[which(!IndividualData$RingNumber %in% TyposIndividual),]
+
+
+### Add colour ring combination --------------------------------------------
+
+# Add colour codes to IndividualData from ColourNumberRings
+IndividualData <- merge(
+  IndividualData,
   ColourNumberRings,
   by = "RingNumber",
   all.x = TRUE   # keep all rows from IndividualData
 )
+
+# Cleaning the codes to something process-able
+# Ensure all are lowercase
+IndividualData$ColourCode <- tolower(IndividualData$ColourCode) %>%
+  # Reduce any multispaces back to single space
+  {gsub("\\s{2,}", " ", . )}
+
+# Keep only rows where the colour code is 13 characters long or less.
+IndividualData <- IndividualData[which(nchar(IndividualData$ColourCode) <= 13 | is.na(IndividualData$ColourCode)), ]
 
 
 # Split into separate cols for each ring colour
@@ -107,11 +171,13 @@ colour_map <- c(
   bl = "blue", bw = "blue/white", gr = "green", al = "metal", or = "orange",
   pb = "pink/blue", pg = "pink/green", re = "red", rw = "red/white",
   wh = "white", wb = "white/blue", ye = "yellow", yb = "yellow/black", pi = "pink",
-  gw = "green/white"
+  gw = "green/white", tr = NA
 )
+
 
 # Function to parse a ring combo
 parse_ring <- function(x) {
+  # If the bird's colour ring combo is NA make the split version NA
   if (is.na(x)) return(data.frame(
     ColourRingLeft1 = NA, ColourRingLeft2 = NA,
     ColourRingRight1 = NA, ColourRingRight2 = NA,
@@ -143,100 +209,104 @@ parse_ring <- function(x) {
 }
 
 # Apply to dataframe
-IndividualDataVlieland <- IndividualDataVlieland %>%
+IndividualData <- IndividualData %>%
   rowwise() %>%
-  mutate(tmp = list(parse_ring(RingColour))) %>%
+  mutate(tmp = list(parse_ring(ColourCode))) %>%
   unnest_wider(tmp) %>%
   ungroup()
 
 
-# Add colour ring combo column:IndividualDataVlieland <- IndividualDataVlieland %>%
-IndividualDataVlieland <- IndividualDataVlieland %>%
-  mutate(
-    ColourRingCombo = pmap_chr(
-      list(ColourRingLeft1, ColourRingLeft2, ColourRingRight1, ColourRingRight2),
-      ~ paste(na.omit(c(...)), collapse = "-")
-    )
+
+# Add extra column with colour ring combo decoded into full English using colour map
+IndividualData <- IndividualData %>%
+mutate(
+  ColourRingCombo = pmap_chr(
+    list(ColourRingLeft1, ColourRingLeft2, ColourRingRight1, ColourRingRight2),
+    ~ paste(na.omit(c(...)), collapse = "-")
   )
+)
+# And enter NA in every row where the bird is not color ringed
+IndividualData$ColourRingCombo[which(IndividualData$ColourRingCombo == "")] <- NA
 
 
 ### Rename columns ----------------------------------------------------------
 
-colnames(IndividualDataVlieland)
-# Change Species column name
-IndividualDataVlieland <- IndividualDataVlieland %>%
-  rename(Species = SpeciesName)
+colnames(IndividualData)
+# Arrange cols to match previous data frame layout
+IndividualDataVlieland <- subset(IndividualData,
+                         select = c("RingNumber", "Mother", "Father",
+                                    "RingBroodID", "Sex", "RingYear", "BirthYear",
+                                    "RingAreaGroupName", "RingNestBox",
+                                    "RingLatitude", "RingLongitude", "SpeciesName",
+                                    "ColourCode", "ColourRingLeft1", "ColourRingLeft2",
+                                    "ColourRingRight1", "ColourRingRight2", "ColourRingCombo"))
+# Re-name cols to match previous data frame layout
+colnames(IndividualDataVlieland) <- c("RingNumber", "Mother", "Father",
+                              "BroodID", "Sex", "RingYear", "BirthYear",
+                              "RingPopulationName", "RingNestBox",
+                              "RingLatitude", "RingLongitude", "Species",
+                              "RingColour", "ColourRingLeft1", "ColourRingLeft2",
+                              "ColourRingRight1", "ColourRingRight2", "ColourRingCombo")
 
 
 
 
-
-### Save IndividualDataVlieland ---------------------------------------------
-
-# Find duplicates
-IndividualDataVlieland %>%
-  count(RingNumber) %>% filter(n > 1)
-
-IndividualDataVlieland %>%
-  filter(RingNumber %in% c("AH...93589", "AK...73457"))
-
-# Remove duplicates
-IndividualDataVlieland <- IndividualDataVlieland %>% distinct()
-
+### Save IndividualData ---------------------------------------------
 
 # Save
 write.csv(IndividualDataVlieland, file = "data/IndividualDataVlieland.csv", row.names = FALSE)
-head(as.data.frame(IndividualDataVlieland))
-head(as.data.frame(IndividualDataVlieland[!is.na(IndividualDataVlieland$RingColour), ]))
 
 
 
-
-
-
-## Brood/Location data -----------------------------------------------------
+## Location data -----------------------------------------------------
 
 # Create location dataframe that will work with mapping modules
+# Info on individuals birth, ringing & breeding locations are collected into data frames
+# These data frames are then complied into one single long data frame
+# The event column denotes if the row relates to birth, ringing or reproduction
 
+### LayDate as date ---------------------------------------------------------
+# Is LayDate stored as a date?
+is.Date(BroodData$LayDate)
 # Ensure dates are Date objects
 BroodData <- BroodData %>%
   mutate(LayDate = as.Date(LayDate))
 
 
-
 ### Get ring events ---------------------------------------------------------
 
-ring_events <- IndividualDataVlieland %>%
-  filter(!is.na(RingNumber)) %>%
-  transmute(
+ring_events <- IndividualData %>%
+  mutate(
     RingNumber = RingNumber,
     Event = "ring",
     Month = NA_character_,  # no month info for ring event
     Year = RingYear,
     NestNo = RingNestBox,
     NestLon = RingLongitude,
-    NestLat = RingLatitude
+    NestLat = RingLatitude,
+    LayDate = NA,
+    ClutchSize = NA,
+    .keep = "none"
   )
-ring_events$LayDate <- NA
-ring_events$ClutchSize <- NA
 
 
 ### Get birth events --------------------------------------------------------
 
-# Join IndividualDataVlieland with BroodData using BroodID
-birth_events <- IndividualDataVlieland %>%
-  left_join(BroodData, by = c("BroodID" = "ID")) %>%
+# Join IndividualData with BroodData using RingBroodID
+birth_events <- IndividualData %>%
+  left_join(BroodData, by = c("RingBroodID" = "BroodID")) %>%
   mutate(
+    RingNumber = RingNumber,
     Event = "birth",
+    Month = month(LayDate, label = TRUE, abbr = TRUE),
     Year = BirthYear,
-    Month = NA,                 # If you want, you could extract the month from LayDate instead
     NestNo = BroodNestBox,
-    NestLon = BroodLongitude,
-    NestLat = BroodLatitude,
+    NestLon = RingLongitude,
+    NestLat = RingLatitude,
     LayDate = as.Date(LayDate),  
-    ClutchSize = ClutchSize 
-  ) %>%
-  select(RingNumber, Event, Year, Month, NestNo, NestLon, NestLat, LayDate)
+    ClutchSize = ClutchSize ,
+    .keep = "none"
+  )
 
 
 
@@ -245,7 +315,7 @@ birth_events <- IndividualDataVlieland %>%
 # Female reproduction
 female_nests <- BroodData %>%
   filter(!is.na(RingNumberFemale)) %>%
-  transmute(
+  mutate(
     RingNumber = RingNumberFemale,
     Event = "nest",
     Month = month(LayDate, label = TRUE, abbr = TRUE),
@@ -254,13 +324,14 @@ female_nests <- BroodData %>%
     NestLon = BroodLongitude,
     NestLat = BroodLatitude,
     LayDate = LayDate,
-    ClutchSize = ClutchSize
+    ClutchSize = ClutchSize,
+    .keep = "none"
   )
 
 # Male reproduction
 male_nests <- BroodData %>%
   filter(!is.na(RingNumberMale)) %>%
-  transmute(
+  mutate(
     RingNumber = RingNumberMale,
     Event = "nest",
     Month = month(LayDate, label = TRUE, abbr = TRUE),
@@ -269,14 +340,15 @@ male_nests <- BroodData %>%
     NestLon = BroodLongitude,
     NestLat = BroodLatitude,
     LayDate = LayDate,
-    ClutchSize = ClutchSize
+    ClutchSize = ClutchSize,
+    .keep = "none"
   )
 
 reproduction_events <- bind_rows(female_nests, male_nests)
 
 
 
-### Combine birth and nest events -------------------------------------------
+### Combine ring, birth and nest events --------------------------------------
 # Make sure relevant columns are character/numeric
 ring_events <- ring_events %>%
   mutate(
@@ -301,143 +373,9 @@ location_data <- bind_rows(ring_events, birth_events, reproduction_events) %>%
   arrange(RingNumber, Year, Month)
 
 
-# Check which of these ring numbers appear in IndividualDataVlieland
-ids <- location_data %>%
-  filter(RingNumber %in% IndividualDataVlieland$RingNumber) %>%
-  distinct(RingNumber)
-nrow(ids) # 4934
-length(unique(IndividualDataVlieland$RingNumber)) # 4934 - all IDs 
-
-
-
-### Add missing months for nest events --------------------------------------
-
-location_data <- location_data %>%
-  mutate(
-    # Only update Month if Event = "nest" and Month is NA
-    Month = if_else(
-      Event == "nest" & is.na(Month) & !is.na(LayDate),
-      month(LayDate, label = TRUE, abbr = FALSE),  # full month name
-      Month
-    )
-  )
-
-
-
-
-### Checking data ----------------------------------------
-
-
-# Check ring and birth years
-ring_birth_check <- IndividualDataVlieland %>%
-  filter(!is.na(RingYear) & !is.na(BirthYear)) %>%
-  mutate(RingMatchesBirth = RingYear == BirthYear)
-
-# Filter only the ones that don't match
-ring_birth_mismatches <- ring_birth_check %>%
-  filter(!RingMatchesBirth) # none?
-
-# Get birth and ring events from location_data
-birth_ring_comparison <- location_data %>%
-  # Keep only birth or ring events
-  filter(Event %in% c("birth", "ring")) %>%
-  # Select relevant columns
-  select(RingNumber, Event, Year, NestNo, NestLon, NestLat) %>%
-  # Pivot wider so birth and ring info are side by side
-  pivot_wider(
-    names_from = Event,
-    values_from = c(Year, NestNo, NestLon, NestLat),
-    names_glue = "{Event}_{.value}"
-  ) %>%
-  # Rename year columns for clarity
-  rename(
-    BirthYear = birth_Year,
-    RingYear  = ring_Year,
-    BirthNestBox = birth_NestNo,
-    BirthNestLon = birth_NestLon,
-    BirthNestLat = birth_NestLat,
-    RingNestBox = ring_NestNo,
-    RingNestLon = ring_NestLon,
-    RingNestLat = ring_NestLat
-  )
-
-# They don't match
-
-
-
-# Finding birds for whom we have a ring/birth location and at least one nest location 
-# Individuals with birth or ring location
-birth_or_ring <- location_data %>%
-  filter(Event %in% c("birth", "ring")) %>%
-  distinct(RingNumber)
-
-# Individuals with at least one nest
-with_nest <- location_data %>%
-  filter(Event == "nest") %>%
-  distinct(RingNumber)
-
-# Individuals with both
-individuals_with_birth_or_ring_and_nest <- intersect(birth_or_ring$RingNumber,
-                                                     with_nest$RingNumber)
-
-# Data frame with all info for these individuals
-location_data_filtered <- location_data %>%
-  filter(RingNumber %in% individuals_with_birth_or_ring_and_nest)
-
-# Find which of these we have a RingColour for
-# Filter the individual data to those with a RingColour
-individuals_with_colour <- IndividualDataVlieland %>%
-  filter(!is.na(RingColour)) %>%
-  select(RingNumber, RingColour)
-
-# Keep only those RingNumbers that are in the previous filtered set
-filtered_with_colour <- individuals_with_colour %>%
-  filter(RingNumber %in% individuals_with_birth_or_ring_and_nest)
-
-
-
-# See which birds have different birth and ring years
-diff_years <- IndividualDataVlieland %>%
-  filter(!is.na(BirthYear), !is.na(RingYear),
-         BirthYear != RingYear) # none
-
-
-
-### Fill missing birth locations from ring locations ------------------------
-# Where BirthYear == RingYear and Birth location data is missing:
-# Fill Birth location from Ring Location data
-
-### SKIP IF WRONG <----------
-
-location_data <- location_data %>%
-  group_by(RingNumber) %>%
-  mutate(
-    # find the first ring event values in this group (may be NA if none)
-    ring_year = Year[Event == "ring"][1],
-    ring_nest = NestNo[Event == "ring"][1],
-    ring_lon  = NestLon[Event == "ring"][1],
-    ring_lat  = NestLat[Event == "ring"][1],
-    
-    # condition: this row is a birth row AND all three location fields are NA
-    birth_all_loc_missing = (Event == "birth") &
-      is.na(NestNo) & is.na(NestLon) & is.na(NestLat),
-    
-    # condition: birth year equals ring year (and ring_year not NA)
-    birth_ring_year_match = !is.na(ring_year) & (Year == ring_year),
-    
-    # Only when both conditions true, copy ring values into birth row fields
-    NestNo = ifelse(birth_all_loc_missing & birth_ring_year_match, ring_nest, NestNo),
-    NestLon = ifelse(birth_all_loc_missing & birth_ring_year_match, ring_lon, NestLon),
-    NestLat = ifelse(birth_all_loc_missing & birth_ring_year_match, ring_lat, NestLat)
-  ) %>%
-  ungroup() %>%
-  # drop helper columns if you don't want them
-  select(-ring_year, -ring_nest, -ring_lon, -ring_lat,
-         -birth_all_loc_missing, -birth_ring_year_match)
-
-
-
-
+# Do most ring numbers appear in IndividualData & location_data?
+length(unique(IndividualData$RingNumber))
+length(unique(location_data$RingNumber))
 
 
 ### Add distances travelled -------------------------------------------------
@@ -469,8 +407,6 @@ location_data <- location_data %>%
 
 
 ### Save location_data ------------------------------------------------------
-head(location_data)
-
 
 write.csv(location_data, file = "data/location_data.csv", row.names = FALSE)
 
@@ -480,7 +416,7 @@ write.csv(location_data, file = "data/location_data.csv", row.names = FALSE)
 
 ## Individual info ---------------------------------------------------------
 
-# Add individual info to IndividualDataVlieland
+# Add individual info to IndividualData
 
 
 ### --- Number of nest sites used (distinct nest boxes from nest events) ------
@@ -535,19 +471,19 @@ clutch_stats <- BroodData %>%
 
 
 ### --- Is mother colour-ringed? ------
-is_mother_color <- IndividualDataVlieland %>%
+is_mother_color <- IndividualData %>%
   left_join(
-    IndividualDataVlieland %>%
-      select(Mother = RingNumber, MotherRingColour = RingColour),
+    IndividualData %>%
+      select(Mother = RingNumber, MotherRingColour = ColourCode),
     by = c("Mother" = "Mother")
   ) %>%
   select(RingNumber, MotherRingColour)
 
 ### --- Is father colour-ringed? ------
-is_father_color <- IndividualDataVlieland %>%
+is_father_color <- IndividualData %>%
   left_join(
-    IndividualDataVlieland %>%
-      select(Father = RingNumber, FatherRingColour = RingColour),
+    IndividualData %>%
+      select(Father = RingNumber, FatherRingColour = ColourCode),
     by = c("Father" = "Father")
   ) %>%
   select(RingNumber, FatherRingColour)
@@ -595,7 +531,7 @@ total_distance <- location_data %>%
 
 
 ### Combine into one df ------
-IndividualInfo <- IndividualDataVlieland %>%
+IndividualInfo <- IndividualData %>%
   left_join(nest_sites,        by = "RingNumber") %>%
   left_join(breeding_attempts, by = "RingNumber") %>%
   left_join(breeding_years,    by = "RingNumber") %>%
@@ -622,5 +558,5 @@ IndividualInfo <- IndividualInfo %>%
 # Save
 write.csv(IndividualInfo, file = "data/IndividualInfo.csv", row.names = FALSE)
 head(as.data.frame(IndividualInfo))
-head(as.data.frame(IndividualInfo[!is.na(IndividualInfo$RingColour), ]))
+head(as.data.frame(IndividualInfo[!is.na(IndividualInfo$ColourCode), ]))
 
