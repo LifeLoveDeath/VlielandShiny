@@ -49,7 +49,7 @@ prepare_individual_data <- function(df) {
   df <- df[, c(
     "RingNumber", "ColourRingCombo", "Species", "SexText",
     "BirthYear", "RingYear",
-    "MotherRingColour", "FatherRingColour",
+    "Mother", "Father",
     "BreedingAttempts", "NumNestSites", "FirstBreedingYear", "LastBreedingYear",
     "MeanClutchSize", "ClutchSizeRange", "TotalEggs",
     "DispersalDistance_m", "TotalDistance_m"
@@ -103,6 +103,8 @@ prepare_individual_data <- function(df) {
       Variable = case_when(
         Variable == "Birth year" ~ '<span title="Year the bird hatched">Birth year</span>',
         Variable == "Ring year" ~ '<span title="Year the bird was ringed for identification">Ring year</span>',
+        Variable == "Mother" ~ '<span title="Ring number of bird&rsquo;s mother">Mother</span>',
+        Variable == "Father" ~ '<span title="Ring number of bird&rsquo;s father">Father</span>',
         Variable == "Breeding attempts" ~ '<span title="Number of breeding attempts recorded for this bird">Breeding attempts</span>',
         Variable == "Number of nest sites" ~ '<span title="Total distinct nest sites used by this bird">Number of nest sites</span>',
         Variable == "First breeding year" ~ '<span title="Year of the bird’s first recorded breeding attempt">First breeding year</span>',

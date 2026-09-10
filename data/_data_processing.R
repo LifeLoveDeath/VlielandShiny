@@ -48,6 +48,21 @@ length(which(duplicated(BroodData)))
 nrow(BroodData)
 # No duplicate rows
 
+### --- Rearrange & save ----
+names(BroodData)
+# Arrange cols to match previous data frame layout
+BroodDataApp <- subset(BroodData,
+          select = c("BroodID", "BroodYear", "RingNumberFemale", "RingNumberMale",
+                     "LayDate", "ClutchSize", "BroodNestBox",
+                     "BroodLatitude", "BroodLongitude", "BroodAreaGroupName", "SpeciesName"))
+# Re-name cols to match previous data frame layout
+colnames(BroodDataApp) <- c("ID", "BroodYear", "RingNumberFemale", "RingNumberMale",
+                                 "LayDate", "ClutchSize", "BroodNestBox",
+                                 "BroodLatitude", "BroodLongitude",
+                                 "BroodPopulationName", "SpeciesName")
+# write csv
+write.csv(BroodDataApp, file = "data/BroodDataApp.csv", row.names = FALSE)
+
 
 ## --- ColourNumberRings ----
 ColourNumberRings.original <- read.csv("data/ColourNumberRings.csv", row.names = NULL, fileEncoding="UTF-8")
@@ -256,6 +271,8 @@ colnames(IndividualDataVlieland) <- c("RingNumber", "Mother", "Father",
 # Save
 write.csv(IndividualDataVlieland, file = "data/IndividualDataVlieland.csv", row.names = FALSE)
 
+# remove objects only needed for this step:
+rm(Vlieland_rings, TyposIndividual, colour_map, parse_ring)
 
 
 ## Location data -----------------------------------------------------
@@ -352,19 +369,19 @@ reproduction_events <- bind_rows(female_nests, male_nests)
 # Make sure relevant columns are character/numeric
 ring_events <- ring_events %>%
   mutate(
-    NestNo = as.character(NestNo),
+    NestNo = as.numeric(NestNo),
     NestLon = as.numeric(NestLon),
     NestLat = as.numeric(NestLat)
   )
 birth_events <- birth_events %>%
   mutate(
-    NestNo = as.character(NestNo),
+    NestNo = as.numeric(NestNo),
     NestLon = as.numeric(NestLon),
     NestLat = as.numeric(NestLat)
   )
 reproduction_events <- reproduction_events %>%
   mutate(
-    NestNo = as.character(NestNo),
+    NestNo = as.numeric(NestNo),
     NestLon = as.numeric(NestLon),
     NestLat = as.numeric(NestLat)
   )
@@ -410,7 +427,8 @@ location_data <- location_data %>%
 
 write.csv(location_data, file = "data/location_data.csv", row.names = FALSE)
 
-
+# remove objects only needed for this step:
+rm(birth_events, ring_events, female_nests, male_nests, reproduction_events)
 
 
 
@@ -427,7 +445,6 @@ nest_sites <- location_data %>%
     NumNestSites = n_distinct(NestNo),
     .groups = "drop"
   )
-
 
 ### --- Number of breeding attempts ------
 breeding_attempts <- BroodData %>%
@@ -468,26 +485,6 @@ clutch_stats <- BroodData %>%
     TotalEggs      = if (all(is.na(ClutchSize))) NA_real_ else sum(ClutchSize, na.rm = TRUE),
     .groups = "drop"
   )
-
-
-### --- Is mother colour-ringed? ------
-is_mother_color <- IndividualData %>%
-  left_join(
-    IndividualData %>%
-      select(Mother = RingNumber, MotherRingColour = ColourCode),
-    by = c("Mother" = "Mother")
-  ) %>%
-  select(RingNumber, MotherRingColour)
-
-### --- Is father colour-ringed? ------
-is_father_color <- IndividualData %>%
-  left_join(
-    IndividualData %>%
-      select(Father = RingNumber, FatherRingColour = ColourCode),
-    by = c("Father" = "Father")
-  ) %>%
-  select(RingNumber, FatherRingColour)
-
 
 ### ---  Dispersal distance: birth → first nest ------
 dispersal <- location_data %>%
@@ -536,12 +533,8 @@ IndividualInfo <- IndividualData %>%
   left_join(breeding_attempts, by = "RingNumber") %>%
   left_join(breeding_years,    by = "RingNumber") %>%
   left_join(clutch_stats,      by = "RingNumber") %>%
-  left_join(is_mother_color,   by = "RingNumber") %>%
-  left_join(is_father_color,   by = "RingNumber") %>%
   left_join(dispersal, by = "RingNumber") %>%
   left_join(total_distance, by = "RingNumber")
-
-
 
 ### Add sex_text ------
 IndividualInfo <- IndividualInfo %>%
@@ -553,10 +546,43 @@ IndividualInfo <- IndividualInfo %>%
   ))
 
 
+### Rename columns ----------------------------------------------------------
+
+colnames(IndividualInfo)
+
+# Arrange cols to match previous data frame layout
+IndividualInfo <- subset(IndividualInfo,
+                                 select = c("RingNumber", "Mother", "Father",
+                                            "RingBroodID", "Sex", "RingYear", "BirthYear",
+                                            "RingAreaGroupName", "RingNestBox",
+                                            "RingLatitude", "RingLongitude", "SpeciesName",
+                                            "ColourCode", "ColourRingLeft1", "ColourRingLeft2",
+                                            "ColourRingRight1", "ColourRingRight2", "ColourRingCombo",
+                                            "NumNestSites", "BreedingAttempts",
+                                            "FirstBreedingYear", "LastBreedingYear", "BreedingSpan",
+                                            "MeanClutchSize", "MinClutchSize", "MaxClutchSize",
+                                            "TotalEggs",
+                                            "DispersalDistance_m", "TotalDistance_m", "SexText"))
+# Re-name cols to match previous data frame layout
+colnames(IndividualInfo) <- c("RingNumber", "Mother", "Father",
+                              "BroodID", "Sex", "RingYear", "BirthYear",
+                              "RingPopulationName", "RingNestBox",
+                              "RingLatitude", "RingLongitude", "Species",
+                              "RingColour", "ColourRingLeft1", "ColourRingLeft2",
+                              "ColourRingRight1", "ColourRingRight2", "ColourRingCombo",
+                              "NumNestSites", "BreedingAttempts",
+                              "FirstBreedingYear", "LastBreedingYear", "BreedingSpan",
+                              "MeanClutchSize", "MinClutchSize", "MaxClutchSize",
+                              "TotalEggs",
+                              "DispersalDistance_m", "TotalDistance_m", "SexText")
+
 
 ### Save individual info df -------------------------------------------------
+
 # Save
 write.csv(IndividualInfo, file = "data/IndividualInfo.csv", row.names = FALSE)
-head(as.data.frame(IndividualInfo))
-head(as.data.frame(IndividualInfo[!is.na(IndividualInfo$ColourCode), ]))
+
+# remove objects only needed for this step:
+rm(nest_sites, breeding_attempts, breeding_years, clutch_stats, dispersal,
+   total_distance)
 

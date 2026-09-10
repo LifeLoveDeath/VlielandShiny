@@ -7,8 +7,8 @@
 
 # Get table of colour rings -----------------------------------------------
 get_colour_rings <- function() {
-  val <- c("blue", "blue/white", "green", "metal", "orange",
-           "pink/blue", "pink/green", "red", "red/white",
+  val <- c("blue", "blue/white", "green", "green/white", "metal", "orange",
+           "pink", "pink/blue", "pink/green", "red", "red/white",
            "white", "white/blue", "yellow", "yellow/black")
   
   img <- sprintf(

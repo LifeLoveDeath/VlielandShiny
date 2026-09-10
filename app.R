@@ -195,7 +195,7 @@ server <- function(input, output, session) {
   
   # Real data
   IndividualDataVlieland <- read.csv('data/IndividualDataVlieland.csv', row.names = NULL)
-  BroodData <- read.csv("data/BroodData.csv", row.names = NULL)
+  BroodData <- read.csv("data/BroodDataApp.csv", row.names = NULL)
   location.data <- read.csv("data/location_data.csv", row.names = NULL) 
   IndividualInfo <- read.csv('data/IndividualInfo.csv', row.names = NULL)
   
@@ -204,6 +204,7 @@ server <- function(input, output, session) {
   finder <- birdFinderServer(input, output, IndividualDataVlieland, session) # feeding in real data
   search_results <- finder$search_results
   selected_ring <- finder$selected_ring
+  selected_colours <- finder$selected_colours
   
   # Reactive title for individual info page
   output$selected_bird <- renderUI({
@@ -250,7 +251,8 @@ server <- function(input, output, session) {
   individualInfoServer(
     id = "individual_info",
     vlieland.data = IndividualInfo,
-    selected_ring = selected_ring
+    selected_ring = selected_ring,
+    selected_colours = selected_colours
   )
   
   

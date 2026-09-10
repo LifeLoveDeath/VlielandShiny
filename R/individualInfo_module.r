@@ -73,13 +73,18 @@ individualInfoUI <- function(id) {
 
 # Server --------------------------------------
 
-individualInfoServer <- function(id, vlieland.data, selected_ring) {
+individualInfoServer <- function(id, vlieland.data, selected_ring, selected_colours) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
     individual.data <- reactive({
       req(selected_ring())
-      df <- vlieland.data[vlieland.data$RingNumber == selected_ring(), ]
+      
+      if (!is.na(selected_colours()))
+        {df <- vlieland.data[vlieland.data$RingNumber == selected_ring() &
+          vlieland.data$ColourRingCombo == selected_colours(),]}
+      else {df <- vlieland.data[vlieland.data$RingNumber == selected_ring(),]}
+      
       prepare_individual_data(df)  # <-- call helper
     })
     
