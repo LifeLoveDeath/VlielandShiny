@@ -4,20 +4,15 @@ Shiny app for Vlieland great tit project
 VlielandShiny.Rproj
 |- app.R                                # contains app ui and server
 
-|- data/                                # contains data (real raw and generated dataset + dummy datasets the app was built with)
-    |- BroodData.csv                    # IN APP (raw real data modified to remove 1 entry with laydate in Oct 2026)
-    |- ColourNumberRings.csv            # Ring number & colour ring combination reference list (real raw data)
-    |- Coordinates_Boxes_Vlieland.csv   
-    |- Coordinates_Boxes_Vlieland.xlsx
-    |- DummyData.csv
-    |- IndividualData.csv               # (real raw data)
-    |- IndividualDataVlieland.csv       # IN APP - for colour ring search (real generated data)
-    |- Individuallnfo.csv               # IN APP - for individual info table (real generated data)
-    |- IndividualsData.csv              # dummy data
-    |- location_data.csv                # IN APP - for mapping (real generated data)
-    |- NestLocationData.csv             # dummy data
-
-|- data_cleaning/                       # scripts for cleaning real data and generating original dummy data
+|- data/                                # Initial data files for "_data_processing.R" & reconfigured versions for use in app
+    |- _data_processing.R               # Reconfiguring the initial data files to suit app needs
+    |- BroodData.csv                    # Initial data - Brood info for blue tits & great tits hatched or parenting on Vlieland during or before 2025 (date may be updated over time)
+    |- BroodDataApp.csv                 # IN APP___For family tree___BroodData.csv with col names altered to match previous col names used in app
+    |- ColourNumberRings.csv            # Initial data - Ring number & colour code reference list
+    |- IndividualData.csv               # Initial data - Individual bird info for blue tits & great tits hatched or parenting on Vlieland during or before 2025 (date may be updated over time)
+    |- IndividualDataVlieland.csv       # IN APP___For bird search___IndividualData.csv plus colour codes & col names altered to match previous col names used in app
+    |- Individuallnfo.csv               # IN APP___For individual info table___IndividualData.csv plus a range of summary stats for each bird
+    |- location_data.csv                # IN APP___For mapping___"event" denotes if a row is the hatching/ringing/nesting location. Per bird, distance between each event given.
 
 |- R/                                   # Is sourced by app.R automatically
     |- appFormatting.R                  # Formatting for the app

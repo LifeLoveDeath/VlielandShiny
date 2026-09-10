@@ -13,6 +13,14 @@
 # ----------------------------------------------------------------------
 get_family_subset <- function(ped.data, focal_id, brood_data) {
   
+  # Ensure no duplicate ring numbers
+  ped.data <- subset(ped.data,
+                     select = c("RingNumber", "Mother", "Father",
+                                "BroodID", "Sex", "RingYear", "BirthYear",
+                                "RingPopulationName", "RingNestBox",
+                                "RingLatitude", "RingLongitude",
+                                "Species")) %>% unique()
+  
   # Step 1: Find parents
   
   focal_row <- ped.data %>% filter(RingNumber == focal_id)
@@ -73,7 +81,7 @@ get_family_subset <- function(ped.data, focal_id, brood_data) {
       RingYear          = NA_integer_,
       BirthYear         = NA_integer_,
       RingPopulationName= NA_character_,
-      RingNestBox       = NA_character_,
+      RingNestBox       = NA_integer_,
       RingLatitude      = NA_real_,
       RingLongitude     = NA_real_,
       Species           = NA_character_,

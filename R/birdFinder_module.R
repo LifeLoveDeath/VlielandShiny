@@ -222,6 +222,7 @@ birdFinderServer <- function(input, output, data, session) {
   # Used by parent UI to show individual bird details
   
   selected_ring <- reactiveVal(NULL)
+  selected_colours <- reactiveVal(NULL)
   
   output$summary_info <- DT::renderDataTable({
     df <- search_results()
@@ -239,8 +240,11 @@ birdFinderServer <- function(input, output, data, session) {
   observeEvent(input$select_button, {
     row_index <- as.numeric(gsub("select_", "", input$select_button))
     df <- search_results()
-    if (!is.null(df) && nrow(df) >= row_index) selected_ring(df[row_index, "RingNumber"])
+    if (!is.null(df) && nrow(df) >= row_index)
+      {selected_ring(df[row_index, "RingNumber"])
+      selected_colours(gsub(", ","-",df[row_index, "ColourRingCombo"]))}
   })
   
-  return(list(search_results = search_results, selected_ring = selected_ring))
+  return(list(search_results = search_results, selected_ring = selected_ring,
+              selected_colours = selected_colours))
 }
