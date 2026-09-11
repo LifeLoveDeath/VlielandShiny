@@ -1,0 +1,58 @@
+{
+	"languages": ["en", "bl"],
+	"translation": [
+	  
+	  {
+			"en": "Vlieland Nestboxes",
+			"bl": ""
+		},
+		
+		{
+		  "en": "About this project and app",
+		  "bl": ""
+		},
+		
+		{
+		  "en": "Find an individual",
+		  "bl": ""
+		},
+		
+		{
+		  "en": "Return to search",
+		  "bl": ""
+		},
+		
+		{
+		  "en": "Here you can view the details of your selected bird. <br> Use the tabs below to explore their general info, location data and family tree.",
+		  "bl": ""
+		},
+		
+		{
+		  "en": "General Info",
+		  "bl": ""
+		},
+		
+		{
+		  "en": "Map",
+		  "bl": ""
+		},
+		
+		{
+		  "en": "Family tree",
+		  "bl": ""
+		},
+		
+		{
+		  "en": "Population trends",
+		  "bl": ""
+		},
+		
+		{
+		  "en": "Citizen science",
+		  "bl": ""
+		}
+		
+	]
+
+}
+		

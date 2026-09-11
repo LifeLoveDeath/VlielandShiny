@@ -9,7 +9,7 @@ required_packages <- c(
   "shiny", "tidyverse", "dplyr", "bslib", "leaflet", "viridis", "reactable",
   "shinyjs", "shinyWidgets", "DT", "ggpedigree", "ggplot2", "plotly",
   "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "tools", "shinythemes",
-  "fontawesome", "tibble", "htmltools", "RColorBrewer", "kinship2"
+  "fontawesome", "tibble", "htmltools", "RColorBrewer", "kinship2", "shiny.i18n"
 )
 
 ## Install any missing packages
@@ -43,10 +43,20 @@ lapply(required_packages, library, character.only = TRUE)
 # library(htmltools)
 # library(RColorBrewer)
 # library(kinship2)
+# library(shiny.i18n)
+
+
+
+# Translation setup ------------------------------------------
+
+# File with translations
+i18n <- Translator$new(translation_json_path = "data/translation.json")
+# Default translation displayed
+i18n$set_translation_language("en")
+
 
 
 # App UI -----------------------------------------------------
-
 
 ui <- div(
   
@@ -64,7 +74,7 @@ ui <- div(
     # ),
     #id = "navbar_id",
     position = "fixed-top",
-    windowTitle = "Vlieland Nestboxes",
+    windowTitle = i18n$t("Vlieland Nestboxes"),
     fluid = TRUE,
     collapsible = TRUE,
     #theme = shinytheme("flatly"), # change theme here
@@ -83,7 +93,7 @@ ui <- div(
       # title text and link to home page if clicked
       tags$a(
         href = "/", target = "_self",
-        tags$span("Vlieland Nestboxes",
+        tags$span(i18n$t("Vlieland Nestboxes"),
         style = "
         color:#3f5262;
         font-weight:300;
@@ -99,14 +109,14 @@ ui <- div(
     
     ### --- Project info homepage -------------------------
     
-    tabPanel("About this project and app",
+    tabPanel(i18n$t("About this project and app"),
              projectInfoUI("projectInfoPage"),
     ),
     
     
     ### --- Find an individual page -------------------------
     
-    tabPanel("Find an individual",
+    tabPanel(i18n$t("Find an individual"),
              useShinyjs(), # for allowing hidden panels
              hidden(
                div(
@@ -133,18 +143,18 @@ ui <- div(
         ",
                      
                      # --- Back button and selected bird ---
-                     actionButton("back_to_search", "Return to search"),
+                     actionButton("back_to_search", i18n$t("Return to search")),
                      uiOutput("selected_bird"),
-                     p(HTML("Here you can view the details of your selected bird.<br>
-                            Use the tabs below to explore their general info, location data and family tree."),
+                     p(HTML(i18n$t("Here you can view the details of your selected bird.<br>
+                            Use the tabs below to explore their general info, location data and family tree.")),
                        style = "font-size:14px; color:#3f5262; margin-bottom: 20px;"),
                      
                      # --- Tabs ---
                      tabsetPanel(
                        id = "bird_tabs",
-                       tabPanel("General Info", individualInfoUI("individual_info")),
-                       tabPanel("Map", value = "Map", mapUI("map_individual")),
-                       tabPanel("Family tree", familyTreeUI("pedigree_module"))
+                       tabPanel(i18n$t("General Info"), individualInfoUI("individual_info")),
+                       tabPanel(i18n$t("Map"), value = "Map", mapUI("map_individual")),
+                       tabPanel(i18n$t("Family tree"), familyTreeUI("pedigree_module"))
                      )
                    )
                )
@@ -154,14 +164,14 @@ ui <- div(
     ### --- Population trends page -------------------------
     
     tabPanel(
-      "Population trends",
+      i18n$t("Population trends"),
       populationTrendsUI("popTrends")
     ),
     
     
     ### --- Citizen science page -------------------------   
     
-    tabPanel("Citizen science",
+    tabPanel(i18n$t("Citizen science"),
              citizenScienceUI()
     ),
     
