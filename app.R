@@ -64,34 +64,35 @@ ui <- div(
     # ),
     #id = "navbar_id",
     position = "fixed-top",
-    windowTitle = "Vlieland Great Tits",
+    windowTitle = "Vlieland Nestboxes",
     fluid = TRUE,
     collapsible = TRUE,
     #theme = shinytheme("flatly"), # change theme here
     # To change theme, use navbarShinyThemeUI above instead of navbarUI and apply theme
     
     ### --- Title section-------
-    
     title = div(
       id = "logo",
-      # nioo logo from /www and link to webpage
+      # nioo logo from /www and if clicked opens NIOO webpage in separate browser
       tags$a(
         href = "https://nioo.knaw.nl/en", target = "_blank",
         tags$img(src = "NIOO_logo.svg", height = "30px")
-      ),
+        ),
       # divider line
       div(class = "divider"),
-      #title text
-      tags$span("Vlieland Great Tits",
-                style = "
-    color:#3f5262;
-    font-weight:300;
-    font-size:20px;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  "
-      )
+      # title text and link to home page if clicked
+      tags$a(
+        href = "/", target = "_self",
+        tags$span("Vlieland Nestboxes",
+        style = "
+        color:#3f5262;
+        font-weight:300;
+        font-size:20px;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      "
+        ))
     ),
     
     ## --- Tab panels -------------------------------------

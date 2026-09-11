@@ -59,28 +59,22 @@ birdFinderUI <- function(id) {
         column(
           width = 4,
           
-          # Search by RING NUMBER
-          h4("Search using ring number", style = "color:#3f5262; font-weight:500;"),
-          textInput("ring_search", "",
-                    placeholder = "Enter ring number"),
-          actionButton("clear_ring_search", "Clear ring number"),
-          br(),
-          br(),
-          
           # Search by COLOUR RINGS
           h4("Search using colour rings", style = "color:#3f5262; font-weight:500;"),
-          helpText(HTML("<b>Use the selectors below to search for a bird by its colour rings:</b><br>
-    • Select ring colours <b>top to bottom</b> on each leg.<br>
-    • Each bird has <b>one metal ring</b>.<br>
-    • You can leave a dropdown blank if a ring is <b>unknown</b>.<br>
-    • See below for an example and diagram.<br>")),
-          br(),
+          helpText(HTML("
+    • Select ring colours <b>top to bottom</b> on each leg<br>
+    • Each bird has <b>one metal ring</b><br>
+    • You can leave a dropdown blank if a ring is <b>unknown</b><br>
+    • See bottom of page for an example and diagram")),
           
           tags$head(tags$style(HTML("
             .picker-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
             .picker-item .text { flex-grow: 1; }
             .picker-item .icon { height: 1em; width: auto; margin-left: 5px; }
           "))),
+          pickerInput("Sp", "Species",
+                      choices = c("Select species..." = "", "Blue tit" = "Blue tit", "Great tit" = "Great tit"),
+                      selected = "Select species..."),
           pickerInput("Left1", "Left leg - top ring",
                       choices = c("", colour_rings$val),
                       choicesOpt = list(content = c("Select colour...", colour_rings$img)),
@@ -101,22 +95,37 @@ birdFinderUI <- function(id) {
           br(),
           br(),
           
+          # Search by RING NUMBER
+          h4("Search using ring number", style = "color:#3f5262; font-weight:500;"),
+          helpText(HTML("
+    • Each metal ring is marked with a unique number<br>
+    • This can also be used as an alternative to colour rings to identify your bird")),
+          textInput("ring_search", "",
+                    placeholder = "Enter ring number"),
+          actionButton("clear_ring_search", "Clear ring number"),
+          br(),
+          br(),
+          
           # Example search text
-          # First is good example for mapping
-          # Second is good example for family tree
+          # BK...65998 has simple map & family tree
+          # B...956635 quite complex & interesting map & family tree
+          h4("Example birds", style = "color:#3f5262; font-weight:500;"),
           helpText(HTML("<b>Try searching for the following birds:</b><br><br>
                           
-                          <i>Ring number: F...999544</i><br>
-                          Left leg - top ring: <b>blue</b><br>
-                          Left leg - bottom ring: <b>red/white</b><br>
-                          Right leg - top ring: <b>metal</b><br>
-                          Right leg - bottom ring: <b>red/white</b><br><br>
+                          Species: <b>Great tit</b><br>
+                          Left leg - top ring: <b>yellow/black</b><br>
+                          Left leg - bottom ring: <b>yellow</b><br>
+                          Right leg - top ring: <b>yellow/black</b><br>
+                          Right leg - bottom ring: <b>metal</b><br>
+                          <i>Ring number: BK...65998</i><br><br>
                           
-                          <i>Ring number: AH...68076</i><br>
-                          Left leg - top ring: <b>red/white</b><br>
-                          Left leg - bottom ring: <b>metal</b><br>
-                          Right leg - top ring: <b>yellow</b><br>
-                          Right leg - bottom ring: <b>white</b>
+                          Species: <b>Great tit</b><br>
+                          Left leg - top ring: <b>blue</b><br>
+                          Left leg - bottom ring: <b>white</b><br>
+                          Right leg - top ring: <b>metal</b><br>
+                          Right leg - bottom ring: <b>pink/green</b><br>
+                          <i>Ring number: B...956635</i><br><br>
+                          
                         ")),
           # Diagram placeholder
           helpText(HTML("<i>(Placeholder: Diagram showing order of rings on bird)</i>"))
@@ -126,8 +135,9 @@ birdFinderUI <- function(id) {
         column(
           width = 8,
           h4("Matching individuals", style = "color:#3f5262; font-weight:500;"),
-          helpText(HTML("Search results will appear here once you select colour rings. Click on an individual to see its last observed location on the map.<br>
-          Click “See full info” to explore its full details, a map of its nesting sites and its family tree.")),
+          helpText(HTML("• Search results will appear here once you select colour rings<br>
+          • <b>Click on an individual</b> to see its <b>last observed location</b> on the map<br>
+          • <b>Click “See full info”</b> to explore its <b>full details</b>, a map of its nesting sites and its family tree.")),
           DT::dataTableOutput("summary_info"),
           br(),
           uiOutput("map_preview_ui")
@@ -147,6 +157,9 @@ birdFinderUI <- function(id) {
 
 birdFinderServer <- function(input, output, data, session) {
   
+  # ---- Uncaps species names in data ----
+  data$Species <- str_to_sentence(data$Species)
+  
   
   # ---- Dropdown narrowing ----
   # Whenever any colour ring input changes, update available options for the other dropdowns
@@ -163,6 +176,28 @@ birdFinderServer <- function(input, output, data, session) {
     
     options <- get_dropdown_options(data, input)
     
+    cat(
+      "\nDROPDOWN OPTIONS - Species:",
+      paste(options$Sp, collapse = ", "),
+      "\n"
+    )
+    
+    sp_choices <- c("", sort(options$Sp))
+    
+    cat(
+      "\nACTUAL SP CHOICES:",
+      paste(
+        ifelse(is.na(sp_choices), "<NA>", sp_choices),
+        collapse = " | "
+      ),
+      "\n"
+    )
+    
+    # below "options" is the list "get_dropdown_options" generated in birdFinder_functions
+    # the length of each "options" sub list e.g. options$sp depends on the subsetting applied by selections in the other dropdowns
+    updatePickerInput(session, "Sp", choices = c("", sort(options$Sp)),
+                      choicesOpt = list(content = c("Select species...", sort(options$Sp))),
+                      selected = isolate(input$Sp))
     updatePickerInput(session, "Left1", choices = c("", sort(options$Left1)),
                       choicesOpt = list(content = c("Select colour...", get_icons(sort(options$Left1)))),
                       selected = isolate(input$Left1))
@@ -178,6 +213,7 @@ birdFinderServer <- function(input, output, data, session) {
   })
   
   observeEvent(input$reset_filters, {
+    updatePickerInput(session, "Sp", selected = "")
     updatePickerInput(session, "Left1", selected = "")
     updatePickerInput(session, "Left2", selected = "")
     updatePickerInput(session, "Right1", selected = "")
@@ -194,6 +230,7 @@ birdFinderServer <- function(input, output, data, session) {
   # Clear dropdowns when a ring number is entered:
   observeEvent(input$ring_search, {
     if (!is.null(input$ring_search) && input$ring_search != "") {
+      updatePickerInput(session, "Sp", selected = "")
       updatePickerInput(session, "Left1", selected = "")
       updatePickerInput(session, "Left2", selected = "")
       updatePickerInput(session, "Right1", selected = "")
@@ -211,7 +248,7 @@ birdFinderServer <- function(input, output, data, session) {
   # Reactive filtered search results, returns results when fewer than 5 rows
   search_results <- reactive({
     filter_birds(data, input)
-  })
+    })
   
   
   
@@ -234,7 +271,8 @@ birdFinderServer <- function(input, output, data, session) {
     
     df$Select <- make_action_buttons(nrow(df), "select_")
     
-    datatable(df, options = list(dom = 't', ordering = FALSE), rownames = FALSE, escape = FALSE)
+    datatable(df, options = list(dom = 't', ordering = FALSE),
+              rownames = FALSE, escape = FALSE, selection = list(mode = "single", selected = 1))
   })
   
   observeEvent(input$select_button, {

@@ -37,7 +37,7 @@ build_base_map <- function(lng = 5.018424, lat = 53.286226, zoom = 12) {
 
 # Add markers -------------------------------------------------------------
 
-add_event_markers <- function(map, data, event_type, color, radius = 8) {
+add_event_markers <- function(map, data, event_type, color, radius = 7) {
   event_data <- data %>% filter(Event == event_type)
   if (nrow(event_data) == 0) return(map)
   
@@ -72,7 +72,7 @@ add_timeline <- function(map, data) {
     lng = timeline_data$NestLon,
     lat = timeline_data$NestLat,
     color = "#0d0887", weight = 3, opacity = 0.7,
-    options = arrowheadOptions(yawn = 50, size = "7%", frequency = freq)
+    options = arrowheadOptions(yawn = 70, size = "4%", frequency = freq)
   )
 }
 

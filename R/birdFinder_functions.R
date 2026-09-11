@@ -27,26 +27,37 @@ get_colour_rings <- function() {
 
 get_dropdown_options <- function(data, input) {
   list(
+    Sp = unique(data[
+      (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
+        (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
+        (input$Right1 == "" | data$ColourRingRight1 == input$Right1) &
+        (input$Right2 == "" | data$ColourRingRight2 == input$Right2),
+      "Species"
+    ]),
     Left1 = unique(data[
-      (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
+      (input$Sp == "" | data$Species == input$Sp) &
+        (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
         (input$Right1 == "" | data$ColourRingRight1 == input$Right1) &
         (input$Right2 == "" | data$ColourRingRight2 == input$Right2),
       "ColourRingLeft1"
     ]),
     Left2 = unique(data[
-      (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
+      (input$Sp == "" | data$Species == input$Sp) &
+        (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
         (input$Right1 == "" | data$ColourRingRight1 == input$Right1) &
         (input$Right2 == "" | data$ColourRingRight2 == input$Right2),
       "ColourRingLeft2"
     ]),
     Right1 = unique(data[
-      (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
+      (input$Sp == "" | data$Species == input$Sp) &
+        (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
         (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
         (input$Right2 == "" | data$ColourRingRight2 == input$Right2),
       "ColourRingRight1"
     ]),
     Right2 = unique(data[
-      (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
+      (input$Sp == "" | data$Species == input$Sp) &
+        (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
         (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
         (input$Right1 == "" | data$ColourRingRight1 == input$Right1),
       "ColourRingRight2"
@@ -74,6 +85,7 @@ filter_birds <- function(data, input) {
   }
   
   # Colour ring filtering
+  if (input$Sp != "" && !is.na(input$Sp)) filtered <- filtered[!is.na(filtered$Species) & filtered$Species == input$Sp, ]
   if (input$Left1 != "" && !is.na(input$Left1)) filtered <- filtered[!is.na(filtered$ColourRingLeft1) & filtered$ColourRingLeft1 == input$Left1, ]
   if (input$Left2 != "" && !is.na(input$Left2)) filtered <- filtered[!is.na(filtered$ColourRingLeft2) & filtered$ColourRingLeft2 == input$Left2, ]
   if (input$Right1 != "" && !is.na(input$Right1)) filtered <- filtered[!is.na(filtered$ColourRingRight1) & filtered$ColourRingRight1 == input$Right1, ]
