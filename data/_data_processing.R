@@ -243,6 +243,28 @@ mutate(
 # And enter NA in every row where the bird is not color ringed
 IndividualData$ColourRingCombo[which(IndividualData$ColourRingCombo == "")] <- NA
 
+### Add columns for date filter ---------------------------------------------
+# When searching for a bird
+# these columns allow birds unlikely to be alive to be filtered out
+
+# Earliest possible date
+IndividualData$Colour_EarliestStart <- ifelse(!is.na(IndividualData$BirthYear),
+                                            yes = IndividualData$BirthYear + 1,
+                                            no = ifelse(!is.na(IndividualData$RingYear),
+                                                        yes = IndividualData$RingYear,
+                                                        no = NA)
+                                            )
+
+
+# Latest likely date
+# Oldest birds according to EURING_longevity_list_20230901.pdf
+# Blue tit 16 years 7 months
+# Great tit (also) 16 years 7 months!
+# So I'll allow possibility of living up to 17 to give the benefit of the doubt!
+IndividualData$Colour_LatestLikely <- ifelse(!is.na(IndividualData$Colour_EarliestStart),
+                                             yes = IndividualData$Colour_EarliestStart + 16,
+                                             no = NA)
+
 
 ### Rename columns ----------------------------------------------------------
 
@@ -254,14 +276,16 @@ IndividualDataVlieland <- subset(IndividualData,
                                     "RingAreaGroupName", "RingNestBox",
                                     "RingLatitude", "RingLongitude", "SpeciesName",
                                     "ColourCode", "ColourRingLeft1", "ColourRingLeft2",
-                                    "ColourRingRight1", "ColourRingRight2", "ColourRingCombo"))
+                                    "ColourRingRight1", "ColourRingRight2", "ColourRingCombo",
+                                    "Colour_EarliestStart", "Colour_LatestLikely"))
 # Re-name cols to match previous data frame layout
 colnames(IndividualDataVlieland) <- c("RingNumber", "Mother", "Father",
                               "BroodID", "Sex", "RingYear", "BirthYear",
                               "RingPopulationName", "RingNestBox",
                               "RingLatitude", "RingLongitude", "Species",
                               "RingColour", "ColourRingLeft1", "ColourRingLeft2",
-                              "ColourRingRight1", "ColourRingRight2", "ColourRingCombo")
+                              "ColourRingRight1", "ColourRingRight2", "ColourRingCombo",
+                              "Colour_EarliestStart", "Colour_LatestLikely")
 
 
 

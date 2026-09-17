@@ -47,7 +47,7 @@ birdFinderUI <- function(id) {
       fluidRow(
         column(
           width = 12,
-          h3("Find an individual", style = "color:#3f5262; font-weight:500;"),
+          h3("Find an individual", style = "color:#3f5262; font-weight:500;")
         )
       ),
       
@@ -72,8 +72,11 @@ birdFinderUI <- function(id) {
             .picker-item .text { flex-grow: 1; }
             .picker-item .icon { height: 1em; width: auto; margin-left: 5px; }
           "))),
+          pickerInput("Yr", "Year bird seen",
+                      choices = c("Select year..." = "", year(Sys.Date()):1955),
+                      selected = "Select year..."),
           pickerInput("Sp", "Species",
-                      choices = c("Select species..." = "", "Blue tit" = "Blue tit", "Great tit" = "Great tit"),
+                      choices = c("Select species..." = "", "Blue tit", "Great tit"),
                       selected = "Select species..."),
           pickerInput("Left1", "Left leg - top ring",
                       choices = c("", colour_rings$val),
@@ -161,6 +164,14 @@ birdFinderServer <- function(input, output, data, session) {
   data$Species <- str_to_sentence(data$Species)
   
   
+  # ---- Cap last date bird could be sighted to sys.date ----
+  data$Colour_LatestLikely <- ifelse(is.na(data$Colour_LatestLikely),
+                                     yes = NA,
+                                     no = ifelse(data$Colour_LatestLikely > year(Sys.Date()),
+                                                 yes = year(Sys.Date()),
+                                                 no = data$Colour_LatestLikely))
+ 
+  
   # ---- Dropdown narrowing ----
   # Whenever any colour ring input changes, update available options for the other dropdowns
   # Excludes current dropdown to prevent circular filtering
@@ -176,25 +187,12 @@ birdFinderServer <- function(input, output, data, session) {
     
     options <- get_dropdown_options(data, input)
     
-    cat(
-      "\nDROPDOWN OPTIONS - Species:",
-      paste(options$Sp, collapse = ", "),
-      "\n"
-    )
-    
-    sp_choices <- c("", sort(options$Sp))
-    
-    cat(
-      "\nACTUAL SP CHOICES:",
-      paste(
-        ifelse(is.na(sp_choices), "<NA>", sp_choices),
-        collapse = " | "
-      ),
-      "\n"
-    )
     
     # below "options" is the list "get_dropdown_options" generated in birdFinder_functions
     # the length of each "options" sub list e.g. options$sp depends on the subsetting applied by selections in the other dropdowns
+    #updatePickerInput(session, "Yr", choices = c("", sort(options$Yr)),
+                      #choicesOpt = list(content = c("Select year...", sort(options$Yr))),
+                      #selected = isolate(input$Yr))
     updatePickerInput(session, "Sp", choices = c("", sort(options$Sp)),
                       choicesOpt = list(content = c("Select species...", sort(options$Sp))),
                       selected = isolate(input$Sp))
@@ -212,7 +210,9 @@ birdFinderServer <- function(input, output, data, session) {
                       selected = isolate(input$Right2))
   })
   
+  # reset all to blank if button pressed
   observeEvent(input$reset_filters, {
+    updatePickerInput(session, "Yr", selected = "")
     updatePickerInput(session, "Sp", selected = "")
     updatePickerInput(session, "Left1", selected = "")
     updatePickerInput(session, "Left2", selected = "")
@@ -230,6 +230,7 @@ birdFinderServer <- function(input, output, data, session) {
   # Clear dropdowns when a ring number is entered:
   observeEvent(input$ring_search, {
     if (!is.null(input$ring_search) && input$ring_search != "") {
+      updatePickerInput(session, "Yr", selected = "")
       updatePickerInput(session, "Sp", selected = "")
       updatePickerInput(session, "Left1", selected = "")
       updatePickerInput(session, "Left2", selected = "")

@@ -4,7 +4,6 @@
 # ==========================================================
 
 
-
 # Get table of colour rings -----------------------------------------------
 get_colour_rings <- function() {
   val <- c("blue", "blue/white", "green", "green/white", "metal", "orange",
@@ -27,6 +26,13 @@ get_colour_rings <- function() {
 
 get_dropdown_options <- function(data, input) {
   list(
+    #Yr = min(data[
+      #(input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
+        #(input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
+        #(input$Right1 == "" | data$ColourRingRight1 == input$Right1) &
+        #(input$Right2 == "" | data$ColourRingRight2 == input$Right2),
+      #"Colour_EarliestStart"
+    #]) : year(Sys.Date()),
     Sp = unique(data[
       (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
         (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
