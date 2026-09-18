@@ -19,6 +19,7 @@
 # library(tidyverse)
 
 
+
 # UI function --------------------------------------------------------------
 birdFinderUI <- function(id) {
   
@@ -70,11 +71,12 @@ birdFinderUI <- function(id) {
           tags$head(tags$style(HTML("
             .picker-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
             .picker-item .text { flex-grow: 1; }
-            .picker-item .icon { height: 1em; width: auto; margin-left: 5px; }
+            .picker-item .icon { height: 1em; width: auto; margin-left: 5px;}
           "))),
           pickerInput("Yr", "Year bird seen",
                       choices = c("Select year..." = "", year(Sys.Date()):1955),
-                      selected = "Select year..."),
+                      selected = "Select year...",
+                      options = list(size = 4.6)),
           pickerInput("Sp", "Species",
                       choices = c("Select species..." = "", "Blue tit", "Great tit"),
                       selected = "Select species..."),
@@ -138,12 +140,16 @@ birdFinderUI <- function(id) {
         column(
           width = 8,
           h4("Matching individuals", style = "color:#3f5262; font-weight:500;"),
-          helpText(HTML("• Search results will appear here once you select colour rings<br>
-          • <b>Click on an individual</b> to see its <b>last observed location</b> on the map<br>
+          helpText(HTML("• Search results will appear here once you select colour rings.<br>
+          • The displayed birds are <b>sorted by date born</b>. Birds born more recently are more likely to be your bird.<br>
+          • <b>Click on an individual</b> to see its <b>last observed location</b> on the map.<br>
           • <b>Click “See full info”</b> to explore its <b>full details</b>, a map of its nesting sites and its family tree.")),
-          DT::dataTableOutput("summary_info"),
-          br(),
+            DT::dataTableOutput("summary_info"),
+            br(),
+          tags$style(type = "text/css", "#more_data{color:#01B6DC; text-align: center;}"), #8AD5E6
+          uiOutput("more_data"),  
           uiOutput("map_preview_ui")
+          
         )
       )
     )
@@ -164,13 +170,20 @@ birdFinderServer <- function(input, output, data, session) {
   data$Species <- str_to_sentence(data$Species)
   
   
-  # ---- Cap last date bird could be sighted to sys.date ----
+  # ---- Cap dates bird could be sighted to sys.date ----
   data$Colour_LatestLikely <- ifelse(is.na(data$Colour_LatestLikely),
                                      yes = NA,
                                      no = ifelse(data$Colour_LatestLikely > year(Sys.Date()),
                                                  yes = year(Sys.Date()),
                                                  no = data$Colour_LatestLikely))
- 
+  
+  data$Colour_EarliestStart <- ifelse(is.na(data$Colour_EarliestStart),
+                                     yes = NA,
+                                     no = ifelse(data$Colour_EarliestStart > year(Sys.Date()),
+                                                 yes = year(Sys.Date()),
+                                                 no = data$Colour_EarliestStart))
+  
+  
   
   # ---- Dropdown narrowing ----
   # Whenever any colour ring input changes, update available options for the other dropdowns
@@ -190,9 +203,9 @@ birdFinderServer <- function(input, output, data, session) {
     
     # below "options" is the list "get_dropdown_options" generated in birdFinder_functions
     # the length of each "options" sub list e.g. options$sp depends on the subsetting applied by selections in the other dropdowns
-    #updatePickerInput(session, "Yr", choices = c("", sort(options$Yr)),
-                      #choicesOpt = list(content = c("Select year...", sort(options$Yr))),
-                      #selected = isolate(input$Yr))
+    updatePickerInput(session, "Yr", choices = c("", sort(options$Yr, decreasing = T)),
+                      choicesOpt = list(content = c("Select year...", sort(options$Yr, decreasing = T))),
+                      selected = isolate(input$Yr))
     updatePickerInput(session, "Sp", choices = c("", sort(options$Sp)),
                       choicesOpt = list(content = c("Select species...", sort(options$Sp))),
                       selected = isolate(input$Sp))
@@ -262,9 +275,18 @@ birdFinderServer <- function(input, output, data, session) {
   selected_ring <- reactiveVal(NULL)
   selected_colours <- reactiveVal(NULL)
   
+  # text shown when too any birds selected to show summary_info
+  output$more_data <- renderUI({
+    req(is.null(search_results()))
+    HTML(paste("Over 200 individuals match your search criteria.<br>
+               More information is required to narrow down potential matches."))
+  })
+  
   output$summary_info <- DT::renderDataTable({
     df <- search_results()
     if (is.null(df) || nrow(df) == 0) return(NULL)
+    
+    df <- df[order(df$Colour_EarliestStart, decreasing = T),]
     
     df <- df[, c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
     df$ColourRingCombo <- gsub("-", ", ", df$ColourRingCombo)
@@ -272,7 +294,7 @@ birdFinderServer <- function(input, output, data, session) {
     
     df$Select <- make_action_buttons(nrow(df), "select_")
     
-    datatable(df, options = list(dom = 't', ordering = FALSE),
+    datatable(df, options = list(dom = 't<"bottom"p>', ordering = FALSE),
               rownames = FALSE, escape = FALSE, selection = list(mode = "single", selected = 1))
   })
   
