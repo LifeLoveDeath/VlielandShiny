@@ -28,12 +28,6 @@ get_colour_rings <- function() {
 
 date_options <- function(data, input) {
   
-  cat(
-    "\n Run 2 Data names(): \n",
-    paste(names(data)),
-    "\n"
-  )
-  
   # Birds selected by all other filters
   filtered_birds <- data[
     which((!is.na(data$Colour_EarliestStart)) &
@@ -43,12 +37,6 @@ date_options <- function(data, input) {
       (input$Right1 == "" | data$ColourRingRight1 == input$Right1) &
       (input$Right2 == "" | data$ColourRingRight2 == input$Right2)),
   ]
-  
-  cat(
-    "\n Run 3 Data names(): \n",
-    paste(names(data)),
-    "\n"
-  )
   
   # If there are no birds that match the search return null
   if (nrow(filtered_birds) == 0) {return(NULL)}
@@ -101,11 +89,6 @@ date_options <- function(data, input) {
 # Filtering colour ring dropdown options ----------------------------------
 
 get_dropdown_options <- function(data, input) {
-  cat(
-    "\n RUN 1 Data names(): \n",
-    paste(names(data)),
-    "\n"
-  )
   
   list(
     Yr = date_options(data = data, input = input),
