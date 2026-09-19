@@ -64,7 +64,7 @@ ui <- div(
     # ),
     #id = "navbar_id",
     position = "fixed-top",
-    windowTitle = "Vlieland Nestboxes",
+    windowTitle = "Vlieland Nestbox Project",
     fluid = TRUE,
     collapsible = TRUE,
     #theme = shinytheme("flatly"), # change theme here
@@ -83,7 +83,7 @@ ui <- div(
       # title text and link to home page if clicked
       tags$a(
         href = "/", target = "_self",
-        tags$span("Vlieland Nestboxes",
+        tags$span("Vlieland Nestbox Project",
         style = "
         color:#3f5262;
         font-weight:300;
@@ -177,7 +177,7 @@ ui <- div(
     
     
     # Footer text
-    HTML("<p>Footer text e.g. Contact or Copyright © 2025 — All Rights Reserved.</p>"),
+    HTML("<p>Footer text e.g. Contact or Copyright © 2026 — All Rights Reserved.</p>"),
     align = "right"
   )
   

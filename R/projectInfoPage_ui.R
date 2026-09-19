@@ -41,7 +41,7 @@ projectInfoUI <- function(id) {
         style = "
     width: 100%;
     height: 400px;
-    background-image: url('passerine_proj_background.jpg');
+    background-image: url('banner3.jpg');
     background-size: cover;
     background-position: center;
     position: relative;
@@ -71,7 +71,7 @@ projectInfoUI <- function(id) {
         border-radius: 8px;
         max-width: 400px;  /* when aligned to left */
         #width: 95%;       /* when aligned bottom - full width of container */
-        margin: 0 20px;
+        margin: 0 0px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       ",
             h2("About the Project", style = "color: #3f5262;"),
@@ -81,7 +81,7 @@ projectInfoUI <- function(id) {
             ),
             # Copyright text
             tags$div(
-              "© 2025 Henri Bouwmeeter / NIOO-KNAW ",
+              "© 2024 Erik Postma ",
               style = "
       position: absolute;
       top: 0px;
@@ -115,8 +115,8 @@ projectInfoUI <- function(id) {
           fluidRow(
             column(
               width = 12,
-              h2("About This App", style = "color: #3f5262; margin-top: 30px;"),
-              p("Placeholder describing the app's functionality: searching for individual birds, exploring population trends and contributing to citizen science.", 
+              h2("About this App", style = "color: #3f5262; margin-top: 30px;"),
+              p("This interactive app allows you to learn more about a colour-ringed bird you have seen, explore population-level trends, and to learn more about the nextbox research on Vlieland.", 
                 style = "font-size: 16px; color = #3f5262; line-height: 1.6;")
             )
           ),
@@ -127,7 +127,7 @@ projectInfoUI <- function(id) {
               width = 4,
               wellPanel(
                 h4("Find an individual", style = "color: white"),
-                p("Search for a bird by its color rings and explore its data, including general information, a map of its breeding sites and its family tree.", style = "color: white"),
+                p("Search for a bird by its color rings and explore its history, including general information, a map of its breeding sites and its family tree.", style = "color: white"),
                 style = "display: flex;
                      flex-direction: column;
                      justify-content: center;  /* vertical centering */
@@ -135,35 +135,38 @@ projectInfoUI <- function(id) {
                      text-align: center;
                      #background-color: #f8f9fa;
                      background-color: #004b84;
-                     height: 170px;"
+                     height: 170px;
+                     border-radius: 8px;"
               )
             ),
             column(
               width = 4,
               wellPanel(
-                h4("Population Trends", style = "color: white"),
-                p("Placeholder: view population trends and visualise analysis.", style = "color: white"),
+                h4("Population trends", style = "color: white"),
+                p("Explore over 70 years of data.", style = "color: white"),
                 style = "display: flex;
                      flex-direction: column;
                      justify-content: center;  /* vertical centering */
                      align-items: center;      /* horizontal centering */
                      text-align: center;
                      background-color: #004b84;
-                     height: 170px;"
+                     height: 170px;
+                     border-radius: 8px;"
               )
             ),
             column(
               width = 4,
               wellPanel(
-                h4("Citizen Science", style = "color: white"),
-                p("Placeholder: contribute data or observations to citizen science.", style = "color: white"),
+                h4("Nestbox research on Vlieland", style = "color: white"),
+                p("Learn more about the research.", style = "color: white"),
                 style = "display: flex;
                      flex-direction: column;
                      justify-content: center;  /* vertical centering */
                      align-items: center;      /* horizontal centering */
                      text-align: center;
                      background-color: #004b84;
-                     height: 170px;"
+                     height: 170px;
+                     border-radius: 8px;"
               )
             )
           ),
@@ -179,17 +182,17 @@ projectInfoUI <- function(id) {
           
           fluidRow(
             column(
-              width = 6,
+              width = 8,
               p("Placeholder text about hole-breeding passerines or study species. Or make this more detailed project info and change first section title to 'Vlieland'.",
                 style = "font-size: 16px; color: #3f5262; line-height: 1.6;")
             ),
             column(
-              width = 6,
+              width = 4,
               style = "text-align: center;",
               tags$img(
-                src = "vlieland.jpg",
+                src = "greattit.jpg",
                 alt = "Image",
-                style = "max-width: 300px; width: 100%; border-radius: 5px;"
+                style = "max-width: 600px; width: 100%; border-radius: 5px;"
               )
             )
           ),
@@ -198,7 +201,7 @@ projectInfoUI <- function(id) {
           fluidRow(
             column(
               width = 12,
-              style = "margin-top: 40px; padding: 20px; background-color: #f8f9fa; border-radius: 5px;",
+              style = "margin-top: 40px; padding: 20px; background-color: #f8f9fa; border-radius: 8px;",
               h4("Contact / links"),
               p("Placeholder for contact info, further info etc.", style = "font-size: 14px;")
             )
