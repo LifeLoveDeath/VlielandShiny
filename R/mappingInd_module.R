@@ -45,7 +45,7 @@ mapUI <- function(id) {
       width = 4,
         
         # Instructions text:
-        helpText(HTML("<b>See where the selected bird was born and has nested
+        helpText(HTML("<b>See where the selected bird was born and has bred
         during different breeding seasons.</b><br>
         • Use the checkboxes to choose the type of location to display.<br>
         • The timeline path connects nests in chronological order.<br>
