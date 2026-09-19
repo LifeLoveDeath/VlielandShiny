@@ -27,7 +27,10 @@ citizenScienceUI <- function(data) {
       fluidRow(
         column(
           width = 12,
-          h3("Citizen Science", style = "color:#3f5262; font-weight:500;")
+          h3("Citizen Science", style = "color:#3f5262; font-weight:500;"),
+          p("Currently, your sightings are not stored. A future version of this app will have the 
+            option to store your sightings, so they can be incorporated into our database. This would 
+            provide us with a better understanding of where birds go outside of the breeding season.")
         )
       )
     ))}

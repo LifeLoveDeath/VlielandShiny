@@ -157,8 +157,8 @@ projectInfoUI <- function(id) {
             column(
               width = 4,
               wellPanel(
-                h4("Nestbox research on Vlieland", style = "color: white"),
-                p("Learn more about the research.", style = "color: white"),
+                h4("Contribute your observations", style = "color: white"),
+                p("Under construction.", style = "color: white"),
                 style = "display: flex;
                      flex-direction: column;
                      justify-content: center;  /* vertical centering */
