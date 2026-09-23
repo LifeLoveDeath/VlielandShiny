@@ -9,7 +9,8 @@ required_packages <- c(
   "shiny", "tidyverse", "dplyr", "bslib", "leaflet", "viridis", "reactable",
   "shinyjs", "shinyWidgets", "DT", "ggpedigree", "ggplot2", "plotly",
   "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "tools", "shinythemes",
-  "fontawesome", "tibble", "htmltools", "RColorBrewer", "kinship2"
+  "fontawesome", "tibble", "htmltools", "RColorBrewer", "kinship2", "osmdata",
+  "patchwork"
 )
 
 ## Install any missing packages
@@ -43,6 +44,8 @@ lapply(required_packages, library, character.only = TRUE)
 # library(htmltools)
 # library(RColorBrewer)
 # library(kinship2)
+# library(osmdata)
+# library(patchwork)
 
 
 # App UI -----------------------------------------------------
