@@ -81,7 +81,7 @@ projectInfoUI <- function(id) {
             ),
             # Copyright text
             tags$div(
-              "© 2024 Erik Postma ",
+              "© 2025 Erik Postma ",
               style = "
       position: absolute;
       top: 0px;
