@@ -510,6 +510,24 @@ clutch_stats <- BroodData %>%
     .groups = "drop"
   )
 
+# Round mean clutch size
+clutch_stats$MeanClutchSize <- round(clutch_stats$MeanClutchSize, 1)
+
+
+# Replace min & max with clutch size range
+clutch_stats <- clutch_stats %>%
+  rowwise() %>%
+  mutate(
+    ClutchSizeRange = ifelse(
+      is.na(MinClutchSize) | is.na(MaxClutchSize),
+      "Unknown",
+      paste0(MinClutchSize, "–", MaxClutchSize)
+    )
+  ) %>%
+  ungroup() %>%
+  select(-MinClutchSize, -MaxClutchSize)
+
+
 ### ---  Dispersal distance: birth → first nest ------
 dispersal <- location_data %>%
   filter(Event %in% c("birth", "nest")) %>%
@@ -529,7 +547,9 @@ dispersal <- location_data %>%
       NA
     )
   ) %>%
-  select(RingNumber, DispersalDistance_m)
+  select(RingNumber, DispersalDistance_m) %>%
+  mutate(
+    DispersalDistance_m = round(DispersalDistance_m))
 
 ### --- Total distance travelled --------
 total_distance <- location_data %>%
@@ -548,7 +568,9 @@ total_distance <- location_data %>%
   summarise(
     TotalDistance_m = if(n() > 1) sum(DistanceFromPrev_m, na.rm = TRUE) else NA_real_,
     .groups = "drop"
-  )
+  ) %>%
+  mutate(
+    TotalDistance_m = round(TotalDistance_m))
 
 
 ### Combine into one df ------
@@ -576,29 +598,23 @@ colnames(IndividualInfo)
 
 # Arrange cols to match previous data frame layout
 IndividualInfo <- subset(IndividualInfo,
-                                 select = c("RingNumber", "Mother", "Father",
-                                            "RingBroodID", "Sex", "RingYear", "BirthYear",
-                                            "RingAreaGroupName", "RingNestBox",
-                                            "RingLatitude", "RingLongitude", "SpeciesName",
-                                            "ColourCode", "ColourRingLeft1", "ColourRingLeft2",
-                                            "ColourRingRight1", "ColourRingRight2", "ColourRingCombo",
-                                            "NumNestSites", "BreedingAttempts",
-                                            "FirstBreedingYear", "LastBreedingYear", "BreedingSpan",
-                                            "MeanClutchSize", "MinClutchSize", "MaxClutchSize",
-                                            "TotalEggs",
-                                            "DispersalDistance_m", "TotalDistance_m", "SexText"))
+                                 select = c("RingNumber", "ColourRingCombo", "SpeciesName",
+                                            "SexText", "BirthYear", "RingYear",
+                                            "Mother", "Father",
+                                            "BreedingAttempts", "NumNestSites", 
+                                            "FirstBreedingYear", "LastBreedingYear",
+                                            "MeanClutchSize", "ClutchSizeRange", "TotalEggs",
+                                            "DispersalDistance_m", "TotalDistance_m"))
 # Re-name cols to match previous data frame layout
-colnames(IndividualInfo) <- c("RingNumber", "Mother", "Father",
-                              "BroodID", "Sex", "RingYear", "BirthYear",
-                              "RingPopulationName", "RingNestBox",
-                              "RingLatitude", "RingLongitude", "Species",
-                              "RingColour", "ColourRingLeft1", "ColourRingLeft2",
-                              "ColourRingRight1", "ColourRingRight2", "ColourRingCombo",
-                              "NumNestSites", "BreedingAttempts",
-                              "FirstBreedingYear", "LastBreedingYear", "BreedingSpan",
-                              "MeanClutchSize", "MinClutchSize", "MaxClutchSize",
-                              "TotalEggs",
-                              "DispersalDistance_m", "TotalDistance_m", "SexText")
+colnames(IndividualInfo) <- c("RingNumber", "ColourRingCombo", "Species",
+                              "SexText", "BirthYear", "RingYear",
+                              "Mother", "Father",
+                              "BreedingAttempts", "NumNestSites",
+                              "FirstBreedingYear", "LastBreedingYear",
+                              "MeanClutchSize", "ClutchSizeRange", "TotalEggs",
+                              "DispersalDistance_m", "TotalDistance_m")
+
+
 
 
 ### Save individual info df -------------------------------------------------

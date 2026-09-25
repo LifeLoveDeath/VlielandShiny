@@ -224,9 +224,10 @@ add_plot_attributes <- function(fam, show_recruits = FALSE) {
         TRUE ~ 1
       ),
       node_fill = case_when(
-        show_recruits & is_recruit ~ ifelse(!is.na(BroodID), pal[as.character(BroodID)], "#F0E1C6"),
+        focal & is.na(BroodID) ~ "#DECCAB",
+        show_recruits & is_recruit ~ ifelse(!is.na(BroodID), pal[as.character(BroodID)], "white" ), #"#F0E1C6"
         show_recruits & !is_recruit ~ "#D3D3D3",
-        TRUE ~ ifelse(!is.na(BroodID), pal[as.character(BroodID)], "#F0E1C6")
+        TRUE ~ ifelse(!is.na(BroodID), pal[as.character(BroodID)], "white") # "#F0E1C6"
       ),
       border_col = "black",
       RNText = ifelse(grepl("^Unknown", RingNumber), "Unknown", RingNumber),

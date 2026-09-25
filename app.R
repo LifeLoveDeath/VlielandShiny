@@ -203,6 +203,8 @@ server <- function(input, output, session) {
   location.data <- read.csv("data/location_data.csv", row.names = NULL) 
   IndividualInfo <- read.csv('data/IndividualInfo.csv', row.names = NULL)
   
+  
+  
   # Find individual by colour rings
   #finder <- birdFinderServer(input, output, vlieland.data, session) # feeding in dummy data
   finder <- birdFinderServer(input, output, IndividualDataVlieland, session) # feeding in real data
@@ -262,8 +264,7 @@ server <- function(input, output, session) {
   
   # Population trends module
   popTrendsServer(
-    id = "popTrends",         
-    IndData = IndividualDataVlieland,
+    id = "popTrends",
     BroodData = BroodData
   )
   

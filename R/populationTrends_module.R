@@ -9,7 +9,6 @@
 #     - Mean, earliest, and latest lay dates per year
 
 # Inputs:
-#   - IndData: Dataframe containing individual-level information (optional, for future expansion)
 #   - BroodData: Dataframe with brood-level information (BroodYear, LayDate, ClutchSize, SpeciesName, etc.)
 
 
@@ -133,7 +132,7 @@ populationTrendsUI <- function(id) {
 
 # Server function --------------------------------------------------------------
 
-popTrendsServer <- function(id, IndData, BroodData) {
+popTrendsServer <- function(id, BroodData) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     

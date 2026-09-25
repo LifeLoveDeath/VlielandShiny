@@ -57,8 +57,8 @@ familyTreeUI <- function(id) {
        fluidRow(
          column(
            width = 12,
-           checkboxInput(ns("show_half_sibs"), "Show half siblings", value = TRUE),
-           checkboxInput(ns("show_recruits"), "Colour recruits only", value = FALSE)
+           checkboxInput(ns("show_half_sibs"), "Show half siblings", value = FALSE),
+           checkboxInput(ns("show_recruits"), "Highlight all ringed birds with offspring", value = FALSE) # Or at least they are ringed (known birds) who survived to adulthood and at least attempted to breed
          )
        ),
        

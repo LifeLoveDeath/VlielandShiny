@@ -171,7 +171,7 @@ filter_birds <- function(data, input) {
 # Render action buttons in results datatable ------------------------------
 
 make_action_buttons <- function(len, id_prefix, label = "See full info") {
-  vapply(seq_len(len), function(i) {
+  vapply(seq(from = 1, to = len, length.out = len), function(i) {
     as.character(shiny::actionButton(
       inputId = paste0(id_prefix, i),
       label = label,
@@ -179,4 +179,3 @@ make_action_buttons <- function(len, id_prefix, label = "See full info") {
     ))
   }, character(1))
 }
-
