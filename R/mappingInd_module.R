@@ -190,25 +190,5 @@ genMapServer <- function(id, location.data, selected_ring) {
       }
     })
     
-    #Used to be this but "no location data message" appeared when there was data
-    # observe({
-    #   data <- filtered_data()
-    #   req(data)
-    #   
-    #   m <- leafletProxy("map_individual", session) %>%
-    #     clearMarkers() %>%
-    #     clearShapes()
-    #   
-    #   # Only add markers / timeline if data exists
-    #   if ("birth" %in% input$event_filter) {
-    #     m <- add_event_markers(m, data, "birth", "#e97158")
-    #   }
-    #   if ("nest" %in% input$event_filter) {
-    #     m <- add_event_markers(m, data, "nest", "#0d0887")
-    #   }
-    #   if (input$timeline && nrow(data) > 1) {
-    #     m <- add_timeline(m, data %>% filter(Event %in% input$event_filter))
-    #   }
-    # })
   })
 }

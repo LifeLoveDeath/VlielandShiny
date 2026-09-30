@@ -77,10 +77,10 @@ ui <- div(
     title = div(
       id = "logo",
       # nioo logo from /www and if clicked opens NIOO webpage in separate browser
-      tags$a(
-        href = "https://nioo.knaw.nl/en", target = "_blank",
-        tags$img(src = "NIOO_logo.svg", height = "30px")
-        ),
+      #tags$a(
+        #href = "https://nioo.knaw.nl/en", target = "_blank",
+        tags$img(src = "NIOO_logo.svg", height = "30px"),
+        #),
       # divider line
       div(class = "divider"),
       # title text and link to home page if clicked

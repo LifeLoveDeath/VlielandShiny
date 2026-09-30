@@ -218,18 +218,19 @@ add_plot_attributes <- function(fam, show_recruits = FALSE) {
   
   fam <- fam %>%
     mutate(
-      node_alpha = case_when(
-        show_recruits & is_recruit ~ 1,
-        show_recruits & !is_recruit ~ 0.4,
-        TRUE ~ 1
-      ),
+      node_alpha = 1,
       node_fill = case_when(
         focal & is.na(BroodID) ~ "#DECCAB",
         show_recruits & is_recruit ~ ifelse(!is.na(BroodID), pal[as.character(BroodID)], "white" ), #"#F0E1C6"
-        show_recruits & !is_recruit ~ "#D3D3D3",
+        show_recruits & !is_recruit ~ "#FBFBFB",
         TRUE ~ ifelse(!is.na(BroodID), pal[as.character(BroodID)], "white") # "#F0E1C6"
       ),
-      border_col = "black",
+      
+      border_col = case_when(
+        show_recruits & is_recruit ~ "black",
+        show_recruits & !is_recruit ~ "#EBEBEB",
+        TRUE ~ "black"
+      ),
       RNText = ifelse(grepl("^Unknown", RingNumber), "Unknown", RingNumber),
       tooltip_text = paste0(
         "RingNumber: ", RNText,
@@ -239,7 +240,6 @@ add_plot_attributes <- function(fam, show_recruits = FALSE) {
         ifelse(!is.na(RingYear), paste0("\nRing year: ", RingYear), "")
       )
     )
-  
   return(fam)
 }
 

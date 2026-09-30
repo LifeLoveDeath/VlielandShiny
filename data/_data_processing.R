@@ -275,7 +275,7 @@ IndividualDataVlieland <- subset(IndividualData,
                                     "RingBroodID", "Sex", "RingYear", "BirthYear",
                                     "RingAreaGroupName", "RingNestBox",
                                     "RingLatitude", "RingLongitude", "SpeciesName",
-                                    "ColourCode", "ColourRingLeft1", "ColourRingLeft2",
+                                    "ColourRingLeft1", "ColourRingLeft2",
                                     "ColourRingRight1", "ColourRingRight2", "ColourRingCombo",
                                     "Colour_EarliestStart", "Colour_LatestLikely"))
 # Re-name cols to match previous data frame layout
@@ -283,7 +283,7 @@ colnames(IndividualDataVlieland) <- c("RingNumber", "Mother", "Father",
                               "BroodID", "Sex", "RingYear", "BirthYear",
                               "RingPopulationName", "RingNestBox",
                               "RingLatitude", "RingLongitude", "Species",
-                              "RingColour", "ColourRingLeft1", "ColourRingLeft2",
+                              "ColourRingLeft1", "ColourRingLeft2",
                               "ColourRingRight1", "ColourRingRight2", "ColourRingCombo",
                               "Colour_EarliestStart", "Colour_LatestLikely")
 
@@ -449,7 +449,15 @@ location_data <- location_data %>%
 
 ### Save location_data ------------------------------------------------------
 
-write.csv(location_data, file = "data/location_data.csv", row.names = FALSE)
+names(location_data)
+
+# Select columns
+location_data_trim <- subset(location_data,
+                            select = c("RingNumber", "Event", "Month", "Year",
+                                       "NestLon", "NestLat"))
+
+# And save
+write.csv(location_data_trim, file = "data/location_data.csv", row.names = FALSE)
 
 # remove objects only needed for this step:
 rm(birth_events, ring_events, female_nests, male_nests, reproduction_events)

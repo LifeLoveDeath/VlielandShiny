@@ -137,7 +137,7 @@ projectInfoUI <- function(id) {
                      background-color: #004b84;
                      height: 170px;
                      border-radius: 8px;"
-              )
+                ),
             ),
             column(
               width = 4,
