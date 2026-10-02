@@ -194,14 +194,14 @@ server <- function(input, output, session) {
   #bs_themer()
 
   # Load data
-  IndividualDataVlieland_rds <- readRDS('data/IndividualDataVlieland.rds') # crashes
-  BroodData <- readRDS("data/BroodDataApp.rds") # Fine :)
-  location.data <- readRDS("data/location_data.rds") # Fine :)
-  IndividualInfo <- readRDS('data/IndividualInfo.rds') # Fine :)
+  IndividualDataVlieland <- readRDS('data/IndividualDataVlieland.rds')
+  BroodData <- readRDS("data/BroodDataApp.rds")
+  location.data <- readRDS("data/location_data.rds")
+  IndividualInfo <- readRDS('data/IndividualInfo.rds')
   
   # Find individual by colour rings
   #finder <- birdFinderServer(input, output, vlieland.data, session) # feeding in dummy data
-  finder <- birdFinderServer(input, output, IndividualDataVlieland_rds, session) # feeding in real data
+  finder <- birdFinderServer(input, output, IndividualDataVlieland, session) # feeding in real data
   search_results <- finder$search_results
   selected_ring <- finder$selected_ring
   selected_colours <- finder$selected_colours
@@ -242,7 +242,7 @@ server <- function(input, output, session) {
   # Generate pedigree
   familyTreeServer(
     id = "pedigree_module",
-    ped.data = IndividualDataVlieland_rds,
+    ped.data = IndividualDataVlieland,
     brood.data = BroodData,
     selected_ring = selected_ring
   )
