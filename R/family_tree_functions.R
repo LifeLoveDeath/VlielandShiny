@@ -74,17 +74,17 @@ get_family_subset <- function(ped.data, focal_id, brood_data) {
     # Build missing parent rows
     missing_rows <- data.frame(
       RingNumber        = missing_parents,
-      Mother            = NA_character_,
+      Mother            = NA,
       Father            = NA_character_,
-      BroodID           = NA_integer_,
+      BroodID           = NA,
       Sex               = as.integer(sex_vals),
       RingYear          = NA_integer_,
       BirthYear         = NA_integer_,
-      RingPopulationName= NA_character_,
-      RingNestBox       = NA_integer_,
+      RingPopulationName= NA,
+      RingNestBox       = NA,
       RingLatitude      = NA_real_,
       RingLongitude     = NA_real_,
-      Species           = NA_character_,
+      Species           = NA,
       RingColour        = NA_character_,
       ColourRingLeft1   = NA_character_,
       ColourRingLeft2   = NA_character_,
@@ -117,9 +117,9 @@ get_family_subset <- function(ped.data, focal_id, brood_data) {
     fam.data <- bind_rows(fam.data,
                           data.frame(
                             RingNumber = missing_mothers,
-                            Mother     = NA_character_,
+                            Mother     = NA,
                             Father     = NA_character_,
-                            BroodID    = NA_integer_,
+                            BroodID    = NA,
                             Sex        = 1L,  # female
                             stringsAsFactors = FALSE
                           ))
@@ -129,9 +129,9 @@ get_family_subset <- function(ped.data, focal_id, brood_data) {
     fam.data <- bind_rows(fam.data,
                           data.frame(
                             RingNumber = missing_fathers,
-                            Mother     = NA_character_,
+                            Mother     = NA,
                             Father     = NA_character_,
-                            BroodID    = NA_integer_,
+                            BroodID    = NA,
                             Sex        = 2L,  # male
                             stringsAsFactors = FALSE
                           ))
@@ -175,11 +175,11 @@ get_family_subset <- function(ped.data, focal_id, brood_data) {
   fam.data <- fam.data %>%
     mutate(
       sib_type = case_when(
-        RingNumber == focal_id ~ NA_character_,  # focal itself
+        RingNumber == focal_id ~ NA,  # focal itself
         !is.na(BroodID) & BroodID == focal_row$BroodID & RingNumber != focal_id ~ "full_sib",
         ( (!is.na(Mother) & Mother == focal_row$Mother & Father != focal_row$Father & !is.na(Father)) |
             (!is.na(Father) & Father == focal_row$Father & Mother != focal_row$Mother & !is.na(Mother)) ) ~ "half_sib",
-        TRUE ~ NA_character_
+        TRUE ~ NA
       )
     )
   

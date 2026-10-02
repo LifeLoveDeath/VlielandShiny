@@ -115,16 +115,23 @@ BroodData$RingNumberMale[which(BroodData$RingNumberMale %in% Female_pa)] <- NA
 names(BroodData)
 # Arrange cols to match previous data frame layout
 BroodDataApp <- subset(BroodData,
-          select = c("BroodID", "BroodYear", "RingNumberFemale", "RingNumberMale",
-                     "LayDate", "ClutchSize", "BroodNestBox",
-                     "BroodLatitude", "BroodLongitude", "BroodAreaGroupName", "SpeciesName"))
+          select = c("BroodYear", "RingNumberFemale", "RingNumberMale",
+                     "LayDate", "ClutchSize", "SpeciesName"))
 # Re-name cols to match previous data frame layout
-colnames(BroodDataApp) <- c("ID", "BroodYear", "RingNumberFemale", "RingNumberMale",
-                                 "LayDate", "ClutchSize", "BroodNestBox",
-                                 "BroodLatitude", "BroodLongitude",
-                                 "BroodPopulationName", "SpeciesName")
+colnames(BroodDataApp) <- c("BroodYear", "RingNumberFemale", "RingNumberMale",
+                                 "LayDate", "ClutchSize", "SpeciesName")
+
+# set data types
+summary(BroodDataApp)
+BroodDataApp$RingNumberFemale <- as.factor(BroodDataApp$RingNumberFemale)
+BroodDataApp$RingNumberMale <- as.factor(BroodDataApp$RingNumberMale)
+BroodDataApp$SpeciesName <- as.factor(BroodDataApp$SpeciesName)
+
+# Save as r object file
+saveRDS(BroodDataApp, "data/BroodDataApp.rds")
+
 # write csv
-write.csv(BroodDataApp, file = "data/BroodDataApp.csv", row.names = FALSE)
+# write.csv(BroodDataApp, file = "data/BroodDataApp.csv", row.names = FALSE)
 
 rm(overlap, Males, Male_ma, Females, Female_pa)
 
@@ -358,8 +365,38 @@ colnames(IndividualDataVlieland) <- c("RingNumber", "Mother", "Father",
 
 ### Save IndividualData ---------------------------------------------
 
+
+
 # Save
+# Save as csv (to simplify down)
 write.csv(IndividualDataVlieland, file = "data/IndividualDataVlieland.csv", row.names = FALSE)
+# remove current
+rm(IndividualDataVlieland)
+# Bring back basic version from .csv (no tibbles etc)
+IndividualDataVlieland <- read.csv('data/IndividualDataVlieland.csv', row.names = NULL)
+# Set variable types
+summary(IndividualDataVlieland)
+#IndividualDataVlieland$RingNumber <- as.factor(IndividualDataVlieland$RingNumber)
+#IndividualDataVlieland$Mother <- as.factor(IndividualDataVlieland$Mother)
+#IndividualDataVlieland$Father <- as.factor(IndividualDataVlieland$Father)
+IndividualDataVlieland$BroodID <- as.factor(IndividualDataVlieland$BroodID)
+IndividualDataVlieland$RingPopulationName <- as.factor(IndividualDataVlieland$RingPopulationName)
+IndividualDataVlieland$RingNestBox <- as.factor(IndividualDataVlieland$RingNestBox)
+IndividualDataVlieland$Species <- as.factor(IndividualDataVlieland$Species)
+#IndividualDataVlieland$ColourRingLeft1 <- as.factor(IndividualDataVlieland$ColourRingLeft1)
+#IndividualDataVlieland$ColourRingLeft2 <- as.factor(IndividualDataVlieland$ColourRingLeft2)
+#IndividualDataVlieland$ColourRingRight1 <- as.factor(IndividualDataVlieland$ColourRingRight1)
+#IndividualDataVlieland$ColourRingRight2 <- as.factor(IndividualDataVlieland$ColourRingRight2)
+IndividualDataVlieland$ColourRingCombo <- as.factor(IndividualDataVlieland$ColourRingCombo)
+# And save as RDS
+saveRDS(IndividualDataVlieland, file = "data/IndividualDataVlieland.rds")
+
+
+
+
+
+# Save as csv
+#write.csv(IndividualDataVlieland, file = "data/IndividualDataVlieland.csv", row.names = FALSE)
 
 # remove objects only needed for this step:
 rm(colour_map, parse_ring)
@@ -521,9 +558,16 @@ names(location_data)
 location_data_trim <- subset(location_data,
                             select = c("RingNumber", "Event", "Month", "Year",
                                        "NestLon", "NestLat"))
+# set data types
+summary(location_data_trim)
+location_data_trim$RingNumber <- as.factor(location_data_trim$RingNumber)
+location_data_trim$Event <- as.factor(location_data_trim$Event)
 
 # And save
-write.csv(location_data_trim, file = "data/location_data.csv", row.names = FALSE)
+saveRDS(location_data_trim, file = "data/location_data.rds")
+
+# And save as csv
+# write.csv(location_data_trim, file = "data/location_data.csv", row.names = FALSE)
 
 # remove objects only needed for this step:
 rm(birth_events, ring_events, female_nests, male_nests, reproduction_events)
@@ -689,12 +733,22 @@ colnames(IndividualInfo) <- c("RingNumber", "ColourRingCombo", "Species",
                               "DispersalDistance_m", "TotalDistance_m")
 
 
-
-
 ### Save individual info df -------------------------------------------------
 
+summary(IndividualInfo)
+IndividualInfo$RingNumber <- as.factor(IndividualInfo$RingNumber)
+IndividualInfo$ColourRingCombo <- as.factor(IndividualInfo$ColourRingCombo)
+IndividualInfo$Species <- as.factor(IndividualInfo$Species)
+IndividualInfo$SexText <- as.factor(IndividualInfo$SexText)
+IndividualInfo$Mother <- as.factor(IndividualInfo$Mother)
+IndividualInfo$Father <- as.factor(IndividualInfo$Father)
+IndividualInfo$ClutchSizeRange <- as.factor(IndividualInfo$ClutchSizeRange)
+
 # Save
-write.csv(IndividualInfo, file = "data/IndividualInfo.csv", row.names = FALSE)
+saveRDS(IndividualInfo, file = "data/IndividualInfo.rds")
+
+# Save as csv
+# write.csv(IndividualInfo, file = "data/IndividualInfo.csv", row.names = FALSE)
 
 # remove objects only needed for this step:
 rm(nest_sites, breeding_attempts, breeding_years, clutch_stats, dispersal,
