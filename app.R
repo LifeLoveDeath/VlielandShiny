@@ -65,7 +65,7 @@ ui <- div(
     # header = tags$head(
     #   tags$link(rel = "icon", type = "image/png", href = "favicon.png")
     # ),
-    #id = "navbar_id",
+    id = "app_navbar",
     position = "fixed-top",
     windowTitle = "Vlieland Nestbox Project",
     fluid = TRUE,
@@ -84,18 +84,14 @@ ui <- div(
       # divider line
       div(class = "divider"),
       # title text and link to home page if clicked
-      tags$a(
-        href = "/", target = "_self",
-        tags$span("Vlieland Nestbox Project",
-        style = "
-        color:#3f5262;
-        font-weight:300;
-        font-size:20px;
-        text-transform:uppercase;
-        letter-spacing:1px;
-        font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-      "
-        ))
+      actionLink(inputId = "main_title",
+                 label = tags$span("Vlieland Nestbox Project",
+                                   style = "color:#3f5262;
+                                   font-weight:300;
+                                   font-size:20px;
+                                   text-transform:uppercase;
+                                   letter-spacing:1px;
+                                   font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;"))
     ),
     
     ## --- Tab panels -------------------------------------
@@ -103,13 +99,14 @@ ui <- div(
     ### --- Project info homepage -------------------------
     
     tabPanel("About this project and app",
+             value = "home",
              projectInfoUI("projectInfoPage"),
     ),
     
     
     ### --- Find an individual page -------------------------
-    
     tabPanel("Find an individual",
+             value = "individual_search",
              useShinyjs(), # for allowing hidden panels
              hidden(
                div(
@@ -158,6 +155,7 @@ ui <- div(
     
     tabPanel(
       "Population trends",
+      value = "Pop_trends",
       populationTrendsUI("popTrends")
     ),
     
@@ -165,6 +163,7 @@ ui <- div(
     ### --- Citizen science page -------------------------   
     
     tabPanel("Citizen science",
+             value = "Citizen_sci",
              citizenScienceUI()
     ),
     
@@ -198,6 +197,14 @@ server <- function(input, output, session) {
   BroodData <- readRDS("data/BroodDataApp.rds")
   location.data <- readRDS("data/location_data.rds")
   IndividualInfo <- readRDS('data/IndividualInfo.rds')
+  
+  
+  # App navigation
+  # Title link to home page
+  observeEvent(input$main_title,{
+    updateNavbarPage(session = session, inputId = "app_navbar", selected = "home")
+  })
+  
   
   # Find individual by colour rings
   #finder <- birdFinderServer(input, output, vlieland.data, session) # feeding in dummy data
