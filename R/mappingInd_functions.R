@@ -19,8 +19,8 @@ get_bird_data <- function(location.data, ring, year_range = NULL) {
 
 # Build bade map ----------------------------------------------------------
 
-build_base_map <- function(lng = 5.018424, lat = 53.286226, zoom = 12) {
-  leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
+build_base_map <- function(lng = 5.013775, lat = 53.273449, zoom = 12.5) {
+  leaflet(options = leafletOptions(zoomControl = TRUE, zoomSnap = 0.5)) %>%
     addTiles() %>%
     setView(lng = lng, lat = lat, zoom = zoom) %>%
     htmlwidgets::onRender("function(el, x) { this.zoomControl.setPosition('topleft'); }") %>%
@@ -30,7 +30,8 @@ build_base_map <- function(lng = 5.018424, lat = 53.286226, zoom = 12) {
         title = "Reset zoom",
         onClick = JS(sprintf("function(btn, map){ map.setView([%s, %s], %s); }", lat, lng, zoom))
       )
-    )
+    ) %>%
+    addScaleBar(position = "bottomright", options = scaleBarOptions(imperial = F))
 }
 
 

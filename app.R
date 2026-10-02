@@ -77,10 +77,10 @@ ui <- div(
     title = div(
       id = "logo",
       # nioo logo from /www and if clicked opens NIOO webpage in separate browser
-      tags$a(
-        href = "https://nioo.knaw.nl/en", target = "_blank",
-        tags$img(src = "NIOO_logo.svg", height = "30px")
-        ),
+      #tags$a(
+        #href = "https://nioo.knaw.nl/en", target = "_blank",
+        tags$img(src = "NIOO_logo.svg", height = "30px"),
+        #),
       # divider line
       div(class = "divider"),
       # title text and link to home page if clicked
@@ -192,20 +192,16 @@ ui <- div(
 server <- function(input, output, session) {
   # Experimenting with themes
   #bs_themer()
-  
+
   # Load data
-  #vlieland.data <- read.csv("data/IndividualsData.csv", row.names = NULL) # loading dummy data
-  #location.data <- read.csv("data/NestLocationData.csv", row.names = NULL) # loading dummy data
-  
-  # Real data
-  IndividualDataVlieland <- read.csv('data/IndividualDataVlieland.csv', row.names = NULL)
-  BroodData <- read.csv("data/BroodDataApp.csv", row.names = NULL)
-  location.data <- read.csv("data/location_data.csv", row.names = NULL) 
-  IndividualInfo <- read.csv('data/IndividualInfo.csv', row.names = NULL)
+  IndividualDataVlieland_rds <- readRDS('data/IndividualDataVlieland.rds') # crashes
+  BroodData <- readRDS("data/BroodDataApp.rds") # Fine :)
+  location.data <- readRDS("data/location_data.rds") # Fine :)
+  IndividualInfo <- readRDS('data/IndividualInfo.rds') # Fine :)
   
   # Find individual by colour rings
   #finder <- birdFinderServer(input, output, vlieland.data, session) # feeding in dummy data
-  finder <- birdFinderServer(input, output, IndividualDataVlieland, session) # feeding in real data
+  finder <- birdFinderServer(input, output, IndividualDataVlieland_rds, session) # feeding in real data
   search_results <- finder$search_results
   selected_ring <- finder$selected_ring
   selected_colours <- finder$selected_colours
@@ -246,7 +242,7 @@ server <- function(input, output, session) {
   # Generate pedigree
   familyTreeServer(
     id = "pedigree_module",
-    ped.data = IndividualDataVlieland,
+    ped.data = IndividualDataVlieland_rds,
     brood.data = BroodData,
     selected_ring = selected_ring
   )
@@ -262,8 +258,7 @@ server <- function(input, output, session) {
   
   # Population trends module
   popTrendsServer(
-    id = "popTrends",         
-    IndData = IndividualDataVlieland,
+    id = "popTrends",
     BroodData = BroodData
   )
   

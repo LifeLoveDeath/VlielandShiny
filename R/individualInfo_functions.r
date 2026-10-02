@@ -28,33 +28,7 @@ format_colour_rings <- function(x) {
 
 prepare_individual_data <- function(df) {
   
-  # Round & create clutch size range
-  df <- df %>%
-    rowwise() %>%
-    mutate(
-      ClutchSizeRange = ifelse(
-        is.na(MinClutchSize) | is.na(MaxClutchSize),
-        "Unknown",
-        paste0(MinClutchSize, "–", MaxClutchSize)
-      )
-    ) %>%
-    ungroup() %>%
-    mutate(
-      DispersalDistance_m = round(DispersalDistance_m),
-      TotalDistance_m = round(TotalDistance_m)
-    ) %>%
-    select(-MinClutchSize, -MaxClutchSize)
-  
-  # Keep desired columns
-  df <- df[, c(
-    "RingNumber", "ColourRingCombo", "Species", "SexText",
-    "BirthYear", "RingYear",
-    "Mother", "Father",
-    "BreedingAttempts", "NumNestSites", "FirstBreedingYear", "LastBreedingYear",
-    "MeanClutchSize", "ClutchSizeRange", "TotalEggs",
-    "DispersalDistance_m", "TotalDistance_m"
-  )]
-  
+  # Re-name columns
   colnames(df) <- c(
     "Ring Number", "Colour rings", "Species", "Sex",
     "Birth year", "Ring year",

@@ -41,11 +41,16 @@ date_options <- function(data, input) {
   # If there are no birds that match the search return null
   if (nrow(filtered_birds) == 0) {return(NULL)}
   
+  # If only 1 bird matches the search result return a vector from max:min
+  if (nrow(filtered_birds) == 1) {return(filtered_birds$Colour_LatestLikely :
+                                           filtered_birds$Colour_EarliestStart)}
+  
+  # Simplify data (reduce to required cols only and then remove duplicate date pairings)
+  filtered_reduced <- unique(filtered_birds[,c("Colour_EarliestStart", "Colour_LatestLikely")])
+  
   # Sort ranges by their starting year
-  ranges <- filtered_birds[
-    order(filtered_birds$Colour_EarliestStart),
-    c("Colour_EarliestStart", "Colour_LatestLikely")
-  ]
+  ranges <- filtered_reduced[
+    order(filtered_reduced$Colour_EarliestStart),]
   
   # Find the continuous ranges
   merged_ranges <- list()
@@ -171,7 +176,7 @@ filter_birds <- function(data, input) {
 # Render action buttons in results datatable ------------------------------
 
 make_action_buttons <- function(len, id_prefix, label = "See full info") {
-  vapply(seq_len(len), function(i) {
+  vapply(seq(from = 1, to = len, length.out = len), function(i) {
     as.character(shiny::actionButton(
       inputId = paste0(id_prefix, i),
       label = label,
@@ -179,4 +184,3 @@ make_action_buttons <- function(len, id_prefix, label = "See full info") {
     ))
   }, character(1))
 }
-

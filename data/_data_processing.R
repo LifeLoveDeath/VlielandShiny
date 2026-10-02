@@ -31,6 +31,41 @@ nrow(IndividualData)
 IndividualData <- unique(IndividualData)
 
 
+### Tidy & cut to Vlieland birds --------------------------------------------
+
+# performing this tidy here so doesn't have to be repeated when this data is used to tidy brood data
+
+# Removal of birds that have neither been ringed nor parented on Vlieland
+# These birds are unlikely ever to be present on Vlieland
+# And some have been colour ringed using different systems
+
+# List of birds ringed or found parenting on Vlieland
+# Migrant parents metal ringed elsewhere have that as their RingAreaGroupName
+# hence taking parental ring list from BroodData as well
+Vlieland_rings <- c(BroodData$RingNumberFemale, BroodData$RingNumberMale,
+                    IndividualData$RingNumber
+                    [IndividualData$RingAreaGroupName == "Vlieland"]) %>%
+  na.omit() %>%
+  unique()
+
+# Any parents who don't feature in IndividualData?
+# Will leave them for now and see if they cause issues
+Vlieland_rings[which(!Vlieland_rings %in% IndividualData$RingNumber)]
+
+# Subset IndividualData to the Vlieland birds
+IndividualData <- IndividualData[which(IndividualData$RingNumber %in% Vlieland_rings),]
+
+# Find ring number typos in IndividualData
+# ie >1 bird per ring number
+# shouldn't be duplicates yet as colour codes not yet added (so is ok to remove them)
+TyposIndividual <- sort(IndividualData$RingNumber[which(duplicated(IndividualData$RingNumber))])
+# And remove rows in the typos list
+IndividualData <- IndividualData[which(!IndividualData$RingNumber %in% TyposIndividual),]
+
+# remove objects only used for this section
+rm(Vlieland_rings, TyposIndividual)
+
+
 ## --- Brood data ----
 BroodData.original <- read.csv("data/BroodData.csv", row.names = NULL, fileEncoding="UTF-8")
 BroodData <- BroodData.original
@@ -48,20 +83,58 @@ length(which(duplicated(BroodData)))
 nrow(BroodData)
 # No duplicate rows
 
+
+### --- Remove birds with sex mismatches ----
+# Find birds registered as both mother & father
+overlap <- unique(BroodData$RingNumberFemale[which(BroodData$RingNumberFemale %in% BroodData$RingNumberMale, )])
+overlap <- overlap[!is.na(overlap)]
+
+# Replace with NA
+# In mother column
+BroodData$RingNumberFemale[which(BroodData$RingNumberFemale %in% overlap)] <- NA
+# In Father column
+BroodData$RingNumberMale[which(BroodData$RingNumberMale %in% overlap)] <- NA
+
+# Find & remove birds with sexes mismatched to parent status
+# Male mothers
+Males <- unique(IndividualData$RingNumber[IndividualData$Sex == 2])
+Males <- Males[!is.na(Males)]
+Male_ma <- Males[which(Males %in% BroodData$RingNumberFemale)]
+# Remove male mothers
+BroodData$RingNumberFemale[which(BroodData$RingNumberFemale %in% Male_ma)] <- NA
+
+# Female fathers
+Females <- unique(IndividualData$RingNumber[IndividualData$Sex == 1])
+Females <- Females[!is.na(Females)]
+Female_pa <- Females[which(Females %in% BroodData$RingNumberMale)]
+# Remove male mothers
+BroodData$RingNumberMale[which(BroodData$RingNumberMale %in% Female_pa)] <- NA
+
+
 ### --- Rearrange & save ----
 names(BroodData)
 # Arrange cols to match previous data frame layout
 BroodDataApp <- subset(BroodData,
-          select = c("BroodID", "BroodYear", "RingNumberFemale", "RingNumberMale",
-                     "LayDate", "ClutchSize", "BroodNestBox",
-                     "BroodLatitude", "BroodLongitude", "BroodAreaGroupName", "SpeciesName"))
+          select = c("BroodYear", "RingNumberFemale", "RingNumberMale",
+                     "LayDate", "ClutchSize", "SpeciesName"))
 # Re-name cols to match previous data frame layout
-colnames(BroodDataApp) <- c("ID", "BroodYear", "RingNumberFemale", "RingNumberMale",
-                                 "LayDate", "ClutchSize", "BroodNestBox",
-                                 "BroodLatitude", "BroodLongitude",
-                                 "BroodPopulationName", "SpeciesName")
+colnames(BroodDataApp) <- c("BroodYear", "RingNumberFemale", "RingNumberMale",
+                                 "LayDate", "ClutchSize", "SpeciesName")
+
+# set data types
+summary(BroodDataApp)
+BroodDataApp$RingNumberFemale <- as.factor(BroodDataApp$RingNumberFemale)
+BroodDataApp$RingNumberMale <- as.factor(BroodDataApp$RingNumberMale)
+BroodDataApp$SpeciesName <- as.factor(BroodDataApp$SpeciesName)
+
+# Save as r object file
+saveRDS(BroodDataApp, "data/BroodDataApp.rds")
+
 # write csv
-write.csv(BroodDataApp, file = "data/BroodDataApp.csv", row.names = FALSE)
+# write.csv(BroodDataApp, file = "data/BroodDataApp.csv", row.names = FALSE)
+
+rm(overlap, Males, Male_ma, Females, Female_pa)
+
 
 
 ## --- ColourNumberRings ----
@@ -131,33 +204,33 @@ rm(matches, missing)
 
 ## Individual data ---------------------------------------------------------
 
-### Cut to Vlieland birds --------------------------------------------
+### --- Remove birds with sex mismatches ----
+# Find birds registered as both mother & father
+overlap <- unique(IndividualData$Mother[which(IndividualData$Mother %in% IndividualData$Father, )])
+overlap <- overlap[!is.na(overlap)]
 
-# Removal of birds that have neither been ringed nor parented on Vlieland
-# These birds are unlikely ever to be present on Vlieland
-# And some have been colour ringed using different systems
+# Replace with NA
+# In mother column
+IndividualData$Mother[which(IndividualData$Mother %in% overlap)] <- NA
+# In Father column
+IndividualData$Father[which(IndividualData$Father %in% overlap)] <- NA
 
-# List of birds ringed or found parenting on Vlieland
-# Migrant parents metal ringed elsewhere have that as their RingAreaGroupName
-# hence taking parental ring list from BroodData as well
-Vlieland_rings <- c(BroodData$RingNumberFemale, BroodData$RingNumberMale,
-                 IndividualData$RingNumber
-                 [IndividualData$RingAreaGroupName == "Vlieland"]) %>%
-  na.omit() %>%
-  unique()
+# Find & remove birds with sexes mismatched to parent status
+# Male mothers
+Males <- unique(IndividualData$RingNumber[IndividualData$Sex == 2])
+Males <- Males[!is.na(Males)]
+Male_ma <- Males[which(Males %in% IndividualData$Mother)]
+# Remove male mothers
+IndividualData$Mother[which(IndividualData$Mother %in% Male_ma)] <- NA
 
-# Any parents who don't feature in IndividualData?
-# Will leave them for now and see if they cause issues
-Vlieland_rings[which(!Vlieland_rings %in% IndividualData$RingNumber)]
+# Female fathers
+Females <- unique(IndividualData$RingNumber[IndividualData$Sex == 1])
+Females <- Females[!is.na(Females)]
+Female_pa <- Females[which(Females %in% IndividualData$Father)]
+# Remove male mothers
+IndividualData$Father[which(IndividualData$Father %in% Female_pa)] <- NA
 
-# Subset IndividualData to the Vlieland birds
-IndividualData <- IndividualData[which(IndividualData$RingNumber %in% Vlieland_rings),]
-
-# Find ring number typos in IndividualData (ie >1 bird per ring number)
-TyposIndividual <- sort(IndividualData$RingNumber[which(duplicated(IndividualData$RingNumber))])
-# And remove rows in the typos list
-IndividualData <- IndividualData[which(!IndividualData$RingNumber %in% TyposIndividual),]
-
+rm(overlap, Males, Male_ma, Females, Female_pa)
 
 ### Add colour ring combination --------------------------------------------
 
@@ -275,7 +348,7 @@ IndividualDataVlieland <- subset(IndividualData,
                                     "RingBroodID", "Sex", "RingYear", "BirthYear",
                                     "RingAreaGroupName", "RingNestBox",
                                     "RingLatitude", "RingLongitude", "SpeciesName",
-                                    "ColourCode", "ColourRingLeft1", "ColourRingLeft2",
+                                    "ColourRingLeft1", "ColourRingLeft2",
                                     "ColourRingRight1", "ColourRingRight2", "ColourRingCombo",
                                     "Colour_EarliestStart", "Colour_LatestLikely"))
 # Re-name cols to match previous data frame layout
@@ -283,7 +356,7 @@ colnames(IndividualDataVlieland) <- c("RingNumber", "Mother", "Father",
                               "BroodID", "Sex", "RingYear", "BirthYear",
                               "RingPopulationName", "RingNestBox",
                               "RingLatitude", "RingLongitude", "Species",
-                              "RingColour", "ColourRingLeft1", "ColourRingLeft2",
+                              "ColourRingLeft1", "ColourRingLeft2",
                               "ColourRingRight1", "ColourRingRight2", "ColourRingCombo",
                               "Colour_EarliestStart", "Colour_LatestLikely")
 
@@ -292,11 +365,41 @@ colnames(IndividualDataVlieland) <- c("RingNumber", "Mother", "Father",
 
 ### Save IndividualData ---------------------------------------------
 
+
+
 # Save
+# Save as csv (to simplify down)
 write.csv(IndividualDataVlieland, file = "data/IndividualDataVlieland.csv", row.names = FALSE)
+# remove current
+rm(IndividualDataVlieland)
+# Bring back basic version from .csv (no tibbles etc)
+IndividualDataVlieland <- read.csv('data/IndividualDataVlieland.csv', row.names = NULL)
+# Set variable types
+summary(IndividualDataVlieland)
+#IndividualDataVlieland$RingNumber <- as.factor(IndividualDataVlieland$RingNumber)
+#IndividualDataVlieland$Mother <- as.factor(IndividualDataVlieland$Mother)
+#IndividualDataVlieland$Father <- as.factor(IndividualDataVlieland$Father)
+IndividualDataVlieland$BroodID <- as.factor(IndividualDataVlieland$BroodID)
+IndividualDataVlieland$RingPopulationName <- as.factor(IndividualDataVlieland$RingPopulationName)
+IndividualDataVlieland$RingNestBox <- as.factor(IndividualDataVlieland$RingNestBox)
+IndividualDataVlieland$Species <- as.factor(IndividualDataVlieland$Species)
+#IndividualDataVlieland$ColourRingLeft1 <- as.factor(IndividualDataVlieland$ColourRingLeft1)
+#IndividualDataVlieland$ColourRingLeft2 <- as.factor(IndividualDataVlieland$ColourRingLeft2)
+#IndividualDataVlieland$ColourRingRight1 <- as.factor(IndividualDataVlieland$ColourRingRight1)
+#IndividualDataVlieland$ColourRingRight2 <- as.factor(IndividualDataVlieland$ColourRingRight2)
+IndividualDataVlieland$ColourRingCombo <- as.factor(IndividualDataVlieland$ColourRingCombo)
+# And save as RDS
+saveRDS(IndividualDataVlieland, file = "data/IndividualDataVlieland.rds")
+
+
+
+
+
+# Save as csv
+#write.csv(IndividualDataVlieland, file = "data/IndividualDataVlieland.csv", row.names = FALSE)
 
 # remove objects only needed for this step:
-rm(Vlieland_rings, TyposIndividual, colour_map, parse_ring)
+rm(colour_map, parse_ring)
 
 
 ## Location data -----------------------------------------------------
@@ -449,7 +552,22 @@ location_data <- location_data %>%
 
 ### Save location_data ------------------------------------------------------
 
-write.csv(location_data, file = "data/location_data.csv", row.names = FALSE)
+names(location_data)
+
+# Select columns
+location_data_trim <- subset(location_data,
+                            select = c("RingNumber", "Event", "Month", "Year",
+                                       "NestLon", "NestLat"))
+# set data types
+summary(location_data_trim)
+location_data_trim$RingNumber <- as.factor(location_data_trim$RingNumber)
+location_data_trim$Event <- as.factor(location_data_trim$Event)
+
+# And save
+saveRDS(location_data_trim, file = "data/location_data.rds")
+
+# And save as csv
+# write.csv(location_data_trim, file = "data/location_data.csv", row.names = FALSE)
 
 # remove objects only needed for this step:
 rm(birth_events, ring_events, female_nests, male_nests, reproduction_events)
@@ -510,6 +628,24 @@ clutch_stats <- BroodData %>%
     .groups = "drop"
   )
 
+# Round mean clutch size
+clutch_stats$MeanClutchSize <- round(clutch_stats$MeanClutchSize, 1)
+
+
+# Replace min & max with clutch size range
+clutch_stats <- clutch_stats %>%
+  rowwise() %>%
+  mutate(
+    ClutchSizeRange = ifelse(
+      is.na(MinClutchSize) | is.na(MaxClutchSize),
+      "Unknown",
+      paste0(MinClutchSize, "–", MaxClutchSize)
+    )
+  ) %>%
+  ungroup() %>%
+  select(-MinClutchSize, -MaxClutchSize)
+
+
 ### ---  Dispersal distance: birth → first nest ------
 dispersal <- location_data %>%
   filter(Event %in% c("birth", "nest")) %>%
@@ -529,7 +665,9 @@ dispersal <- location_data %>%
       NA
     )
   ) %>%
-  select(RingNumber, DispersalDistance_m)
+  select(RingNumber, DispersalDistance_m) %>%
+  mutate(
+    DispersalDistance_m = round(DispersalDistance_m))
 
 ### --- Total distance travelled --------
 total_distance <- location_data %>%
@@ -548,7 +686,9 @@ total_distance <- location_data %>%
   summarise(
     TotalDistance_m = if(n() > 1) sum(DistanceFromPrev_m, na.rm = TRUE) else NA_real_,
     .groups = "drop"
-  )
+  ) %>%
+  mutate(
+    TotalDistance_m = round(TotalDistance_m))
 
 
 ### Combine into one df ------
@@ -576,35 +716,39 @@ colnames(IndividualInfo)
 
 # Arrange cols to match previous data frame layout
 IndividualInfo <- subset(IndividualInfo,
-                                 select = c("RingNumber", "Mother", "Father",
-                                            "RingBroodID", "Sex", "RingYear", "BirthYear",
-                                            "RingAreaGroupName", "RingNestBox",
-                                            "RingLatitude", "RingLongitude", "SpeciesName",
-                                            "ColourCode", "ColourRingLeft1", "ColourRingLeft2",
-                                            "ColourRingRight1", "ColourRingRight2", "ColourRingCombo",
-                                            "NumNestSites", "BreedingAttempts",
-                                            "FirstBreedingYear", "LastBreedingYear", "BreedingSpan",
-                                            "MeanClutchSize", "MinClutchSize", "MaxClutchSize",
-                                            "TotalEggs",
-                                            "DispersalDistance_m", "TotalDistance_m", "SexText"))
+                                 select = c("RingNumber", "ColourRingCombo", "SpeciesName",
+                                            "SexText", "BirthYear", "RingYear",
+                                            "Mother", "Father",
+                                            "BreedingAttempts", "NumNestSites", 
+                                            "FirstBreedingYear", "LastBreedingYear",
+                                            "MeanClutchSize", "ClutchSizeRange", "TotalEggs",
+                                            "DispersalDistance_m", "TotalDistance_m"))
 # Re-name cols to match previous data frame layout
-colnames(IndividualInfo) <- c("RingNumber", "Mother", "Father",
-                              "BroodID", "Sex", "RingYear", "BirthYear",
-                              "RingPopulationName", "RingNestBox",
-                              "RingLatitude", "RingLongitude", "Species",
-                              "RingColour", "ColourRingLeft1", "ColourRingLeft2",
-                              "ColourRingRight1", "ColourRingRight2", "ColourRingCombo",
-                              "NumNestSites", "BreedingAttempts",
-                              "FirstBreedingYear", "LastBreedingYear", "BreedingSpan",
-                              "MeanClutchSize", "MinClutchSize", "MaxClutchSize",
-                              "TotalEggs",
-                              "DispersalDistance_m", "TotalDistance_m", "SexText")
+colnames(IndividualInfo) <- c("RingNumber", "ColourRingCombo", "Species",
+                              "SexText", "BirthYear", "RingYear",
+                              "Mother", "Father",
+                              "BreedingAttempts", "NumNestSites",
+                              "FirstBreedingYear", "LastBreedingYear",
+                              "MeanClutchSize", "ClutchSizeRange", "TotalEggs",
+                              "DispersalDistance_m", "TotalDistance_m")
 
 
 ### Save individual info df -------------------------------------------------
 
+summary(IndividualInfo)
+IndividualInfo$RingNumber <- as.factor(IndividualInfo$RingNumber)
+IndividualInfo$ColourRingCombo <- as.factor(IndividualInfo$ColourRingCombo)
+IndividualInfo$Species <- as.factor(IndividualInfo$Species)
+IndividualInfo$SexText <- as.factor(IndividualInfo$SexText)
+IndividualInfo$Mother <- as.factor(IndividualInfo$Mother)
+IndividualInfo$Father <- as.factor(IndividualInfo$Father)
+IndividualInfo$ClutchSizeRange <- as.factor(IndividualInfo$ClutchSizeRange)
+
 # Save
-write.csv(IndividualInfo, file = "data/IndividualInfo.csv", row.names = FALSE)
+saveRDS(IndividualInfo, file = "data/IndividualInfo.rds")
+
+# Save as csv
+# write.csv(IndividualInfo, file = "data/IndividualInfo.csv", row.names = FALSE)
 
 # remove objects only needed for this step:
 rm(nest_sites, breeding_attempts, breeding_years, clutch_stats, dispersal,

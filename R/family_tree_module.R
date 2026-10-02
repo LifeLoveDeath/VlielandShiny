@@ -46,9 +46,8 @@ familyTreeUI <- function(id) {
         width = 4,
         
         # Instructions text:
-        helpText(HTML("<b>Explore the selected bird's family tree.</b><br>
-        • Use the checkboxes to ....<br>
-        • Show recruits.....<br>")),
+        helpText(HTML(#"<b>Explore the selected bird's family tree.</b><br>
+        "Use the checkboxes to ....")),
         
         br(),
         
@@ -57,8 +56,8 @@ familyTreeUI <- function(id) {
        fluidRow(
          column(
            width = 12,
-           checkboxInput(ns("show_half_sibs"), "Show half siblings", value = TRUE),
-           checkboxInput(ns("show_recruits"), "Colour recruits only", value = FALSE)
+           checkboxInput(ns("show_half_sibs"), "Show half siblings", value = FALSE),
+           checkboxInput(ns("show_recruits"), "Highlight individuals observed breeding", value = FALSE) # Or at least they are ringed (known birds) who survived to adulthood and at least attempted to breed
          )
        ),
        
@@ -119,7 +118,7 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
         momID = "Mother",
         config = list(
           sex_color_include = FALSE,  # we want clutch colours, not sex colours
-          point_size = 6,
+          point_size = 3,
           segment_linewidth = 0.5,
           #label_text_size = 3,
           #label_nudge_y = 0.25,
@@ -143,49 +142,32 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
         mutate(sex = as.character(sex))     # ensure matching to scale names
       nodes$Sex <- NULL
        
-      # Overlay shapes in white so they are not visible
+      # Remove legend
       p <- p +
-        geom_point(
-          data = nodes %>% filter(sex %in% c(1,2,3)),
-          aes(x = x_pos, y = y_pos, text = tooltip_text, shape = factor(sex)),
-          size = 6, fill = "white", colour = "white",
-          #alpha = other_nodes$node_alpha
-          #show.legend = TRUE  # needed for shape legend
-        ) +
         guides(shape = "none", fill = "none", colour = "none")
-      
-      
       
       # Separate out nodes
       focal_id <- selected_ring()
-      clutch_nodes <- nodes %>% filter(!is.na(BroodID))
-      other_nodes   <- nodes %>% filter(is.na(BroodID))
       focal_node    <- nodes %>% filter(RingNumber == focal_id)
       
       # Build plot with dynamic alpha and fill
       a <- p +
         geom_point(
-          data = other_nodes %>% filter(sex %in% c(1,2,3)),
-          aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
-          fill = other_nodes$node_fill,
-          #colour = other_nodes$node_fill,
-          #colour = "black",
-          colour = other_nodes$border_col, 
+          data = nodes %>% filter(sex %in% c(1, 2, 3)),
+          aes(
+            x = x_pos,
+            y = y_pos,
+            shape = factor(sex),
+            text = tooltip_text,
+            fill = node_fill,
+            colour = border_col,
+            alpha = node_alpha
+          ),
           stroke = 0.3,
-          size = 6,
-          alpha = other_nodes$node_alpha
+          size = 6
         ) +
-        geom_point(
-          data = clutch_nodes %>% filter(sex %in% c(1,2,3)),
-          aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),
-          fill = clutch_nodes$node_fill,
-          #colour = clutch_nodes$node_fill,
-          #colour = "black",
-          colour = clutch_nodes$border_col, 
-          stroke = 0.3,
-          size = 6,
-          alpha = clutch_nodes$node_alpha
-        ) +
+        scale_colour_identity() +
+        scale_alpha_identity() +
         geom_point(
           data = focal_node %>% filter(sex %in% c(1,2,3)),
           aes(x = x_pos, y = y_pos, shape = factor(sex), text = tooltip_text),

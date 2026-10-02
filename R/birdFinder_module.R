@@ -301,6 +301,7 @@ birdFinderServer <- function(input, output, data, session) {
   observeEvent(input$select_button, {
     row_index <- as.numeric(gsub("select_", "", input$select_button))
     df <- search_results()
+    df <- df[order(df$Colour_EarliestStart, decreasing = T),]
     if (!is.null(df) && nrow(df) >= row_index)
       {selected_ring(df[row_index, "RingNumber"])
       selected_colours(gsub(", ","-",df[row_index, "ColourRingCombo"]))}

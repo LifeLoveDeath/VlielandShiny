@@ -13,8 +13,8 @@ get_last_location <- function(location_data, ring) {
 }
 
 # --- Build Leaflet map for a given location ---
-build_preview_map <- function(loc_data, default_lat = 53.286226, default_lng = 5.018424, default_zoom = 12) {
-  m <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
+build_preview_map <- function(loc_data, default_lat = 53.273449, default_lng = 5.013775, default_zoom = 12.5) {
+  m <- leaflet(options = leafletOptions(zoomControl = TRUE, zoomSnap = 0.5)) %>%
     addTiles() %>%
     setView(lng = default_lng, lat = default_lat, zoom = default_zoom) %>%
     htmlwidgets::onRender("function(el, x) { this.zoomControl.setPosition('topleft'); }") %>%
@@ -25,7 +25,9 @@ build_preview_map <- function(loc_data, default_lat = 53.286226, default_lng = 5
         onClick = JS(sprintf("function(btn, map){ map.setView([%s, %s], %s); }",
                              default_lat, default_lng, default_zoom))
       )
-    )
+    ) %>%
+    addScaleBar(position = "bottomright", options = scaleBarOptions(imperial = F))
+
   
   if (nrow(loc_data) == 0 || is.na(loc_data$NestLon) || is.na(loc_data$NestLat)) {
     m <- m %>%
