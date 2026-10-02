@@ -110,7 +110,6 @@ Female_pa <- Females[which(Females %in% BroodData$RingNumberMale)]
 # Remove male mothers
 BroodData$RingNumberMale[which(BroodData$RingNumberMale %in% Female_pa)] <- NA
 
-
 ### --- Rearrange & save ----
 names(BroodData)
 # Arrange cols to match previous data frame layout
@@ -231,6 +230,21 @@ Female_pa <- Females[which(Females %in% IndividualData$Father)]
 IndividualData$Father[which(IndividualData$Father %in% Female_pa)] <- NA
 
 rm(overlap, Males, Male_ma, Females, Female_pa)
+
+
+### --- Sex unsexed parents ----
+# All birds listed as Fathers
+Fathers <- unique(c(IndividualData$Father,BroodData$RingNumberMale))
+Fathers <- Fathers[!is.na(Fathers)]
+# All birds listed as mothers
+Mothers <- unique(c(IndividualData$Mother,BroodData$RingNumberFemale))
+Mothers <- Mothers[!is.na(Mothers)]
+# check no birds in both lists :)
+Fathers[which(Fathers %in% Mothers)]
+# Apply sex of parental title
+# All Fathers to be male
+IndividualData$Sex[which(IndividualData$RingNumber %in% Mothers)] <- 1
+IndividualData$Sex[which(IndividualData$RingNumber %in% Fathers)] <- 2
 
 ### Add colour ring combination --------------------------------------------
 
@@ -388,6 +402,8 @@ IndividualDataVlieland$Species <- as.factor(IndividualDataVlieland$Species)
 #IndividualDataVlieland$ColourRingRight1 <- as.factor(IndividualDataVlieland$ColourRingRight1)
 #IndividualDataVlieland$ColourRingRight2 <- as.factor(IndividualDataVlieland$ColourRingRight2)
 IndividualDataVlieland$ColourRingCombo <- as.factor(IndividualDataVlieland$ColourRingCombo)
+# delete the temporary csv
+file.remove("data/IndividualDataVlieland.csv")
 # And save as RDS
 saveRDS(IndividualDataVlieland, file = "data/IndividualDataVlieland.rds")
 
@@ -399,7 +415,7 @@ saveRDS(IndividualDataVlieland, file = "data/IndividualDataVlieland.rds")
 #write.csv(IndividualDataVlieland, file = "data/IndividualDataVlieland.csv", row.names = FALSE)
 
 # remove objects only needed for this step:
-rm(colour_map, parse_ring)
+rm(colour_map, parse_ring, Fathers, Mothers)
 
 
 ## Location data -----------------------------------------------------

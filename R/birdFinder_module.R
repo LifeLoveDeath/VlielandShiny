@@ -117,13 +117,15 @@ birdFinderUI <- function(id) {
           h4("Example birds", style = "color:#3f5262; font-weight:500;"),
           helpText(HTML("<b>Try searching for the following birds:</b><br><br>
                           
-                          Species: <b>Great tit</b><br>
-                          Left leg - top ring: <b>yellow/black</b><br>
-                          Left leg - bottom ring: <b>yellow</b><br>
-                          Right leg - top ring: <b>yellow/black</b><br>
-                          Right leg - bottom ring: <b>metal</b><br>
-                          <i>Ring number: BK...65998</i><br><br>
+                          Year: <b>2003</b><br>
+                          Species: <b>Blue tit</b><br>
+                          Left leg - top ring: <b>green</b><br>
+                          Left leg - bottom ring: <b>metal</b><br>
+                          Right leg - top ring: <b>blue/white</b><br>
+                          Right leg - bottom ring:<b>red</b><br>
+                          <i>Ring number: AE...85066</i><br><br>
                           
+                          Year: <b>1999</b><br>
                           Species: <b>Great tit</b><br>
                           Left leg - top ring: <b>blue</b><br>
                           Left leg - bottom ring: <b>white</b><br>
@@ -233,6 +235,9 @@ birdFinderServer <- function(input, output, data, session) {
     updatePickerInput(session, "Right2", selected = "")
   })
   
+  # Clear ring number when a dropdown is selected from:
+  observeEvent(list(input$Yr,input$Sp,input$Left1,input$Left2,input$Right1,input$Right2),
+               {updateTextInput(session, "ring_search", value = "")})
   
   # ---- Clear selection ----
   # Clears ring number search or resets colour ring dropdowns when relevant buttons are clicked
