@@ -1,0 +1,42 @@
+tag, nl
+
+title, "Nestkasten Onderzoek op Vlieland"
+
+about_the_project_heading, "Over dit project"
+about_the_project_text, "Vlieland is een van de vier studie gebieden van het NIOO."
+
+about_the_app_heading, "Over deze website"
+about_the_app_text, "Met deze interactieve app kan je meer te weten komen over een kool- of pimpelmees met kleurringen die je gezien hebt, en over het nestkasten onderzoek in het algemeen." 
+
+find_an_individual_heading, "Zoek een vogel"
+find_an_individual_text, "Zoek een vogel op aan de hand van zijn kleurringen en ontdek zijn geschiedenis."
+
+tab1, "Meer over dit project en app"
+tab2, "Zoek je vogel"
+here_you_can_view, "Hier vind je meer informatie over de vogel die je gezien hebt.<br>Klik op de tab voor hun levensloop, een kaart en een stamboom."
+
+bird_profile, "Vogel profiel"
+meters, Meters
+unknown, Unknown
+
+
+population_trends_heading, "Populatie trends"
+population_trends_text, "Visualiseer 70 jaar aan data."
+
+contribute_your_observations_heading, "Deel je waarnemingen"
+contribute_your_observations_text, "Werk in uitvoering"
+
+research_heading, "Nestkasten op Vlieland"
+research_text, "Meer informatie over koolmezen, over Vlieland, of over het onderzoek in het algemeen."
+
+contact_links_heading, "Meer weten?"
+contact_links_text, "Websites enzovoorts."
+
+back_to_search, "Return to search"
+
+tab3, "Tijdseries"
+select_species, "Soort:"
+
+
+tab4, "Deel je waarneming"
+footer, "Gefinancierd door NERC. Copyright © 2026."

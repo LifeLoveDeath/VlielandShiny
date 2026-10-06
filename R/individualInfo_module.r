@@ -16,7 +16,7 @@
 
 
 # UI -----------------------------------------
-individualInfoUI <- function(id) {
+individualInfoUI <- function(id, i18n) {
   ns <- NS(id)
   
   tagList(
@@ -26,7 +26,7 @@ individualInfoUI <- function(id) {
       column(
         width = 12,
         br(),
-        h4("Bird profile", style = "color:#3f5262; font-weight:500;"),
+        h4(i18n$t("bird_profile"), style = "color:#3f5262; font-weight:500;"),
         p(HTML("The table below summarizes key information about the bird you have seen, 
         including where it was born, where it went to breed, as its reproductive history.<br>
         <em>Hover over any term to learn more.</em>"))

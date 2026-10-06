@@ -7,9 +7,11 @@
 # Images must be /www folder
 
 
+# Translation ------------------------------------------------
 
-projectInfoUI <- function(id) {
-  ns <- NS(id)
+
+projectInfoUI <- function(id, i18n) {
+    ns <- NS(id)
   
   tagList(
   
@@ -74,9 +76,9 @@ projectInfoUI <- function(id) {
         margin: 0 0px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       ",
-            h2("About the Project", style = "color: #3f5262;"),
+            h2(i18n$t("about_the_project_heading"), style = "color: #3f5262;"),
             p(
-              "Vlieland is one of four areas in NIOO-AnE's long-term monitoring research on great tits and other bird species that started in 1955. It consists of several smaller forest areas, which together cover about 250 ha of mainly conifers and oak on poor sandy soil.",
+              i18n$t("about_the_project_text"),
               style = "font-size:16px; line-height:1.6; color:#3f5262;"
             ),
             # Copyright text
@@ -115,8 +117,8 @@ projectInfoUI <- function(id) {
           fluidRow(
             column(
               width = 12,
-              h2("About this App", style = "color: #3f5262; margin-top: 30px;"),
-              p("This interactive app allows you to learn more about a colour-ringed bird you have seen, explore population-level trends, and to learn more about the nextbox research on Vlieland.", 
+              h2(i18n$t("about_the_app_heading"), style = "color: #3f5262; margin-top: 30px;"),
+              p(i18n$t("about_the_app_text"), 
                 style = "font-size: 16px; color = #3f5262; line-height: 1.6;")
             )
           ),
@@ -126,8 +128,8 @@ projectInfoUI <- function(id) {
             column(
               width = 4,
               wellPanel(
-                h4("Find an individual", style = "color: white"),
-                p("Search for a bird by its color rings and explore its history, including general information, a map of its breeding sites and its family tree.", style = "color: white"),
+                h4(i18n$t("find_an_individual_heading"), style = "color: white"),
+                p(i18n$t("find_an_individual_text"), style = "color: white"),
                 style = "display: flex;
                      flex-direction: column;
                      justify-content: center;  /* vertical centering */
@@ -142,8 +144,8 @@ projectInfoUI <- function(id) {
             column(
               width = 4,
               wellPanel(
-                h4("Population trends", style = "color: white"),
-                p("Explore over 70 years of data.", style = "color: white"),
+                h4(i18n$t("population_trends_heading"), style = "color: white"),
+                p(i18n$t("population_trends_text"), style = "color: white"),
                 style = "display: flex;
                      flex-direction: column;
                      justify-content: center;  /* vertical centering */
@@ -157,8 +159,8 @@ projectInfoUI <- function(id) {
             column(
               width = 4,
               wellPanel(
-                h4("Contribute your observations", style = "color: white"),
-                p("Under construction.", style = "color: white"),
+                h4(i18n$t("contribute_your_observations_heading"), style = "color: white"),
+                p(i18n$t("contribute_your_observations_text"), style = "color: white"),
                 style = "display: flex;
                      flex-direction: column;
                      justify-content: center;  /* vertical centering */
@@ -175,7 +177,7 @@ projectInfoUI <- function(id) {
           fluidRow(
             column(
               width = 12,
-              h2("Hole-breeding passerines",
+              h2(i18n$t("research_heading"),
                  style = "color: #3f5262; margin-top: 30px;")
             )
           ),
@@ -183,7 +185,7 @@ projectInfoUI <- function(id) {
           fluidRow(
             column(
               width = 8,
-              p("Placeholder text about hole-breeding passerines or study species. Or make this more detailed project info and change first section title to 'Vlieland'.",
+              p(i18n$t("research_text"),
                 style = "font-size: 16px; color: #3f5262; line-height: 1.6;")
             ),
             column(
@@ -202,8 +204,8 @@ projectInfoUI <- function(id) {
             column(
               width = 12,
               style = "margin-top: 40px; padding: 20px; background-color: #f8f9fa; border-radius: 8px;",
-              h4("Contact / links"),
-              p("Placeholder for contact info, further info etc.", style = "font-size: 14px;")
+              h4(i18n$t("contact_links_heading")),
+              p(i18n$t("contact_links_text"), style = "font-size: 14px;")
             )
           )
       )

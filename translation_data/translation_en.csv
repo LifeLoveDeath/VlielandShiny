@@ -1,0 +1,46 @@
+tag, en
+
+title, "Vlieland Nestbox Project"
+about_the_project_heading, "About the project"
+about_the_project_text, "Vlieland is one of four areas in NIOO-AnE's long-term monitoring research on great tits and other bird species that started in 1955. It consists of several smaller forest areas, which together cover about 250 ha of mainly conifers and oak on poor sandy soil."
+about_the_app_header, "About this website"
+about_the_app_text, "This interactive app allows you to learn more about a colour-ringed bird you have seen, explore population-level trends, and to learn more about the nextbox research on Vlieland."
+
+find_an_individual_heading, "Find an individual"
+find_an_individual_text, "Search for a bird by its color rings and explore its history, including general information, a map of its breeding sites and its family tree."
+
+population_trends_heading, "Population trends"
+population_trends_text, "Explore over 70 years of data."
+
+contribute_your_observations_heading, "Contribute your data"
+contribute_your_observations_text, "Under construction"
+
+research_heading, "Hole-breeding passerines"
+research_text, "Placeholder text about hole-breeding passerines or study species. Or make this more detailed project info and change first section title to 'Vlieland'."
+
+contact_links_heading, "More information"
+contact_links_text, "Placeholder for contact info, further info etc."
+
+
+tab1, "About this project and app"
+tab2, "Find an individual"
+here_you_can_view, "Here you can view the details of your selected bird.<br>Use the tabs below to explore their general info, location data and family tree."
+find_an_individual, "Find an individual"
+search_using_colour_rings, "Search using colour rings"
+year_bird_seen, "Year bird seen"
+select_year, "Select year..."
+species, Species
+select_species, "Select species..."
+blue_tit, "Blue tit"
+great_tit, "Great tit"
+back_to_search, "Return to search"
+left_top, "Left leg - top ring"
+left_bottom, "Left leg - bottom ring"
+select_colour, "Select colour..."
+
+tab3, "Population trends"
+select_species, "Select species:"
+
+tab4, "Citizen science"
+
+ooter, "Footer text e.g. Contact or Copyright © 2026 — All Rights Reserved."

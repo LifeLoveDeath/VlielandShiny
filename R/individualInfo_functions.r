@@ -8,7 +8,7 @@
 # Format numeric distances with meters ------------------------------------------------
 
 format_distance <- function(x) {
-  ifelse(!is.na(x), paste0(round(x), " meters"), "Unknown")
+  ifelse(!is.na(x), paste(round(x), "meters", sep=" "), "unknown")
 }
 
 
