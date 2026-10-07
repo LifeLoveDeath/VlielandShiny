@@ -10,7 +10,7 @@ required_packages <- c(
   "shinyjs", "shinyWidgets", "DT", "ggpedigree", "ggplot2", "plotly",
   "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "tools", "shinythemes",
   "fontawesome", "tibble", "htmltools", "RColorBrewer", "kinship2", "osmdata",
-  "patchwork"
+  "patchwork", "leaflegend"
 )
 
 ## Install any missing packages
@@ -46,7 +46,7 @@ lapply(required_packages, library, character.only = TRUE)
 # library(kinship2)
 # library(osmdata)
 # library(patchwork)
-
+# library(leaflegend)
 
 # App UI -----------------------------------------------------
 
