@@ -6,13 +6,13 @@ VlielandShiny.Rproj
 
 |- data/                                # Initial data files for "_data_processing.R" & reconfigured versions for use in app
     |- _data_processing.R               # Reconfiguring the initial data files to suit app needs
-    |- BroodData.csv                    # Initial data - Brood info for blue tits & great tits hatched or parenting on Vlieland during or before 2025 (date may be updated over time)
-    |- BroodDataApp.csv                 # IN APP___For family tree___BroodData.csv with col names altered to match previous col names used in app
-    |- ColourNumberRings.csv            # Initial data - Ring number & colour code reference list
-    |- IndividualData.csv               # Initial data - Individual bird info for blue tits & great tits hatched or parenting on Vlieland during or before 2025 (date may be updated over time)
-    |- IndividualDataVlieland.csv       # IN APP___For bird search___IndividualData.csv plus colour codes & col names altered to match previous col names used in app
-    |- Individuallnfo.csv               # IN APP___For individual info table___IndividualData.csv plus a range of summary stats for each bird
-    |- location_data.csv                # IN APP___For mapping___"event" denotes if a row is the hatching/ringing/nesting location. Per bird, distance between each event given.
+    |- BroodData.csv                    # Initial data  Brood info for blue tits & great tits hatched or parenting on Vlieland during or before 2025 (date may be updated over time)
+    |- BroodDataApp.rds                 # IN APP        Family tree & population trends - Reduced version of BroodData.csv
+    |- ColourNumberRings.csv            # Initial data  Ring number & colour code reference list
+    |- IndividualData.csv               # Initial data  Individual bird info for blue tits & great tits hatched or parenting on Vlieland during or before 2025 (date may be updated over time)
+    |- IndividualDataVlieland.rds       # IN APP        Bird search & family tree - IndividualData.csv plus bird colour codes
+    |- Individuallnfo.csv               # IN APP        Individual info table - Range of summary stats for each bird
+    |- location_data.csv                # IN APP        Preview & main maps - "event" denotes if a row is the hatching/ringing/nesting location. Per bird, distance between each event given.
 
 |- R/                                   # Is sourced by app.R automatically
     |- appFormatting.R                  # Formatting for the app
