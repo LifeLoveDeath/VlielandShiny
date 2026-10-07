@@ -155,7 +155,7 @@ ui <- div(
     
     tabPanel(
       "Population trends",
-      value = "Pop_trends",
+      value = "pop_trends",
       populationTrendsUI("popTrends")
     ),
     
@@ -163,7 +163,7 @@ ui <- div(
     ### --- Citizen science page -------------------------   
     
     tabPanel("Citizen science",
-             value = "Citizen_sci",
+             value = "citizen_sci",
              citizenScienceUI()
     ),
     
@@ -202,8 +202,18 @@ server <- function(input, output, session) {
   # App navigation
   # Title link to home page
   observeEvent(input$main_title,{
-    updateNavbarPage(session = session, inputId = "app_navbar", selected = "home")
+    updateNavbarPage(session = session,
+                     inputId = "app_navbar",
+                     selected = "home")
   })
+  # Summary cards to relevant tabs
+  observeEvent(input$card_clicked, {
+    updateNavbarPage(
+      session = session,
+      inputId = "app_navbar",
+      selected = input$card_clicked)
+  })
+  
   
   
   # Find individual by colour rings

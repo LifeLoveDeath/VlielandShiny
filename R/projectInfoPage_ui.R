@@ -122,10 +122,30 @@ projectInfoUI <- function(id) {
           ),
           
           #### --- Features / cards section ----
+          
+          
+          
           fluidRow(
+            # watch the page, if a card is clicked perform the following function
+            # store the data-tab value for the clicked card
+            # tell shiny to set the card_clicked value as the stored data-tab value
+            # ensure Shiny resets the card_clicked value every time a card is clicked
+            tags$script(HTML("
+                  $(document).on('click', '.clickable-card', function() {
+                  var tab = $(this).data('tab');
+                  Shiny.setInputValue(
+                  'card_clicked',
+                  tab,
+                  {priority: 'event'}
+                  );
+                  });
+                 ")),
             column(
               width = 4,
               wellPanel(
+                id = "individual_search_card",
+                class = "clickable-card",
+                'data-tab' = "individual_search",
                 h4("Find an individual", style = "color: white"),
                 p("Search for a bird by its color rings and explore its history, including general information, a map of its breeding sites and its family tree.", style = "color: white"),
                 style = "display: flex;
@@ -142,6 +162,9 @@ projectInfoUI <- function(id) {
             column(
               width = 4,
               wellPanel(
+                id = "pop_trends_card",
+                class = "clickable-card",
+                'data-tab' = "pop_trends",
                 h4("Population trends", style = "color: white"),
                 p("Explore over 70 years of data.", style = "color: white"),
                 style = "display: flex;
@@ -157,6 +180,9 @@ projectInfoUI <- function(id) {
             column(
               width = 4,
               wellPanel(
+                id = "citizen_sci_card",
+                class = "clickable-card",
+                'data-tab' = "citizen_sci",
                 h4("Contribute your observations", style = "color: white"),
                 p("Under construction.", style = "color: white"),
                 style = "display: flex;
@@ -170,6 +196,7 @@ projectInfoUI <- function(id) {
               )
             )
           ),
+          
           
           #### --- Species info ----
           fluidRow(
