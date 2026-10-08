@@ -57,7 +57,8 @@ mapUI <- function(id) {
                            choices = c("Birth nest" = "birth", "Breeding nests" = "nest"),
                            selected = c("birth", "nest")),
         tags$label("Timeline:", style = "margin-bottom: 0; display: block;"),
-        checkboxInput(ns("timeline"), "Show timeline path", value = FALSE, width = NULL),
+        checkboxInput(ns("timeline"), "Show timeline path (arrows indicate drirection of travel)",
+                      value = FALSE, width = '100%'),
         
         uiOutput(ns("year_slider")),
       
@@ -177,6 +178,7 @@ genMapServer <- function(id, location.data, selected_ring) {
       m <- leafletProxy("map_individual", session) %>%
         clearMarkers() %>%
         clearShapes()
+      # IF key exists clearControls(layerId = "mapInd_key")
       
       # Only add markers / timeline if data exists
       if ("birth" %in% input$event_filter) {
@@ -188,6 +190,13 @@ genMapServer <- function(id, location.data, selected_ring) {
       if (input$timeline && nrow(data) > 1) {
         m <- add_timeline(m, data %>% filter(Event %in% input$event_filter))
       }
+      
+      # Add legend
+      addLegendSymbol(m, position = "topleft", color = c("#e97158", "#0d088775","#0d0887"),
+                      shape = c("circle", "circle", "line"), opacity = 1,
+                      values = c("birth nextbox", "breeding nestbox", "timeline"),
+                      strokeWidth = c(1,1,3), layerId = "mapInd_key")
+      m # return the map
     })
     
   })

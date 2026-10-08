@@ -31,39 +31,7 @@ nrow(IndividualData)
 IndividualData <- unique(IndividualData)
 
 
-### Tidy & cut to Vlieland birds --------------------------------------------
 
-# performing this tidy here so doesn't have to be repeated when this data is used to tidy brood data
-
-# Removal of birds that have neither been ringed nor parented on Vlieland
-# These birds are unlikely ever to be present on Vlieland
-# And some have been colour ringed using different systems
-
-# List of birds ringed or found parenting on Vlieland
-# Migrant parents metal ringed elsewhere have that as their RingAreaGroupName
-# hence taking parental ring list from BroodData as well
-Vlieland_rings <- c(BroodData$RingNumberFemale, BroodData$RingNumberMale,
-                    IndividualData$RingNumber
-                    [IndividualData$RingAreaGroupName == "Vlieland"]) %>%
-  na.omit() %>%
-  unique()
-
-# Any parents who don't feature in IndividualData?
-# Will leave them for now and see if they cause issues
-Vlieland_rings[which(!Vlieland_rings %in% IndividualData$RingNumber)]
-
-# Subset IndividualData to the Vlieland birds
-IndividualData <- IndividualData[which(IndividualData$RingNumber %in% Vlieland_rings),]
-
-# Find ring number typos in IndividualData
-# ie >1 bird per ring number
-# shouldn't be duplicates yet as colour codes not yet added (so is ok to remove them)
-TyposIndividual <- sort(IndividualData$RingNumber[which(duplicated(IndividualData$RingNumber))])
-# And remove rows in the typos list
-IndividualData <- IndividualData[which(!IndividualData$RingNumber %in% TyposIndividual),]
-
-# remove objects only used for this section
-rm(Vlieland_rings, TyposIndividual)
 
 
 ## --- Brood data ----
@@ -82,58 +50,6 @@ range(lubridate::day(BroodData$LayDate),na.rm=T)
 length(which(duplicated(BroodData)))
 nrow(BroodData)
 # No duplicate rows
-
-
-### --- Remove birds with sex mismatches ----
-# Find birds registered as both mother & father
-overlap <- unique(BroodData$RingNumberFemale[which(BroodData$RingNumberFemale %in% BroodData$RingNumberMale, )])
-overlap <- overlap[!is.na(overlap)]
-
-# Replace with NA
-# In mother column
-BroodData$RingNumberFemale[which(BroodData$RingNumberFemale %in% overlap)] <- NA
-# In Father column
-BroodData$RingNumberMale[which(BroodData$RingNumberMale %in% overlap)] <- NA
-
-# Find & remove birds with sexes mismatched to parent status
-# Male mothers
-Males <- unique(IndividualData$RingNumber[IndividualData$Sex == 2])
-Males <- Males[!is.na(Males)]
-Male_ma <- Males[which(Males %in% BroodData$RingNumberFemale)]
-# Remove male mothers
-BroodData$RingNumberFemale[which(BroodData$RingNumberFemale %in% Male_ma)] <- NA
-
-# Female fathers
-Females <- unique(IndividualData$RingNumber[IndividualData$Sex == 1])
-Females <- Females[!is.na(Females)]
-Female_pa <- Females[which(Females %in% BroodData$RingNumberMale)]
-# Remove male mothers
-BroodData$RingNumberMale[which(BroodData$RingNumberMale %in% Female_pa)] <- NA
-
-### --- Rearrange & save ----
-names(BroodData)
-# Arrange cols to match previous data frame layout
-BroodDataApp <- subset(BroodData,
-          select = c("BroodYear", "RingNumberFemale", "RingNumberMale",
-                     "LayDate", "ClutchSize", "SpeciesName"))
-# Re-name cols to match previous data frame layout
-colnames(BroodDataApp) <- c("BroodYear", "RingNumberFemale", "RingNumberMale",
-                                 "LayDate", "ClutchSize", "SpeciesName")
-
-# set data types
-summary(BroodDataApp)
-BroodDataApp$RingNumberFemale <- as.factor(BroodDataApp$RingNumberFemale)
-BroodDataApp$RingNumberMale <- as.factor(BroodDataApp$RingNumberMale)
-BroodDataApp$SpeciesName <- as.factor(BroodDataApp$SpeciesName)
-
-# Save as r object file
-saveRDS(BroodDataApp, "data/BroodDataApp.rds")
-
-# write csv
-# write.csv(BroodDataApp, file = "data/BroodDataApp.csv", row.names = FALSE)
-
-rm(overlap, Males, Male_ma, Females, Female_pa)
-
 
 
 ## --- ColourNumberRings ----
@@ -200,6 +116,97 @@ rm(matches, missing)
 
 # Data prep ---------------------------------------------------------------
 
+## Initial individual data tidy --------------------------------------------
+
+### Tidy & cut to Vlieland birds --------------------------------------------
+
+# performing this tidy here so doesn't have to be repeated when this data is used to tidy brood data
+
+# Removal of birds that have neither been ringed nor parented on Vlieland
+# These birds are unlikely ever to be present on Vlieland
+# And some have been colour ringed using different systems
+
+# List of birds ringed or found parenting on Vlieland
+# Migrant parents metal ringed elsewhere have that as their RingAreaGroupName
+# hence taking parental ring list from BroodData as well
+Vlieland_rings <- c(BroodData$RingNumberFemale, BroodData$RingNumberMale,
+                    IndividualData$RingNumber
+                    [IndividualData$RingAreaGroupName == "Vlieland"]) %>%
+  na.omit() %>%
+  unique()
+
+# Any parents who don't feature in IndividualData?
+# Will leave them for now and see if they cause issues
+Vlieland_rings[which(!Vlieland_rings %in% IndividualData$RingNumber)]
+
+# Subset IndividualData to the Vlieland birds
+IndividualData <- IndividualData[which(IndividualData$RingNumber %in% Vlieland_rings),]
+
+# Find ring number typos in IndividualData
+# ie >1 bird per ring number
+# shouldn't be duplicates yet as colour codes not yet added (so is ok to remove them)
+TyposIndividual <- sort(IndividualData$RingNumber[which(duplicated(IndividualData$RingNumber))])
+# And remove rows in the typos list
+IndividualData <- IndividualData[which(!IndividualData$RingNumber %in% TyposIndividual),]
+
+# remove objects only used for this section
+rm(Vlieland_rings, TyposIndividual)
+
+
+
+## Brood data ---------------------------------------------------------
+
+### --- Remove birds with sex mismatches ----
+# Find birds registered as both mother & father
+overlap <- unique(BroodData$RingNumberFemale[which(BroodData$RingNumberFemale %in% BroodData$RingNumberMale, )])
+overlap <- overlap[!is.na(overlap)]
+
+# Replace with NA
+# In mother column
+BroodData$RingNumberFemale[which(BroodData$RingNumberFemale %in% overlap)] <- NA
+# In Father column
+BroodData$RingNumberMale[which(BroodData$RingNumberMale %in% overlap)] <- NA
+
+# Find & remove birds with sexes mismatched to parent status
+# Male mothers
+Males <- unique(IndividualData$RingNumber[IndividualData$Sex == 2])
+Males <- Males[!is.na(Males)]
+Male_ma <- Males[which(Males %in% BroodData$RingNumberFemale)]
+# Remove male mothers
+BroodData$RingNumberFemale[which(BroodData$RingNumberFemale %in% Male_ma)] <- NA
+
+# Female fathers
+Females <- unique(IndividualData$RingNumber[IndividualData$Sex == 1])
+Females <- Females[!is.na(Females)]
+Female_pa <- Females[which(Females %in% BroodData$RingNumberMale)]
+# Remove male mothers
+BroodData$RingNumberMale[which(BroodData$RingNumberMale %in% Female_pa)] <- NA
+
+### --- Rearrange & save ----
+names(BroodData)
+# Arrange cols to match previous data frame layout
+BroodDataApp <- subset(BroodData,
+                       select = c("BroodYear", "RingNumberFemale", "RingNumberMale",
+                                  "LayDate", "ClutchSize", "SpeciesName"))
+# Re-name cols to match previous data frame layout
+colnames(BroodDataApp) <- c("BroodYear", "RingNumberFemale", "RingNumberMale",
+                            "LayDate", "ClutchSize", "SpeciesName")
+
+# set data types
+summary(BroodDataApp)
+BroodDataApp$RingNumberFemale <- as.factor(BroodDataApp$RingNumberFemale)
+BroodDataApp$RingNumberMale <- as.factor(BroodDataApp$RingNumberMale)
+BroodDataApp$SpeciesName <- as.factor(BroodDataApp$SpeciesName)
+
+# Save as r object file
+saveRDS(BroodDataApp, "data/BroodDataApp.rds")
+
+# write csv
+# write.csv(BroodDataApp, file = "data/BroodDataApp.csv", row.names = FALSE)
+
+rm(overlap, Males, Male_ma, Females, Female_pa)
+
+
 
 ## Individual data ---------------------------------------------------------
 
@@ -230,6 +237,7 @@ Female_pa <- Females[which(Females %in% IndividualData$Father)]
 IndividualData$Father[which(IndividualData$Father %in% Female_pa)] <- NA
 
 rm(overlap, Males, Male_ma, Females, Female_pa)
+
 
 
 ### --- Sex unsexed parents ----
