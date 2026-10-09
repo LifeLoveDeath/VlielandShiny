@@ -8,7 +8,7 @@ tag, en
 
 # COMMONLY USED WORDS & PHRASES #
 # Words and phrases that occur on multiple pages of the app
-# Anticipating words like blue tit, great tit & species might feature
+# Anticipating words like blue tit, great tit & species might feature... possibly in upper and lower case??
 
 
 
@@ -46,6 +46,7 @@ app_view_bird_text, "Here you can view the details of your selected bird.<br>Use
 
 ## INDIVIDUAL INFO ##
 app_subtab_info, "General Info"
+individualInfo_bird_profile, "Bird profile"
 
 ## MAPPING INDIVIDUAL ##
 app_subtab_map, "Map"
@@ -60,31 +61,3 @@ app_subtab_tree, "Family Tree"
 
 
 # CITIZEN SCIENCE #
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-find_an_individual, "Find an individual"
-search_using_colour_rings, "Search using colour rings"
-year_bird_seen, "Year bird seen"
-select_year, "Select year..."
-species, Species
-select_species, "Select species..."
-blue_tit, "Blue tit"
-great_tit, "Great tit"
-left_top, "Left leg - top ring"
-left_bottom, "Left leg - bottom ring"
-select_colour, "Select colour..."
-
-

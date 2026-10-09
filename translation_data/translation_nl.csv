@@ -8,7 +8,7 @@ tag, nl
 
 # COMMONLY USED WORDS & PHRASES #
 # Words and phrases that occur on multiple pages of the app
-# Anticipating words like blue tit, great tit & species might feature
+# Anticipating words like blue tit, great tit & species might feature... possibly in upper and lower case??
 
 
 
@@ -46,6 +46,7 @@ app_view_bird_text, "Hier vind je meer informatie over de vogel die je gezien he
 
 ## INDIVIDUAL INFO ##
 app_subtab_info, "TRANSLATE: General Info"
+individualInfo_bird_profile, "Vogel profiel"
 
 ## MAPPING INDIVIDUAL ##
 app_subtab_map, "TRANSLATE: Map"
@@ -60,30 +61,3 @@ app_subtab_tree, "TRANSLATE: Family Tree"
 
 
 # CITIZEN SCIENCE #
-
-
-
-
-
-
-
-
-
-
-bird_profile, "Vogel profiel"
-meters, Meters
-unknown, Unknown
-
-
-
-
-
-
-
-
-
-
-
-
-select_species, "Soort:"
-
