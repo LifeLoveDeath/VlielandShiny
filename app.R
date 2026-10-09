@@ -51,7 +51,7 @@ lapply(required_packages, library, character.only = TRUE)
 # Translation ------------------------------------------------
 
 i18n <- Translator$new(translation_csvs_path = "translation_data/")
-i18n$set_translation_language("nl")
+i18n$set_translation_language("tag")
 
 
 # App UI -----------------------------------------------------
@@ -113,7 +113,7 @@ ui <- div(
     
     ### --- Find an individual page -------------------------
 
-    tabPanel(i18n$t("tab2"),
+    tabPanel(i18n$t("app_tab_individual_search"),
              value = "individual_search",
              useShinyjs(), # for allowing hidden panels
              hidden(
@@ -141,17 +141,17 @@ ui <- div(
         ",
                      
                      # --- Back button and selected bird ---
-                     actionButton("back_to_search", "back_to_search"),
+                     actionButton("back_to_search", i18n$t("app_back_to_search")),
                      uiOutput("selected_bird"),
-                     p(HTML(i18n$t("here_you_can_view")),
+                     p(HTML(i18n$t("app_view_bird_text")),
                        style = "font-size:14px; color:#3f5262; margin-bottom: 20px;"),
                      
                      # --- Tabs ---
                      tabsetPanel(
                        id = "bird_tabs",
-                       tabPanel("General Info", individualInfoUI("individual_info", i18n)),
-                       tabPanel("Map", value = "Map", mapUI("map_individual")),
-                       tabPanel("Family tree", familyTreeUI("pedigree_module"))
+                       tabPanel(i18n$t("app_subtab_info"), individualInfoUI("individual_info", i18n)),
+                       tabPanel(i18n$t("app_subtab_map"), value = "Map", mapUI("map_individual")),
+                       tabPanel(i18n$t("app_subtab_tree"), familyTreeUI("pedigree_module"))
                      )
                    )
                )
@@ -161,7 +161,7 @@ ui <- div(
     ### --- Population trends page -------------------------
     
     tabPanel(
-      i18n$t("tab3"),
+      i18n$t("app_tab_pop_trends"),
       value = "pop_trends",
       populationTrendsUI("popTrends", i18n)
     ),
@@ -170,7 +170,7 @@ ui <- div(
     ### --- Citizen science page -------------------------   
     
 
-    tabPanel(i18n$t("tab4"),
+    tabPanel(i18n$t("app_tab_citizen_sci"),
              value = "citizen_sci",
              citizenScienceUI()
     ),
@@ -187,7 +187,7 @@ ui <- div(
     
     
     # Footer text
-    p(i18n$t("footer")),
+    p(i18n$t("app_footer")),
     align = "right"
   )
   

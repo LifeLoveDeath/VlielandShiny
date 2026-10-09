@@ -1,12 +1,39 @@
 tag, nl
 
+# PRESENT ON ALL PAGES #
 app_title, "Nestkasten Onderzoek op Vlieland"
+app_footer, "Gefinancierd door NERC. Copyright © 2026."
 
+
+
+# PROJECT INFO PAGE #
 app_tab_home, "Meer over dit project en app"
 
 
 
+# BIRD FINDER #
+app_tab_individual_search, "Zoek je vogel"
+app_back_to_search, "TRANSLATE: Return to search"
+app_view_bird_text, "Hier vind je meer informatie over de vogel die je gezien hebt.<br>Klik op de tab voor hun levensloop, een kaart en een stamboom."
 
+## INDIVIDUAL INFO ##
+app_subtab_info, "TRANSLATE: General Info"
+
+## MAPPING INDIVIDUAL ##
+app_subtab_map, "TRANSLATE: Map"
+
+## FAMILY TREE ##
+app_subtab_tree, "TRANSLATE: Family Tree"
+
+
+
+# POPULATION TRENDS #
+app_tab_pop_trends, "Tijdseries"
+
+
+
+# CITIZEN SCIENCE #
+app_tab_citizen_sci, "Deel je waarneming"
 
 
 about_the_project_heading, "Over dit project"
@@ -18,8 +45,6 @@ about_the_app_text, "Met deze interactieve app kan je meer te weten komen over e
 find_an_individual_heading, "Zoek een vogel"
 find_an_individual_text, "Zoek een vogel op aan de hand van zijn kleurringen en ontdek zijn geschiedenis."
 
-tab2, "Zoek je vogel"
-here_you_can_view, "Hier vind je meer informatie over de vogel die je gezien hebt.<br>Klik op de tab voor hun levensloop, een kaart en een stamboom."
 
 bird_profile, "Vogel profiel"
 meters, Meters
@@ -38,11 +63,7 @@ research_text, "Meer informatie over koolmezen, over Vlieland, of over het onder
 contact_links_heading, "Meer weten?"
 contact_links_text, "Websites enzovoorts."
 
-back_to_search, "Return to search"
 
-tab3, "Tijdseries"
+
 select_species, "Soort:"
 
-
-tab4, "Deel je waarneming"
-footer, "Gefinancierd door NERC. Copyright © 2026."

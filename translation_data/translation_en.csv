@@ -1,11 +1,39 @@
 tag, en
 
+# PRESENT ON ALL PAGES #
 app_title, "Vlieland Nestbox Project"
+app_footer, "Footer text e.g. Contact or Copyright © 2026 — All Rights Reserved."
 
+
+
+# PROJECT INFO PAGE #
 app_tab_home, "About this project and app"
 
 
 
+# BIRD FINDER #
+app_tab_individual_search, "Find an individual"
+app_back_to_search, "Return to search"
+app_view_bird_text, "Here you can view the details of your selected bird.<br>Use the tabs below to explore their general info, location data and family tree."
+
+## INDIVIDUAL INFO ##
+app_subtab_info, "General Info"
+
+## MAPPING INDIVIDUAL ##
+app_subtab_map, "Map"
+
+## FAMILY TREE ##
+app_subtab_tree, "Family Tree"
+
+
+
+# POPULATION TRENDS #
+app_tab_pop_trends, "Population trends"
+
+
+
+# CITIZEN SCIENCE #
+app_tab_citizen_sci, "Citizen science"
 
 
 about_the_project_heading, "About the project"
@@ -30,8 +58,6 @@ contact_links_text, "Placeholder for contact info, further info etc."
 
 
 
-tab2, "Find an individual"
-here_you_can_view, "Here you can view the details of your selected bird.<br>Use the tabs below to explore their general info, location data and family tree."
 find_an_individual, "Find an individual"
 search_using_colour_rings, "Search using colour rings"
 year_bird_seen, "Year bird seen"
@@ -40,14 +66,8 @@ species, Species
 select_species, "Select species..."
 blue_tit, "Blue tit"
 great_tit, "Great tit"
-back_to_search, "Return to search"
 left_top, "Left leg - top ring"
 left_bottom, "Left leg - bottom ring"
 select_colour, "Select colour..."
 
-tab3, "Population trends"
 
-
-tab4, "Citizen science"
-
-footer, "Footer text e.g. Contact or Copyright © 2026 — All Rights Reserved."
