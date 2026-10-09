@@ -73,7 +73,7 @@ ui <- div(
     # ),
     #id = "navbar_id",
     position = "fixed-top",
-    windowTitle = i18n$t("title"),
+    windowTitle = i18n$t("app_title"),
     fluid = TRUE,
     collapsible = TRUE,
     #theme = shinytheme("flatly"), # change theme here
@@ -92,7 +92,7 @@ ui <- div(
       # title text and link to home page if clicked
       tags$a(
         href = "/", target = "_self",
-        tags$span(i18n$t("title"),
+        tags$span(i18n$t("app_title"),
         style = "
         color:#3f5262;
         font-weight:300;
@@ -108,7 +108,7 @@ ui <- div(
     
     ### --- Project info homepage -------------------------
     
-    tabPanel(i18n$t("tab1"),
+    tabPanel(i18n$t("app_tab_home"),
              projectInfoUI("projectInfoPage", i18n),
     ),
     

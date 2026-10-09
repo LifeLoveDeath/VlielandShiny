@@ -1,6 +1,13 @@
 tag, nl
 
-title, "Nestkasten Onderzoek op Vlieland"
+app_title, "Nestkasten Onderzoek op Vlieland"
+
+app_tab_home, "Meer over dit project en app"
+
+
+
+
+
 
 about_the_project_heading, "Over dit project"
 about_the_project_text, "Vlieland is een van de vier studie gebieden van het NIOO."
@@ -11,7 +18,6 @@ about_the_app_text, "Met deze interactieve app kan je meer te weten komen over e
 find_an_individual_heading, "Zoek een vogel"
 find_an_individual_text, "Zoek een vogel op aan de hand van zijn kleurringen en ontdek zijn geschiedenis."
 
-tab1, "Meer over dit project en app"
 tab2, "Zoek je vogel"
 here_you_can_view, "Hier vind je meer informatie over de vogel die je gezien hebt.<br>Klik op de tab voor hun levensloop, een kaart en een stamboom."
 

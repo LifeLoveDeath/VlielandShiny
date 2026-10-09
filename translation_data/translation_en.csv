@@ -1,6 +1,13 @@
 tag, en
 
-title, "Vlieland Nestbox Project"
+app_title, "Vlieland Nestbox Project"
+
+app_tab_home, "About this project and app"
+
+
+
+
+
 about_the_project_heading, "About the project"
 about_the_project_text, "Vlieland is one of four areas in NIOO-AnE's long-term monitoring research on great tits and other bird species that started in 1955. It consists of several smaller forest areas, which together cover about 250 ha of mainly conifers and oak on poor sandy soil."
 about_the_app_header, "About this website"
@@ -22,7 +29,7 @@ contact_links_heading, "More information"
 contact_links_text, "Placeholder for contact info, further info etc."
 
 
-tab1, "About this project and app"
+
 tab2, "Find an individual"
 here_you_can_view, "Here you can view the details of your selected bird.<br>Use the tabs below to explore their general info, location data and family tree."
 find_an_individual, "Find an individual"
@@ -43,4 +50,4 @@ tab3, "Population trends"
 
 tab4, "Citizen science"
 
-ooter, "Footer text e.g. Contact or Copyright © 2026 — All Rights Reserved."
+footer, "Footer text e.g. Contact or Copyright © 2026 — All Rights Reserved."
