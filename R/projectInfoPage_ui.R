@@ -76,9 +76,9 @@ projectInfoUI <- function(id, i18n) {
         margin: 0 0px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       ",
-            h2(i18n$t("about_the_project_heading"), style = "color: #3f5262;"),
+            h2(i18n$t("projInfo_about_project_heading"), style = "color: #3f5262;"),
             p(
-              i18n$t("about_the_project_text"),
+              i18n$t("projInfo_about_project_text"),
               style = "font-size:16px; line-height:1.6; color:#3f5262;"
             ),
             # Copyright text
@@ -117,8 +117,8 @@ projectInfoUI <- function(id, i18n) {
           fluidRow(
             column(
               width = 12,
-              h2(i18n$t("about_the_app_heading"), style = "color: #3f5262; margin-top: 30px;"),
-              p(i18n$t("about_the_app_text"), 
+              h2(i18n$t("projInfo_about_app_heading"), style = "color: #3f5262; margin-top: 30px;"),
+              p(i18n$t("projInfo_about_app_text"), 
                 style = "font-size: 16px; color = #3f5262; line-height: 1.6;")
             )
           ),
@@ -148,8 +148,8 @@ projectInfoUI <- function(id, i18n) {
                 id = "individual_search_card",
                 class = "clickable-card",
                 'data-tab' = "individual_search",
-                h4(i18n$t("find_an_individual_heading"), style = "color: white"),
-                p(i18n$t("find_an_individual_text"), style = "color: white"),
+                h4(i18n$t("projInfo_bird_finder_heading"), style = "color: white"),
+                p(i18n$t("projInfo_bird_finder_text"), style = "color: white"),
                 style = "display: flex;
                      flex-direction: column;
                      justify-content: center;  /* vertical centering */
@@ -167,8 +167,8 @@ projectInfoUI <- function(id, i18n) {
                 id = "pop_trends_card",
                 class = "clickable-card",
                 'data-tab' = "pop_trends",
-                h4(i18n$t("population_trends_heading"), style = "color: white"),
-                p(i18n$t("population_trends_text"), style = "color: white"),
+                h4(i18n$t("projInfo_pop_trends_heading"), style = "color: white"),
+                p(i18n$t("projInfo_pop_trends_text"), style = "color: white"),
                 style = "display: flex;
                      flex-direction: column;
                      justify-content: center;  /* vertical centering */
@@ -185,8 +185,8 @@ projectInfoUI <- function(id, i18n) {
                 id = "citizen_sci_card",
                 class = "clickable-card",
                 'data-tab' = "citizen_sci",
-                h4(i18n$t("contribute_your_observations_heading"), style = "color: white"),
-                p(i18n$t("contribute_your_observations_text"), style = "color: white"),
+                h4(i18n$t("projInfo_citizen_sci_heading"), style = "color: white"),
+                p(i18n$t("cprojInfo_citizen_sci_text"), style = "color: white"),
                 style = "display: flex;
                      flex-direction: column;
                      justify-content: center;  /* vertical centering */
@@ -204,7 +204,7 @@ projectInfoUI <- function(id, i18n) {
           fluidRow(
             column(
               width = 12,
-              h2(i18n$t("research_heading"),
+              h2(i18n$t("projInfo_research_heading"),
                  style = "color: #3f5262; margin-top: 30px;")
             )
           ),
@@ -212,7 +212,7 @@ projectInfoUI <- function(id, i18n) {
           fluidRow(
             column(
               width = 8,
-              p(i18n$t("research_text"),
+              p(i18n$t("projInfo_research_text"),
                 style = "font-size: 16px; color: #3f5262; line-height: 1.6;")
             ),
             column(
@@ -231,8 +231,8 @@ projectInfoUI <- function(id, i18n) {
             column(
               width = 12,
               style = "margin-top: 40px; padding: 20px; background-color: #f8f9fa; border-radius: 8px;",
-              h4(i18n$t("contact_links_heading")),
-              p(i18n$t("contact_links_text"), style = "font-size: 14px;")
+              h4(i18n$t("projInfo_contact_links_heading")),
+              p(i18n$t("projInfo_contact_links_text"), style = "font-size: 14px;")
             )
           )
       )

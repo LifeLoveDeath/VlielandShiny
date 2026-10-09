@@ -1,18 +1,46 @@
 tag, nl
 
+# Text is grouped by which page of the app it is present on
+# Within this, tags are organised alpahbetically to help prevent accidental duplication
+# Each tag begins with a set reference to the R file it is found within
+
+
+
+# COMMONLY USED WORDS & PHRASES #
+# Words and phrases that occur on multiple pages of the app
+# Anticipating words like blue tit, great tit & species might feature
+
+
+
 # PRESENT ON ALL PAGES #
-app_title, "Nestkasten Onderzoek op Vlieland"
 app_footer, "Gefinancierd door NERC. Copyright © 2026."
+app_tab_citizen_sci, "Deel je waarneming"
+app_tab_home, "Meer over dit project en app"
+app_tab_individual_search, "Zoek je vogel"
+app_tab_pop_trends, "Tijdseries"
+app_title, "Nestkasten Onderzoek op Vlieland"
 
 
 
 # PROJECT INFO PAGE #
-app_tab_home, "Meer over dit project en app"
+projInfo_about_app_heading, "Over deze website"
+projInfo_about_app_text, "Met deze interactieve app kan je meer te weten komen over een kool- of pimpelmees met kleurringen die je gezien hebt, en over het nestkasten onderzoek in het algemeen." 
+projInfo_about_project_heading, "Over dit project"
+projInfo_about_project_text, "Vlieland is een van de vier studie gebieden van het NIOO."
+projInfo_bird_finder_heading, "Zoek een vogel"
+projInfo_bird_finder_text, "Zoek een vogel op aan de hand van zijn kleurringen en ontdek zijn geschiedenis."
+projInfo_citizen_sci_heading, "Deel je waarnemingen"
+projInfo_citizen_sci_text, "Werk in uitvoering"
+projInfo_contact_links_heading, "Meer weten?"
+projInfo_contact_links_text, "Websites enzovoorts."
+projInfo_pop_trends_heading, "Populatie trends"
+projInfo_pop_trends_text, "Visualiseer 70 jaar aan data."
+projInfo_research_heading, "Nestkasten op Vlieland"
+projInfo_research_text, "Meer informatie over koolmezen, over Vlieland, of over het onderzoek in het algemeen."
 
 
 
 # BIRD FINDER #
-app_tab_individual_search, "Zoek je vogel"
 app_back_to_search, "TRANSLATE: Return to search"
 app_view_bird_text, "Hier vind je meer informatie over de vogel die je gezien hebt.<br>Klik op de tab voor hun levensloop, een kaart en een stamboom."
 
@@ -28,22 +56,18 @@ app_subtab_tree, "TRANSLATE: Family Tree"
 
 
 # POPULATION TRENDS #
-app_tab_pop_trends, "Tijdseries"
 
 
 
 # CITIZEN SCIENCE #
-app_tab_citizen_sci, "Deel je waarneming"
 
 
-about_the_project_heading, "Over dit project"
-about_the_project_text, "Vlieland is een van de vier studie gebieden van het NIOO."
 
-about_the_app_heading, "Over deze website"
-about_the_app_text, "Met deze interactieve app kan je meer te weten komen over een kool- of pimpelmees met kleurringen die je gezien hebt, en over het nestkasten onderzoek in het algemeen." 
 
-find_an_individual_heading, "Zoek een vogel"
-find_an_individual_text, "Zoek een vogel op aan de hand van zijn kleurringen en ontdek zijn geschiedenis."
+
+
+
+
 
 
 bird_profile, "Vogel profiel"
@@ -51,17 +75,13 @@ meters, Meters
 unknown, Unknown
 
 
-population_trends_heading, "Populatie trends"
-population_trends_text, "Visualiseer 70 jaar aan data."
 
-contribute_your_observations_heading, "Deel je waarnemingen"
-contribute_your_observations_text, "Werk in uitvoering"
 
-research_heading, "Nestkasten op Vlieland"
-research_text, "Meer informatie over koolmezen, over Vlieland, of over het onderzoek in het algemeen."
 
-contact_links_heading, "Meer weten?"
-contact_links_text, "Websites enzovoorts."
+
+
+
+
 
 
 

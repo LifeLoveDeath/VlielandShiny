@@ -1,18 +1,46 @@
 tag, en
 
+# Text is grouped by which page of the app it is present on
+# Within this, tags are organised alpahbetically to help prevent accidental duplication
+# Each tag begins with a set reference to the R file it is found within
+
+
+
+# COMMONLY USED WORDS & PHRASES #
+# Words and phrases that occur on multiple pages of the app
+# Anticipating words like blue tit, great tit & species might feature
+
+
+
 # PRESENT ON ALL PAGES #
-app_title, "Vlieland Nestbox Project"
 app_footer, "Footer text e.g. Contact or Copyright © 2026 — All Rights Reserved."
+app_tab_citizen_sci, "Citizen science"
+app_tab_home, "About this project and app"
+app_tab_individual_search, "Find an individual"
+app_tab_pop_trends, "Population trends"
+app_title, "Vlieland Nestbox Project"
 
 
 
 # PROJECT INFO PAGE #
-app_tab_home, "About this project and app"
+projInfo_about_app_heading, "About this website"
+projInfo_about_app_text, "This interactive app allows you to learn more about a colour-ringed bird you have seen, explore population-level trends, and to learn more about the nextbox research on Vlieland."
+projInfo_about_project_heading, "About the project"
+projInfo_about_project_text, "Vlieland is one of four areas in NIOO-AnE's long-term monitoring research on great tits and other bird species that started in 1955. It consists of several smaller forest areas, which together cover about 250 ha of mainly conifers and oak on poor sandy soil."
+projInfo_bird_finder_heading, "Find an individual"
+projInfo_bird_finder_text, "Search for a bird by its color rings and explore its history, including general information, a map of its breeding sites and its family tree."
+projInfo_citizen_sci_heading, "Contribute your data"
+projInfo_citizen_sci_text, "Under construction"
+projInfo_contact_links_heading, "More information"
+projInfo_contact_links_text, "Placeholder for contact info, further info etc."
+projInfo_pop_trends_heading, "Population trends"
+projInfo_pop_trends_text, "Explore over 70 years of data."
+projInfo_research_heading, "Hole-breeding passerines"
+projInfo_research_text, "Placeholder text about hole-breeding passerines or study species. Or make this more detailed project info and change first section title to 'Vlieland'."
 
 
 
 # BIRD FINDER #
-app_tab_individual_search, "Find an individual"
 app_back_to_search, "Return to search"
 app_view_bird_text, "Here you can view the details of your selected bird.<br>Use the tabs below to explore their general info, location data and family tree."
 
@@ -28,33 +56,22 @@ app_subtab_tree, "Family Tree"
 
 
 # POPULATION TRENDS #
-app_tab_pop_trends, "Population trends"
 
 
 
 # CITIZEN SCIENCE #
-app_tab_citizen_sci, "Citizen science"
 
 
-about_the_project_heading, "About the project"
-about_the_project_text, "Vlieland is one of four areas in NIOO-AnE's long-term monitoring research on great tits and other bird species that started in 1955. It consists of several smaller forest areas, which together cover about 250 ha of mainly conifers and oak on poor sandy soil."
-about_the_app_header, "About this website"
-about_the_app_text, "This interactive app allows you to learn more about a colour-ringed bird you have seen, explore population-level trends, and to learn more about the nextbox research on Vlieland."
 
-find_an_individual_heading, "Find an individual"
-find_an_individual_text, "Search for a bird by its color rings and explore its history, including general information, a map of its breeding sites and its family tree."
 
-population_trends_heading, "Population trends"
-population_trends_text, "Explore over 70 years of data."
 
-contribute_your_observations_heading, "Contribute your data"
-contribute_your_observations_text, "Under construction"
 
-research_heading, "Hole-breeding passerines"
-research_text, "Placeholder text about hole-breeding passerines or study species. Or make this more detailed project info and change first section title to 'Vlieland'."
 
-contact_links_heading, "More information"
-contact_links_text, "Placeholder for contact info, further info etc."
+
+
+
+
+
 
 
 
