@@ -39,7 +39,7 @@ left_bottom, "Left leg - bottom ring"
 select_colour, "Select colour..."
 
 tab3, "Population trends"
-select_species, "Select species:"
+
 
 tab4, "Citizen science"
 
