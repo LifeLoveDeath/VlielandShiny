@@ -163,7 +163,7 @@ ui <- div(
     
     tabPanel(
       i18n$t("tab3"),
-      populationTrendsUI("populationTrendsUI", i18n)
+      populationTrendsUI("popTrends", i18n)
     ),
     
     
