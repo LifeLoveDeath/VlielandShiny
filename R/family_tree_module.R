@@ -64,7 +64,10 @@ familyTreeUI <- function(id) {
         # Placeholder further info text:
         br(),
         helpText(HTML("Placeholder further info text.<br>
-                    E.g. General info or guide to interpretation of family tree"))
+                    E.g. General info or guide to interpretation of family tree")),
+       
+       br(),
+       plotOutput(outputId = ns("tree_key"), width = "183px", height = "200px")
         
       ),
       column(
@@ -207,6 +210,24 @@ familyTreeServer <- function(id, ped.data, brood.data, selected_ring) {
         )
       
     })
+    
+    output$tree_key <- renderPlot({
+      df <- data.frame(X = seq(0,12,2),
+                       Y = 0:6)
+      par(mar=c(0,0,3,0))
+      plot(df, pch = NA, xlab = NA, ylab = NA, axes = F, ylim = c(1.6,4.8), xlim = c(1,8.1), main = "Key")
+      # Add shapes
+      points(3,4.5, pch = 23, cex = 3.2, lwd = 1, bg = "white") # unsexed dimond
+      points(3,3.7, pch = 22, cex = 3.4, lwd = 1, bg = "white") # male square
+      points(3,2.9, pch = 21, cex = 3.2, lwd = 0.9, bg = "white") # female circle
+      points(1.5,2, pch = 23, cex = 4.5, lwd = 3.7, bg = "white") # unsexed focal
+      points(3,2, pch = 21, cex = 4.1, lwd = 3.7, bg = "white") # female focal
+      points(4.5,2, pch = 22, cex = 4.6, lwd = 3.7, bg = "white") # male focal
+      # Add text
+      text(6,4.5, "Unsexed", pos = 4, offset = 0)
+      text(6,3.7, "Male", pos = 4, offset = 0)
+      text(6,2.9, "Female", pos = 4, offset = 0)
+      text(6,2, "Focal bird", pos = 4, offset = 0)})
     
   })
 }

@@ -10,7 +10,7 @@ required_packages <- c(
   "shinyjs", "shinyWidgets", "DT", "ggpedigree", "ggplot2", "plotly",
   "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "tools", "shinythemes",
   "fontawesome", "tibble", "htmltools", "RColorBrewer", "kinship2", "osmdata",
-  "patchwork", "shiny.i18n"
+  "patchwork", "shiny.i18n", "leaflegend"
 )
 
 ## Install any missing packages
@@ -46,7 +46,7 @@ lapply(required_packages, library, character.only = TRUE)
 # library(kinship2)
 # library(osmdata)
 # library(patchwork)
-
+# library(leaflegend)
 
 # Translation ------------------------------------------------
 
@@ -71,7 +71,7 @@ ui <- div(
     # header = tags$head(
     #   tags$link(rel = "icon", type = "image/png", href = "favicon.png")
     # ),
-    #id = "navbar_id",
+    id = "app_navbar",
     position = "fixed-top",
     windowTitle = i18n$t("app_title"),
     fluid = TRUE,
@@ -90,32 +90,31 @@ ui <- div(
       # divider line
       div(class = "divider"),
       # title text and link to home page if clicked
-      tags$a(
-        href = "/", target = "_self",
-        tags$span(i18n$t("app_title"),
-        style = "
-        color:#3f5262;
-        font-weight:300;
-        font-size:20px;
-        text-transform:uppercase;
-        letter-spacing:1px;
-        font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-      "
-        ))
+      actionLink(inputId = "main_title",
+                 label = tags$span(i18n$t("app_title"),
+                                   style = "color:#3f5262;
+                                   font-weight:300;
+                                   font-size:20px;
+                                   text-transform:uppercase;
+                                   letter-spacing:1px;
+                                   font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;"))
     ),
     
     ## --- Tab panels -------------------------------------
     
     ### --- Project info homepage -------------------------
     
+
     tabPanel(i18n$t("app_tab_home"),
+             value = "home",
              projectInfoUI("projectInfoPage", i18n),
     ),
     
     
     ### --- Find an individual page -------------------------
-    
+
     tabPanel(i18n$t("tab2"),
+             value = "individual_search",
              useShinyjs(), # for allowing hidden panels
              hidden(
                div(
@@ -163,13 +162,16 @@ ui <- div(
     
     tabPanel(
       i18n$t("tab3"),
+      value = "pop_trends",
       populationTrendsUI("popTrends", i18n)
     ),
     
     
     ### --- Citizen science page -------------------------   
     
+
     tabPanel(i18n$t("tab4"),
+             value = "citizen_sci",
              citizenScienceUI()
     ),
     
@@ -203,6 +205,24 @@ server <- function(input, output, session) {
   BroodData <- readRDS("data/BroodDataApp.rds")
   location.data <- readRDS("data/location_data.rds")
   IndividualInfo <- readRDS('data/IndividualInfo.rds')
+  
+  
+  # App navigation
+  # Title link to home page
+  observeEvent(input$main_title,{
+    updateNavbarPage(session = session,
+                     inputId = "app_navbar",
+                     selected = "home")
+  })
+  # Summary cards to relevant tabs
+  observeEvent(input$card_clicked, {
+    updateNavbarPage(
+      session = session,
+      inputId = "app_navbar",
+      selected = input$card_clicked)
+  })
+  
+  
   
   # Find individual by colour rings
   #finder <- birdFinderServer(input, output, vlieland.data, session) # feeding in dummy data

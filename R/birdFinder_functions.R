@@ -41,12 +41,12 @@ date_options <- function(data, input) {
   # If there are no birds that match the search return null
   if (nrow(filtered_birds) == 0) {return(NULL)}
   
-  # If only 1 bird matches the search result return a vector from max:min
-  if (nrow(filtered_birds) == 1) {return(filtered_birds$Colour_LatestLikely :
-                                           filtered_birds$Colour_EarliestStart)}
-  
   # Simplify data (reduce to required cols only and then remove duplicate date pairings)
   filtered_reduced <- unique(filtered_birds[,c("Colour_EarliestStart", "Colour_LatestLikely")])
+  
+  # If only 1 bird matches the search result return a vector from max:min
+  if (nrow(filtered_reduced) == 1) {return(filtered_reduced$Colour_LatestLikely :
+                                             filtered_reduced$Colour_EarliestStart)}
   
   # Sort ranges by their starting year
   ranges <- filtered_reduced[

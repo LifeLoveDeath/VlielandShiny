@@ -124,10 +124,30 @@ projectInfoUI <- function(id, i18n) {
           ),
           
           #### --- Features / cards section ----
+          
+          
+          
           fluidRow(
+            # watch the page, if a card is clicked perform the following function
+            # store the data-tab value for the clicked card
+            # tell shiny to set the card_clicked value as the stored data-tab value
+            # ensure Shiny resets the card_clicked value every time a card is clicked
+            tags$script(HTML("
+                  $(document).on('click', '.clickable-card', function() {
+                  var tab = $(this).data('tab');
+                  Shiny.setInputValue(
+                  'card_clicked',
+                  tab,
+                  {priority: 'event'}
+                  );
+                  });
+                 ")),
             column(
               width = 4,
               wellPanel(
+                id = "individual_search_card",
+                class = "clickable-card",
+                'data-tab' = "individual_search",
                 h4(i18n$t("find_an_individual_heading"), style = "color: white"),
                 p(i18n$t("find_an_individual_text"), style = "color: white"),
                 style = "display: flex;
@@ -144,6 +164,9 @@ projectInfoUI <- function(id, i18n) {
             column(
               width = 4,
               wellPanel(
+                id = "pop_trends_card",
+                class = "clickable-card",
+                'data-tab' = "pop_trends",
                 h4(i18n$t("population_trends_heading"), style = "color: white"),
                 p(i18n$t("population_trends_text"), style = "color: white"),
                 style = "display: flex;
@@ -159,6 +182,9 @@ projectInfoUI <- function(id, i18n) {
             column(
               width = 4,
               wellPanel(
+                id = "citizen_sci_card",
+                class = "clickable-card",
+                'data-tab' = "citizen_sci",
                 h4(i18n$t("contribute_your_observations_heading"), style = "color: white"),
                 p(i18n$t("contribute_your_observations_text"), style = "color: white"),
                 style = "display: flex;
@@ -172,6 +198,7 @@ projectInfoUI <- function(id, i18n) {
               )
             )
           ),
+          
           
           #### --- Species info ----
           fluidRow(
