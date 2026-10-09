@@ -21,7 +21,7 @@
 
 
 # UI function --------------------------------------------------------------
-birdFinderUI <- function(id, i18n) {
+birdFinderUI <- function(id) {
   
   ns <- NS(id)
   
@@ -48,7 +48,7 @@ birdFinderUI <- function(id, i18n) {
       fluidRow(
         column(
           width = 12,
-          h3(i18n$t("find_an_individual"), style = "color:#3f5262; font-weight:500;")
+          h3("Find an individual", style = "color:#3f5262; font-weight:500;")
         )
       ),
       
@@ -61,7 +61,7 @@ birdFinderUI <- function(id, i18n) {
           width = 4,
           
           # Search by COLOUR RINGS
-          h4(i18n$t("search_using_colour_rings"), style = "color:#3f5262; font-weight:500;"),
+          h4("Search using colour rings", style = "color:#3f5262; font-weight:500;"),
           helpText(HTML("
     • Select ring colours <b>top to bottom</b> on each leg<br>
     • Each bird has <b>one metal ring</b><br>
@@ -73,29 +73,29 @@ birdFinderUI <- function(id, i18n) {
             .picker-item .text { flex-grow: 1; }
             .picker-item .icon { height: 1em; width: auto; margin-left: 5px;}
           "))),
-          pickerInput("Yr", i18n$t("year_bird_seen"),
-                      choices = c(i18n$t("select_year") = "", year(Sys.Date()):1955),
-                      selected = i18n$t("select_year"),
+          pickerInput("Yr", "Year bird seen",
+                      choices = c("Select year..." = "", year(Sys.Date()):1955),
+                      selected = "Select year...",
                       options = list(size = 4.6)),
-          pickerInput("Sp", i18n$t("species"),
-                      choices = c(i18n$t("select_species") = "", i18n$t("blue_tit"), i18n$t("great_tit")),
-                      selected = i18n$t("select_species")),
-          pickerInput("Left1", i18n$t("left_top"),
+          pickerInput("Sp", "Species",
+                      choices = c("Select species..." = "", "Blue tit", "Great tit"),
+                      selected = "Select species..."),
+          pickerInput("Left1", "Left leg - top ring",
                       choices = c("", colour_rings$val),
-                      choicesOpt = list(content = c(i18n$t("select_colour"), colour_rings$img)),
-                      selected = i18n$t("select_colour")),
-          pickerInput("Left2", i18n$t("left_bottom"),
+                      choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                      selected = "Select colour..."),
+          pickerInput("Left2", "Left leg - bottom ring",
                       choices = c("", colour_rings$val),
-                      choicesOpt = list(content = c(i18n$t("select_colour"), colour_rings$img)),
-                      selected = i18n$t("select_colour")),
-          pickerInput("Right1", "right_top",
+                      choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                      selected = "Select colour..."),
+          pickerInput("Right1", "Right leg - top ring",
                       choices = c("", colour_rings$val),
-                      choicesOpt = list(content = c("select_colour", colour_rings$img)),
-                      selected = "select_colour"),
-          pickerInput("Right2", "right_bottom",
+                      choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                      selected = "Select colour..."),
+          pickerInput("Right2", "Right leg - bottom ring",
                       choices = c("", colour_rings$val),
-                      choicesOpt = list(content = c("select_colour", colour_rings$img)),
-                      selected = "select_colour"),
+                      choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                      selected = "Select colour..."),
           actionButton("reset_filters", "Reset filters", style = "margin-top: 10px;"),
           br(),
           br(),
@@ -146,8 +146,8 @@ birdFinderUI <- function(id, i18n) {
           • The displayed birds are <b>sorted by date born</b>. Birds born more recently are more likely to be your bird.<br>
           • <b>Click on an individual</b> to see its <b>last observed location</b> on the map.<br>
           • <b>Click “See full info”</b> to explore its <b>full details</b>, a map of its nesting sites and its family tree.")),
-            DT::dataTableOutput("summary_info"),
-            br(),
+          DT::dataTableOutput("summary_info"),
+          br(),
           tags$style(type = "text/css", "#more_data{color:#01B6DC; text-align: center;}"), #8AD5E6
           uiOutput("more_data"),  
           uiOutput("map_preview_ui")
@@ -180,10 +180,10 @@ birdFinderServer <- function(input, output, data, session) {
                                                  no = data$Colour_LatestLikely))
   
   data$Colour_EarliestStart <- ifelse(is.na(data$Colour_EarliestStart),
-                                     yes = NA,
-                                     no = ifelse(data$Colour_EarliestStart > year(Sys.Date()),
-                                                 yes = year(Sys.Date()),
-                                                 no = data$Colour_EarliestStart))
+                                      yes = NA,
+                                      no = ifelse(data$Colour_EarliestStart > year(Sys.Date()),
+                                                  yes = year(Sys.Date()),
+                                                  no = data$Colour_EarliestStart))
   
   
   
@@ -267,7 +267,7 @@ birdFinderServer <- function(input, output, data, session) {
   # Reactive filtered search results, returns results when fewer than 5 rows
   search_results <- reactive({
     filter_birds(data, input)
-    })
+  })
   
   
   
@@ -308,7 +308,7 @@ birdFinderServer <- function(input, output, data, session) {
     df <- search_results()
     df <- df[order(df$Colour_EarliestStart, decreasing = T),]
     if (!is.null(df) && nrow(df) >= row_index)
-      {selected_ring(df[row_index, "RingNumber"])
+    {selected_ring(df[row_index, "RingNumber"])
       selected_colours(gsub(", ","-",df[row_index, "ColourRingCombo"]))}
   })
   

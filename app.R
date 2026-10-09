@@ -142,7 +142,7 @@ ui <- div(
         ",
                      
                      # --- Back button and selected bird ---
-                     actionButton("back_to_search", "back_to_search"),
+                     actionButton("back_to_search", i18n("back_to_search")),
                      uiOutput("selected_bird"),
                      p(HTML(i18n$t("here_you_can_view")),
                        style = "font-size:14px; color:#3f5262; margin-bottom: 20px;"),
