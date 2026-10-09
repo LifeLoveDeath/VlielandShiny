@@ -175,6 +175,32 @@ ui <- div(
              citizenScienceUI()
     ),
     
+    ### --- Language control -------------------------
+    # A/文      A文      A｜文
+    nav_item(h4("A/文")),
+    tags$select("padding-top: 15px; padding-bottom: 15px;"),
+    nav_item(selectInput(inputId = "lang_select",
+                         label = NULL,
+                         choices = c("en","nl"),
+                         selected = "en",
+                         width = "80px"
+                         )) # style ("padding-top: 15px; padding-bottom: 15px;")
+    #navbarMenu(title = "A/文",
+    #  #tabPanel("en"),
+    #  #tabPanel("nl"),
+    #  tabPanel(actionLink(inputId = "en", label = "en")),
+    #  tabPanel(actionLink(inputId = "nl", label = "nl"))
+    #  )
+    #
+    #tabPanel(dropdown(
+    #  actionLink(inputId = "en", label = "en"),
+    #  actionLink(inputId = "nl", label = "nl")
+    #))
+    #navbarMenu(title = "A/文", actionLink(inputId = "en", label = "en"),"nl")
+    
+    #actionLink(inputId = "main_title",
+               #label = tags$span(i18n$t("app_title")
+    
   ),
   
   hr(),
