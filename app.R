@@ -50,20 +50,29 @@ lapply(required_packages, library, character.only = TRUE)
 
 # Translation ------------------------------------------------
 
-i18n <- Translator$new(translation_csvs_path = "translation_data/")
-i18n$set_translation_language("tag")
+initial_lang <- "en"
+i18n <- Translator$new(translation_csvs_path = "./translation_data/plain_files/")
+print(i18n$get_languages()) # can find the languages
+print(class(i18n)) # the class of i18n is correct
+print(names(i18n$translation))
+i18n$set_translation_language(initial_lang)
 
 
 # App UI -----------------------------------------------------
 
 
-ui <- div(
+ui <- tagList(
+  #singleton(usei18n(translator = i18n)),
+  #singleton(shiny.i18n::usei18n(i18n)), # shiny.i18n::usei18n(translator =  i18n),  
+  div(
   
   ## --- Formatting -------------------------------------------
   appThemeUI("appFormat"), # app formatting
   navbarUI("navbarFormat"), # use this for custom title bar
-  #navbarShinyThemeUI("navbarShinyTheme"),  # use this navbar formatting if using a shiny theme (below)
-
+  navbarShinyThemeUI("navbarShinyTheme"),  # use this navbar formatting if using a shiny theme (below)
+  
+    
+  
   
   ## --- Navbar -----------------------------------------------
   navbarPage(
@@ -178,29 +187,12 @@ ui <- div(
     ### --- Language control -------------------------
     # A/文      A文      A｜文
     nav_item(h4("A/文")),
-    tags$select("padding-top: 15px; padding-bottom: 15px;"),
     nav_item(selectInput(inputId = "lang_select",
                          label = NULL,
-                         choices = c("en","nl"),
-                         selected = "en",
+                         choices = i18n$get_languages(),
+                         selected = i18n$get_translation_language(), # initial_lang
                          width = "80px"
                          )) # style ("padding-top: 15px; padding-bottom: 15px;")
-    #navbarMenu(title = "A/文",
-    #  #tabPanel("en"),
-    #  #tabPanel("nl"),
-    #  tabPanel(actionLink(inputId = "en", label = "en")),
-    #  tabPanel(actionLink(inputId = "nl", label = "nl"))
-    #  )
-    #
-    #tabPanel(dropdown(
-    #  actionLink(inputId = "en", label = "en"),
-    #  actionLink(inputId = "nl", label = "nl")
-    #))
-    #navbarMenu(title = "A/文", actionLink(inputId = "en", label = "en"),"nl")
-    
-    #actionLink(inputId = "main_title",
-               #label = tags$span(i18n$t("app_title")
-    
   ),
   
   hr(),
@@ -217,7 +209,7 @@ ui <- div(
     align = "right"
   )
   
-)
+))
 
 
 # App server ----------------------------------------------
@@ -225,6 +217,12 @@ ui <- div(
 server <- function(input, output, session) {
   # Experimenting with themes
   #bs_themer()
+  
+  # Language change with dropdown selection
+  observeEvent(input$lang_select, {
+    update_lang(input$lang_select)
+    #i18n$set_translation_language(input$lang_select)
+    })
 
   # Load data
   IndividualDataVlieland <- readRDS('data/IndividualDataVlieland.rds')
@@ -247,7 +245,6 @@ server <- function(input, output, session) {
       inputId = "app_navbar",
       selected = input$card_clicked)
   })
-  
   
   
   # Find individual by colour rings

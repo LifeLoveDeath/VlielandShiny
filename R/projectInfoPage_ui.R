@@ -186,7 +186,7 @@ projectInfoUI <- function(id, i18n) {
                 class = "clickable-card",
                 'data-tab' = "citizen_sci",
                 h4(i18n$t("projInfo_citizen_sci_heading"), style = "color: white"),
-                p(i18n$t("cprojInfo_citizen_sci_text"), style = "color: white"),
+                p(i18n$t("projInfo_citizen_sci_text"), style = "color: white"),
                 style = "display: flex;
                      flex-direction: column;
                      justify-content: center;  /* vertical centering */
