@@ -45,7 +45,7 @@ populationTrendsUI <- function(id, i18n) {
       fluidRow(
         column(
           width = 12,
-          h3(i18n$t("population_trends_heading"), style = "color:#3f5262; font-weight:500; margin-bottom: 20px;"),
+          h3("Population Trends", style = "color:#3f5262; font-weight:500; margin-bottom: 20px;"),
           p(HTML("Here you can view population trends....<br>
                             Use the tabs below to explore trends over time ..."),
             style = "font-size:14px; color:#3f5262; margin-bottom: 20px;")
@@ -68,7 +68,7 @@ populationTrendsUI <- function(id, i18n) {
             ),
             column(
               width = 4,
-              checkboxGroupInput(ns("laydate_species_filter"), i18n$t("select_species"),
+              checkboxGroupInput(ns("laydate_species_filter"), "Select species:",
                                  choices = NULL),  # <- will update in server
               radioButtons(ns("laydate_type"), "Lay date type:",
                            choices = c("Mean" = "mean_day",

@@ -52,9 +52,10 @@ lapply(required_packages, library, character.only = TRUE)
 
 initial_lang <- "en"
 i18n <- Translator$new(translation_csvs_path = "./translation_data/plain_files/")
-print(i18n$get_languages()) # can find the languages
-print(class(i18n)) # the class of i18n is correct
-print(names(i18n$translation))
+#i18n <- Translator$new(translation_json_path = "translation_data/JSON/translation.json")
+#print(i18n$get_languages()) # can find the languages
+#print(class(i18n)) # the class of i18n is correct
+#print(names(i18n$translation))
 i18n$set_translation_language(initial_lang)
 
 
@@ -62,9 +63,13 @@ i18n$set_translation_language(initial_lang)
 
 
 ui <- tagList(
-  #singleton(usei18n(translator = i18n)),
-  #singleton(shiny.i18n::usei18n(i18n)), # shiny.i18n::usei18n(translator =  i18n),  
-  div(
+  #fluidPage( # BREAK TEST
+  singleton(usei18n(translator = i18n)),
+  #h4(i18n$t("app_title")) # BREAK TEST
+  #) # BREAK TEST
+  #,
+  #singleton(shiny.i18n::usei18n(i18n)), # shiny.i18n::usei18n(translator =  i18n), # UNNEEDED?
+  div( # ensures correct placement of various items on the page
   
   ## --- Formatting -------------------------------------------
   appThemeUI("appFormat"), # app formatting
@@ -91,11 +96,8 @@ ui <- tagList(
     ### --- Title section-------
     title = div(
       id = "logo",
-      # nioo logo from /www and if clicked opens NIOO webpage in separate browser
-      #tags$a(
-        #href = "https://nioo.knaw.nl/en", target = "_blank",
+      # nioo logo from /www
         tags$img(src = "NIOO_logo.svg", height = "30px"),
-        #),
       # divider line
       div(class = "divider"),
       # title text and link to home page if clicked
@@ -118,55 +120,55 @@ ui <- tagList(
              value = "home",
              projectInfoUI("projectInfoPage", i18n),
     ),
-    
-    
-    ### --- Find an individual page -------------------------
+#    
+#    
+#    ### --- Find an individual page -------------------------
 
-    tabPanel(i18n$t("app_tab_individual_search"),
-             value = "individual_search",
-             useShinyjs(), # for allowing hidden panels
-             hidden(
-               div(
-                 id = "search_panel",
-                 birdFinderUI("birdFinder")  # birdFinderUI now produces the full layout
-               )
-             ),
-             
-             hidden(
-               # Sort formatting to match other pages
-               div(id = "individual_panel",
-                   style = "background-color: #f2f4f5; padding: 5px;",
-                   
-                   # --- White panel container ---
-                   div(
-                     style = "
-          background-color: #ffffff;
-          max-width: 90vw;   
-          min-height: 800px;
-          margin: 0 auto;
-          padding: 30px 40px;
-          border-radius: 8px;
-          box-shadow: 0 0 12px rgba(0,0,0,0.08);
-        ",
-                     
-                     # --- Back button and selected bird ---
-                     actionButton("back_to_search", i18n$t("app_back_to_search")),
-                     uiOutput("selected_bird"),
-                     p(HTML(i18n$t("app_view_bird_text")),
-                       style = "font-size:14px; color:#3f5262; margin-bottom: 20px;"),
-                     
-                     # --- Tabs ---
-                     tabsetPanel(
-                       id = "bird_tabs",
-                       tabPanel(i18n$t("app_subtab_info"), individualInfoUI("individual_info", i18n)),
-                       tabPanel(i18n$t("app_subtab_map"), value = "Map", mapUI("map_individual")),
-                       tabPanel(i18n$t("app_subtab_tree"), familyTreeUI("pedigree_module"))
-                     )
-                   )
-               )
-             )
-    ),
-    
+#    tabPanel(i18n$t("app_tab_individual_search"),
+#             value = "individual_search",
+#             useShinyjs(), # for allowing hidden panels
+#             hidden(
+#               div(
+#                 id = "search_panel",
+#                 birdFinderUI("birdFinder")  # birdFinderUI now produces the full layout
+#               )
+#             ),
+#             
+#             hidden(
+#               # Sort formatting to match other pages
+#               div(id = "individual_panel",
+#                   style = "background-color: #f2f4f5; padding: 5px;",
+#                   
+#                   # --- White panel container ---
+#                   div(
+#                     style = "
+#          background-color: #ffffff;
+#          max-width: 90vw;   
+#          min-height: 800px;
+#          margin: 0 auto;
+#          padding: 30px 40px;
+#          border-radius: 8px;
+#          box-shadow: 0 0 12px rgba(0,0,0,0.08);
+#        ",
+#                     
+#                     # --- Back button and selected bird ---
+#                     actionButton("back_to_search", i18n$t("app_back_to_search")),
+#                     uiOutput("selected_bird"),
+#                     p(HTML(i18n$t("app_view_bird_text")),
+#                       style = "font-size:14px; color:#3f5262; margin-bottom: 20px;"),
+#                     
+#                     # --- Tabs ---
+#                     tabsetPanel(
+#                       id = "bird_tabs",
+#                       tabPanel(i18n$t("app_subtab_info"), individualInfoUI("individual_info", i18n)),
+#                       tabPanel(i18n$t("app_subtab_map"), value = "Map", mapUI("map_individual")),
+#                       tabPanel(i18n$t("app_subtab_tree"), familyTreeUI("pedigree_module"))
+#                     )
+#                   )
+#               )
+#             )
+#    ),
+#    
     ### --- Population trends page -------------------------
     
     tabPanel(
@@ -193,31 +195,32 @@ ui <- tagList(
                          selected = i18n$get_translation_language(), # initial_lang
                          width = "80px"
                          )) # style ("padding-top: 15px; padding-bottom: 15px;")
-  ),
-  
-  hr(),
-  
-  ## --- Fixed footer text --------------------------------------
-  tags$footer(
-    # Share this app text
-    #tags$span("Share this app: "),
-    #add custom buttons or use AddThis
-    
-    
-    # Footer text
-    p(i18n$t("app_footer")),
-    align = "right"
-  )
-  
-))
+  )#,
+#  
+#  hr(),
+#  
+#  ## --- Fixed footer text --------------------------------------
+#  tags$footer(
+#    # Share this app text
+#    #tags$span("Share this app: "),
+#    #add custom buttons or use AddThis
+#    
+#    
+#    # Footer text
+#    p(i18n$t("app_footer")),
+#    align = "right"
+#  )
+#  
+)
+)
 
 
-# App server ----------------------------------------------
-
+## App server ----------------------------------------------
+#server <- function(input, output, session) {} # BREAK TEST
 server <- function(input, output, session) {
-  # Experimenting with themes
-  #bs_themer()
-  
+#  # Experimenting with themes
+#  #bs_themer()
+#  
   # Language change with dropdown selection
   observeEvent(input$lang_select, {
     update_lang(input$lang_select)
@@ -246,71 +249,71 @@ server <- function(input, output, session) {
       selected = input$card_clicked)
   })
   
-  
-  # Find individual by colour rings
-  #finder <- birdFinderServer(input, output, vlieland.data, session) # feeding in dummy data
-  finder <- birdFinderServer(input, output, IndividualDataVlieland, session) # feeding in real data
-  search_results <- finder$search_results
-  selected_ring <- finder$selected_ring
-  selected_colours <- finder$selected_colours
-  
-  # Reactive title for individual info page
-  output$selected_bird <- renderUI({
-    req(selected_ring())
-    h3(HTML(paste0(
-      "Explore individual info: Ring number ",
-      "<span style='color:#dd4f2a;'>", selected_ring(), "</span>"
-    )), style = "color:#3f5262; font-weight:500;")
-  })
-  
-  # Show/hide panels based on selection
-  observe({
-    if (is.null(selected_ring())) {
-      shinyjs::show("search_panel")
-      shinyjs::hide("individual_panel")
-    } else {
-      shinyjs::hide("search_panel")
-      shinyjs::show("individual_panel")
-    }
-  })
-  
-  # Back button to reset selection
-  observeEvent(input$back_to_search, {
-    selected_ring(NULL)
-    shinyjs::show("search_panel")
-    shinyjs::hide("individual_panel")
-  })
-  
-  # Generate preview map
-  map_preview <- genPreviewMapServer(input, output, search_results, location.data, session)
-  
-  # Generate interactive map (always present)
-  map_individual <- genMapServer("map_individual", location.data, selected_ring)
-  
-  # Generate pedigree
-  familyTreeServer(
-    id = "pedigree_module",
-    ped.data = IndividualDataVlieland,
-    brood.data = BroodData,
-    selected_ring = selected_ring
-  )
-  
-  # Generate individual info table
-  individualInfoServer(
-    id = "individual_info",
-    vlieland.data = IndividualInfo,
-    selected_ring = selected_ring,
-    selected_colours = selected_colours
-  )
-  
-  
+#  
+#  # Find individual by colour rings
+#  #finder <- birdFinderServer(input, output, vlieland.data, session) # feeding in dummy data
+#  finder <- birdFinderServer(input, output, IndividualDataVlieland, session) # feeding in real data
+#  search_results <- finder$search_results
+#  selected_ring <- finder$selected_ring
+#  selected_colours <- finder$selected_colours
+#  
+#  # Reactive title for individual info page
+#  output$selected_bird <- renderUI({
+#    req(selected_ring())
+#    h3(HTML(paste0(
+#      "Explore individual info: Ring number ",
+#      "<span style='color:#dd4f2a;'>", selected_ring(), "</span>"
+#    )), style = "color:#3f5262; font-weight:500;")
+#  })
+#  
+#  # Show/hide panels based on selection
+#  observe({
+#    if (is.null(selected_ring())) {
+#      shinyjs::show("search_panel")
+#      shinyjs::hide("individual_panel")
+#    } else {
+#      shinyjs::hide("search_panel")
+#      shinyjs::show("individual_panel")
+#    }
+#  })
+#  
+#  # Back button to reset selection
+#  observeEvent(input$back_to_search, {
+#    selected_ring(NULL)
+#    shinyjs::show("search_panel")
+#    shinyjs::hide("individual_panel")
+#  })
+#  
+#  # Generate preview map
+#  map_preview <- genPreviewMapServer(input, output, search_results, location.data, session)
+#  
+#  # Generate interactive map (always present)
+#  map_individual <- genMapServer("map_individual", location.data, selected_ring)
+#  
+#  # Generate pedigree
+#  familyTreeServer(
+#    id = "pedigree_module",
+#    ped.data = IndividualDataVlieland,
+#    brood.data = BroodData,
+#    selected_ring = selected_ring
+#  )
+#  
+#  # Generate individual info table
+#  individualInfoServer(
+#    id = "individual_info",
+#    vlieland.data = IndividualInfo,
+#    selected_ring = selected_ring,
+#    selected_colours = selected_colours
+#  )
+#  
+#  
   # Population trends module
   popTrendsServer(
     id = "popTrends",
     BroodData = BroodData
   )
-  
-  
+#  
+#  
 }
 
 
