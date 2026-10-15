@@ -1,8 +1,16 @@
 tag, nl
 
+# TRANSLATION INTRODUCTION #
 # Text is grouped by which page of the app it is present on
 # Within this, tags are organised alpahbetically to help prevent accidental duplication
 # Each tag begins with a set reference to the R file it is found within
+
+# Some text is written in HTML and includes tags like <br>
+# The translation package handles most special characters well
+# However < and > are not handled so well
+# The fix is to render text conatining such characters in the server with renderUI()
+# The text is then brought through to the ui with uiOutput()
+# This preserves the special characters and allows html tags like <br> to be used
 
 
 
@@ -40,8 +48,12 @@ projInfo_research_text, "Meer informatie over koolmezen, over Vlieland, of over 
 
 
 
-# BIRD FINDER #
+# BIRD SEARCH #
+
+
+# SELECETD BIRD - ON ALL PAGES #
 app_back_to_search, "TRANSLATE: Return to search"
+app_view_bird_heading, "TRANSLATE: Explore individual info: Ring number"
 app_view_bird_text, "Hier vind je meer informatie over de vogel die je gezien hebt.<br>Klik op de tab voor hun levensloop, een kaart en een stamboom."
 
 ## INDIVIDUAL INFO ##

@@ -50,14 +50,8 @@ lapply(required_packages, library, character.only = TRUE)
 
 # Translation ------------------------------------------------
 
-initial_lang <- "en"
 i18n <- Translator$new(translation_csvs_path = "./translation_data/")
-#i18n <- Translator$new(translation_json_path = "translation_data/JSON/translation.json")
-#print(i18n$get_languages()) # can find the languages
-#print(class(i18n)) # the class of i18n is correct
-#print(names(i18n$translation))
-i18n$set_translation_language(initial_lang)
-
+i18n$set_translation_language("en")
 
 # App UI -----------------------------------------------------
 
@@ -154,21 +148,20 @@ ui <- tagList(
                      # --- Back button and selected bird ---
                      actionButton("back_to_search", i18n$t("app_back_to_search")),
                      uiOutput("selected_bird"),
-#                     p(HTML(i18n$t("app_view_bird_text")),
-#                       style = "font-size:14px; color:#3f5262; margin-bottom: 20px;")#,
-#                     
-#                     # --- Tabs ---
-#                     tabsetPanel(
-#                       id = "bird_tabs",
-#                       tabPanel(i18n$t("app_subtab_info"), individualInfoUI("individual_info", i18n)),
-#                       tabPanel(i18n$t("app_subtab_map"), value = "Map", mapUI("map_individual")),
-#                       tabPanel(i18n$t("app_subtab_tree"), familyTreeUI("pedigree_module"))
-#                     )
-                   )
-               )
-             )
-    ),
-#    
+                     uiOutput("selected_bird_text"),
+                     
+                     # --- Tabs ---
+                     tabsetPanel(
+                       id = "bird_tabs",
+                       tabPanel(i18n$t("app_subtab_info"), individualInfoUI("individual_info", i18n)),
+                       tabPanel(i18n$t("app_subtab_map"), value = "Map", mapUI("map_individual")),
+                       tabPanel(i18n$t("app_subtab_tree"), familyTreeUI("pedigree_module"))
+                     )
+                  )
+              )
+            )
+   ),
+    
     ### --- Population trends page -------------------------
     
     tabPanel(
@@ -215,12 +208,10 @@ ui <- tagList(
 )
 
 
-## App server ----------------------------------------------
+# App server ----------------------------------------------
 #server <- function(input, output, session) {} # BREAK TEST
 server <- function(input, output, session) {
-#  # Experimenting with themes
-#  #bs_themer()
-#  
+ 
   # Language change with dropdown selection
   observeEvent(input$lang_select, {
     update_lang(input$lang_select)
@@ -259,10 +250,16 @@ server <- function(input, output, session) {
   # Reactive title for individual info page
   output$selected_bird <- renderUI({
     req(selected_ring())
-    h3(HTML(paste0(
-      "Explore individual info: Ring number ",
+    h3(HTML(paste(
+      i18n$t("app_view_bird_heading"),
       "<span style='color:#dd4f2a;'>", selected_ring(), "</span>"
     )), style = "color:#3f5262; font-weight:500;")
+  })
+  
+  # Descriptive text for individual info page
+  output$selected_bird_text <- renderUI({
+    p(HTML(i18n$t("app_view_bird_text")),
+      style = "font-size:14px; color:#3f5262; margin-bottom: 20px;")
   })
   
   # Show/hide panels based on selection
@@ -285,34 +282,34 @@ server <- function(input, output, session) {
   
   # Generate preview map
   map_preview <- genPreviewMapServer(input, output, search_results, location.data, session)
-#  
-#  # Generate interactive map (always present)
-#  map_individual <- genMapServer("map_individual", location.data, selected_ring)
-#  
-#  # Generate pedigree
-#  familyTreeServer(
-#    id = "pedigree_module",
-#    ped.data = IndividualDataVlieland,
-#    brood.data = BroodData,
-#    selected_ring = selected_ring
-#  )
-#  
-#  # Generate individual info table
-#  individualInfoServer(
-#    id = "individual_info",
-#    vlieland.data = IndividualInfo,
-#    selected_ring = selected_ring,
-#    selected_colours = selected_colours
-#  )
-#  
-#  
+  
+  # Generate interactive map (always present)
+  map_individual <- genMapServer("map_individual", location.data, selected_ring)
+  
+  # Generate pedigree
+  familyTreeServer(
+    id = "pedigree_module",
+    ped.data = IndividualDataVlieland,
+    brood.data = BroodData,
+    selected_ring = selected_ring
+  )
+  
+  # Generate individual info table
+  individualInfoServer(
+    id = "individual_info",
+    vlieland.data = IndividualInfo,
+    selected_ring = selected_ring,
+    selected_colours = selected_colours
+  )
+  
+  
   # Population trends module
   popTrendsServer(
     id = "popTrends",
     BroodData = BroodData
   )
-#  
-#  
+  
+  
 }
 
 
