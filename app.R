@@ -181,13 +181,26 @@ ui <- tagList(
     
     ### --- Language control -------------------------
     # A/文      A文      A｜文
-    nav_item(h4("A/文")),
-    nav_item(selectInput(inputId = "lang_select",
-                         label = NULL,
-                         choices = i18n$get_languages(),
-                         selected = i18n$get_translation_language(),
-                         width = "80px"
-                         )) # style ("padding-top: 15px; padding-bottom: 15px;")
+   nav_item(div(
+     style = "padding-top: 10px; padding-bottom: 10px;
+     padding-left: 15px;",
+     span("A/文"),
+     tags$style(HTML("
+      .selectize-input {
+        min-height: 33px;
+        padding-bottom: 4px;
+        padding-top: 4px;
+        padding-left: 12px;
+        padding-right: 6px;
+      }"
+                     )),
+     selectInput(inputId = "lang_select",
+                 label = NULL,
+                 choices = i18n$get_languages(),
+                 selected = i18n$get_translation_language(),
+                 width = "75px"
+     )
+   )),
   ),
   
   hr(),
