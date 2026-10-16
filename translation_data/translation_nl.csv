@@ -1,6 +1,15 @@
 tag, nl
 
 # TRANSLATION INTRODUCTION #
+# We have developed an intermediate tag 'language' as a reference key for translating the app
+# It is possible to 'translate' the app into tag
+# However this option has been hidden from the user
+# For the purposes of development it can be useful to see which tags refeerence which pieces of text
+# To turn on the option for live tag translation:
+#       - Open app.R
+#       - Find the selectInput() item in the navbar (inputId = "lang_select")
+#       - Uncomment the other "choices =" option and comment out the one currently in use
+
 # Text is grouped by which page of the app it is present on
 # Within this, tags are organised alpahbetically to help prevent accidental duplication
 # Each tag begins with a set reference to the R file it is found within

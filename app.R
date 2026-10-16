@@ -196,7 +196,8 @@ ui <- tagList(
                      )),
      selectInput(inputId = "lang_select",
                  label = NULL,
-                 choices = i18n$get_languages(),
+                 #choices = i18n$get_languages(), # tag language also in language change dropdown (for development)
+                 choices = i18n$get_languages()[i18n$get_languages() != "tag"], # tag language NOT in language change dropdown (for sharing)
                  selected = i18n$get_translation_language(),
                  width = "75px"
      )
