@@ -50,20 +50,28 @@ lapply(required_packages, library, character.only = TRUE)
 
 # Translation ------------------------------------------------
 
-i18n <- Translator$new(translation_csvs_path = "translation_data/")
-i18n$set_translation_language("tag")
-
+i18n <- Translator$new(translation_csvs_path = "./translation_data/")
+i18n$set_translation_language("en")
 
 # App UI -----------------------------------------------------
 
 
-ui <- div(
+ui <- tagList(
+  #fluidPage( # BREAK TEST
+  singleton(usei18n(translator = i18n)),
+  #h4(i18n$t("app_title")) # BREAK TEST
+  #) # BREAK TEST
+  #,
+  #singleton(shiny.i18n::usei18n(i18n)), # shiny.i18n::usei18n(translator =  i18n), # UNNEEDED?
+  div( # ensures correct placement of various items on the page
   
   ## --- Formatting -------------------------------------------
   appThemeUI("appFormat"), # app formatting
   navbarUI("navbarFormat"), # use this for custom title bar
-  #navbarShinyThemeUI("navbarShinyTheme"),  # use this navbar formatting if using a shiny theme (below)
-
+  navbarShinyThemeUI("navbarShinyTheme"),  # use this navbar formatting if using a shiny theme (below)
+  
+    
+  
   
   ## --- Navbar -----------------------------------------------
   navbarPage(
@@ -82,11 +90,8 @@ ui <- div(
     ### --- Title section-------
     title = div(
       id = "logo",
-      # nioo logo from /www and if clicked opens NIOO webpage in separate browser
-      #tags$a(
-        #href = "https://nioo.knaw.nl/en", target = "_blank",
+      # nioo logo from /www
         tags$img(src = "NIOO_logo.svg", height = "30px"),
-        #),
       # divider line
       div(class = "divider"),
       # title text and link to home page if clicked
@@ -143,8 +148,7 @@ ui <- div(
                      # --- Back button and selected bird ---
                      actionButton("back_to_search", i18n$t("app_back_to_search")),
                      uiOutput("selected_bird"),
-                     p(HTML(i18n$t("app_view_bird_text")),
-                       style = "font-size:14px; color:#3f5262; margin-bottom: 20px;"),
+                     uiOutput("selected_bird_text"),
                      
                      # --- Tabs ---
                      tabsetPanel(
@@ -153,10 +157,10 @@ ui <- div(
                        tabPanel(i18n$t("app_subtab_map"), value = "Map", mapUI("map_individual")),
                        tabPanel(i18n$t("app_subtab_tree"), familyTreeUI("pedigree_module"))
                      )
-                   )
-               )
-             )
-    ),
+                  )
+              )
+            )
+   ),
     
     ### --- Population trends page -------------------------
     
@@ -175,6 +179,28 @@ ui <- div(
              citizenScienceUI()
     ),
     
+    ### --- Language control -------------------------
+    # A/文      A文      A｜文
+   nav_item(div(
+     style = "padding-top: 10px; padding-bottom: 10px;
+     padding-left: 15px;",
+     span("A/文"),
+     tags$style(HTML("
+      .selectize-input {
+        min-height: 33px;
+        padding-bottom: 4px;
+        padding-top: 4px;
+        padding-left: 12px;
+        padding-right: 6px;
+      }"
+                     )),
+     selectInput(inputId = "lang_select",
+                 label = NULL,
+                 choices = i18n$get_languages(),
+                 selected = i18n$get_translation_language(),
+                 width = "75px"
+     )
+   )),
   ),
   
   hr(),
@@ -192,13 +218,17 @@ ui <- div(
   )
   
 )
+)
 
 
 # App server ----------------------------------------------
-
+#server <- function(input, output, session) {} # BREAK TEST
 server <- function(input, output, session) {
-  # Experimenting with themes
-  #bs_themer()
+ 
+  # Language change with dropdown selection
+  observeEvent(input$lang_select, {
+    update_lang(input$lang_select)
+    })
 
   # Load data
   IndividualDataVlieland <- readRDS('data/IndividualDataVlieland.rds')
@@ -223,7 +253,6 @@ server <- function(input, output, session) {
   })
   
   
-  
   # Find individual by colour rings
   #finder <- birdFinderServer(input, output, vlieland.data, session) # feeding in dummy data
   finder <- birdFinderServer(input, output, IndividualDataVlieland, session) # feeding in real data
@@ -234,10 +263,16 @@ server <- function(input, output, session) {
   # Reactive title for individual info page
   output$selected_bird <- renderUI({
     req(selected_ring())
-    h3(HTML(paste0(
-      "Explore individual info: Ring number ",
+    h3(HTML(paste(
+      i18n$t("app_view_bird_heading"),
       "<span style='color:#dd4f2a;'>", selected_ring(), "</span>"
     )), style = "color:#3f5262; font-weight:500;")
+  })
+  
+  # Descriptive text for individual info page
+  output$selected_bird_text <- renderUI({
+    p(HTML(i18n$t("app_view_bird_text")),
+      style = "font-size:14px; color:#3f5262; margin-bottom: 20px;")
   })
   
   # Show/hide panels based on selection
@@ -250,11 +285,11 @@ server <- function(input, output, session) {
       shinyjs::show("individual_panel")
     }
   })
-  
-  # Back button to reset selection
-  observeEvent(input$back_to_search, {
-    selected_ring(NULL)
-    shinyjs::show("search_panel")
+ 
+ # Back button to reset selection
+ observeEvent(input$back_to_search, {
+   selected_ring(NULL)
+   shinyjs::show("search_panel")
     shinyjs::hide("individual_panel")
   })
   

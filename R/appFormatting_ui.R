@@ -157,7 +157,7 @@ navbarUI <- function(id) {
             }
         
             /* menu link colors */
-            .navbar-default .navbar-nav > li > a {
+            .navbar-default .navbar-nav > li {
               color: white !important;
             }
         
@@ -185,13 +185,15 @@ navbarUI <- function(id) {
     # Non-collapsed menu (horizontal)
     tags$style(HTML("
     /* Normal menu items */
-    .navbar-default .navbar-nav > li > a {
+    .navbar-default .navbar-nav > li > a,
+    .navbar-default .navbar-nav > li {
       color: #3f5262 !important;  /* default text color */
       font-size: 16px;
       font-weight: 500;
       text-decoration: none;       /* no underline */
       letter-spacing:0.5px
     }
+
     
     /* Hover state: underline and color change */
     .navbar-default .navbar-nav > li > a:hover {
@@ -218,7 +220,8 @@ navbarUI <- function(id) {
     ## Collapsed menu (hamburger)
     tags$style(HTML("
     /* Collapsed menu items inside hamburger */
-    .navbar-collapse.in .navbar-nav > li > a {
+    .navbar-collapse.in .navbar-nav > li > a,
+    .navbar-collapse.in .navbar-nav > li{
       color: white !important;  /* keep white text */
       background-color: #004b84 !important;  /* dark blue background */
       text-decoration: none !important;
@@ -247,13 +250,13 @@ navbarUI <- function(id) {
     
     
     # Make sure formatting is correct during collapsing animation:
-        /* Collapsed menu items (hamburger) */
-    .navbar-collapse.in .navbar-nav > li > a,
-    .navbar-collapse.collapsing .navbar-nav > li > a {
-      color: white !important;
-      background-color: #004b84 !important; /* dark blue background */
-      text-decoration: none !important;
-    }
+         /* Collapsed menu items (hamburger) */
+     .navbar-collapse.in .navbar-nav > li > a,
+     .navbar-collapse.collapsing .navbar-nav > li > a {
+       color: white !important;
+       background-color: #004b84 !important; /* dark blue background */
+       text-decoration: none !important;
+     }
 
     /* Hover state in hamburger */
     .navbar-collapse.in .navbar-nav > li > a:hover,
@@ -382,7 +385,6 @@ navbarShinyThemeUI <- function(id) {
       $('.navbar-collapse').collapse('hide');
     });
   "))
-    
     
   )
 }
