@@ -46,9 +46,9 @@ populationTrendsUI <- function(id, i18n) {
         column(
           width = 12,
           h3("Population Trends", style = "color:#3f5262; font-weight:500; margin-bottom: 20px;"),
-          p(HTML("Here you can view population trends....<br>
-                            Use the tabs below to explore trends over time ..."),
-            style = "font-size:14px; color:#3f5262; margin-bottom: 20px;")
+          # p(HTML("Here you can view population trends....<br> # Not needed while only one tab to view
+          #                   Use the tabs below to explore trends over time ..."),
+          #   style = "font-size:14px; color:#3f5262; margin-bottom: 20px;")
         )
       ),
       
@@ -75,7 +75,7 @@ populationTrendsUI <- function(id, i18n) {
                                        "Earliest" = "earliest_day",
                                        "Latest" = "latest_day"),
                            selected = "mean_day"),
-              checkboxInput(ns("show_points"), "Show points", value = TRUE)
+              checkboxInput(ns("show_points"), "Show points (hover over points to see exact values plotted)", value = TRUE)
             ),
             column(
               width = 8,
@@ -98,7 +98,7 @@ populationTrendsUI <- function(id, i18n) {
                   choices = NULL
                 ),
                 # Show points checkbox
-                checkboxInput(ns("clutch_show_points"), "Show points", value = TRUE)
+                checkboxInput(ns("clutch_show_points"), "Show points (hover over points to see exact values plotted)", value = TRUE)
               ),
               column(
                 width = 8,
@@ -109,16 +109,16 @@ populationTrendsUI <- function(id, i18n) {
         ),
         
         # ===== Placeholder for future tabs =====
-        tabPanel(
-          title = "More Analyses",
-          fluidRow(
-            column(
-              width = 12,
-              p("Additional analyses and plots will go here.", 
-                style = "color:#6c757d; font-style: italic; margin-top: 20px;")
-            )
-          )
-        )
+        # tabPanel(
+        #   title = "More Analyses",
+        #   fluidRow(
+        #     column(
+        #       width = 12,
+        #       p("Additional analyses and plots will go here.", 
+        #         style = "color:#6c757d; font-style: italic; margin-top: 20px;")
+        #     )
+        #   )
+        # )
       )
     )
   )
@@ -280,13 +280,14 @@ popTrendsServer <- function(id, BroodData) {
       p <- p +
         geom_smooth(aes(group = SpeciesName), method = "lm", se = FALSE, linetype = "dashed") +
         scale_y_continuous(limits = c(y_min, y_max)) +
-        scale_x_continuous(limits = c(x_min, x_max), breaks = seq(x_min, x_max, by = 5)) +
+        scale_x_continuous(limits = c(x_min, x_max), breaks = seq(x_min, x_max, by = 10)) +
         scale_colour_viridis(discrete = TRUE, option = "D", end = 0.8) +
-        labs(title = "Mean Clutch Size Over Time",
-             x = "Year",
+        labs(x = "Year",
              y = "Mean Clutch Size",
              colour = "Species") +
         theme_minimal()
+      
+      ggplotly(p, tooltip = "text")
     })
     
     
