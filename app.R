@@ -7,7 +7,7 @@
 ## Required packages
 required_packages <- c(
   "shiny", "tidyverse", "dplyr", "bslib", "leaflet", "viridis", "reactable",
-  "shinyjs", "shinyWidgets", "DT", "ggpedigree", "ggplot2", "plotly",
+  "shinyBS", "shinyjs", "shinyWidgets", "DT", "ggpedigree", "ggplot2", "plotly",
   "grid", "leaflet.extras2", "leaftime", "leaflet.extras", "tools", "shinythemes",
   "fontawesome", "tibble", "htmltools", "RColorBrewer", "kinship2", "osmdata",
   "patchwork", "shiny.i18n", "leaflegend"
