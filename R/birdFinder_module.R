@@ -54,6 +54,35 @@ birdFinderUI <- function(id) {
       
       br(),
       
+      # Collapsible panel with example birds to search
+      # AE...85066 has simple map & family tree
+      # B...956635 quite complex & interesting map & family tree
+      tags$head(tags$style(HTML(".panel-title > a  {
+                          color:#3f5262 !important; font-weight:500;
+                          font-size: 16px; line-height: 1.1; }"))),
+      bsCollapse(
+        bsCollapsePanel(
+          title = "⌵ Example birds",
+          div(style = "padding-left: 15px; padding-right: 15px;",
+              helpText(HTML("<b>Try searching for the following birds:</b>"))),
+          column(width = 3, helpText(HTML("Year: <b>2003</b><br>
+                                            Species: <b>Blue tit</b><br>
+                                            Left leg - top ring: <b>green</b><br>
+                                            Left leg - bottom ring: <b>metal</b><br>
+                                            Right leg - top ring: <b>blue/white</b><br>
+                                            Right leg - bottom ring:<b>red</b><br>
+                                            <i>Ring number: AE...85066</i>"))),
+          column(width = 3, helpText(HTML("<i>(Placeholder: Diagram showing order of rings on bird)</i>"))),
+          column(width = 3, helpText(HTML("Year: <b>1999</b><br>
+                          Species: <b>Great tit</b><br>
+                          Left leg - top ring: <b>blue</b><br>
+                          Left leg - bottom ring: <b>white</b><br>
+                          Right leg - top ring: <b>metal</b><br>
+                          Right leg - bottom ring: <b>pink/green</b><br>
+                          <i>Ring number: B...956635</i>"))),
+          column(width = 3, helpText(HTML("<i>(Placeholder: Diagram showing order of rings on bird)</i>")))
+        )),
+      
       # --- Search inputs (left) and results (right) ---
       fluidRow(
         # Left column: search inputs
@@ -108,34 +137,6 @@ birdFinderUI <- function(id) {
           textInput("ring_search", "",
                     placeholder = "Enter ring number"),
           actionButton("clear_ring_search", "Clear ring number"),
-          br(),
-          br(),
-          
-          # Example search text
-          # BK...65998 has simple map & family tree
-          # B...956635 quite complex & interesting map & family tree
-          h4("Example birds", style = "color:#3f5262; font-weight:500;"),
-          helpText(HTML("<b>Try searching for the following birds:</b><br><br>
-                          
-                          Year: <b>2003</b><br>
-                          Species: <b>Blue tit</b><br>
-                          Left leg - top ring: <b>green</b><br>
-                          Left leg - bottom ring: <b>metal</b><br>
-                          Right leg - top ring: <b>blue/white</b><br>
-                          Right leg - bottom ring:<b>red</b><br>
-                          <i>Ring number: AE...85066</i><br><br>
-                          
-                          Year: <b>1999</b><br>
-                          Species: <b>Great tit</b><br>
-                          Left leg - top ring: <b>blue</b><br>
-                          Left leg - bottom ring: <b>white</b><br>
-                          Right leg - top ring: <b>metal</b><br>
-                          Right leg - bottom ring: <b>pink/green</b><br>
-                          <i>Ring number: B...956635</i><br><br>
-                          
-                        ")),
-          # Diagram placeholder
-          helpText(HTML("<i>(Placeholder: Diagram showing order of rings on bird)</i>"))
         ),
         
         # Right column: table and map
