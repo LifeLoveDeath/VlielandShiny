@@ -21,13 +21,13 @@
 
 
 # UI function --------------------------------------------------------------
-birdFinderUI <- function(id) {
+birdFinderUI <- function(id, i18n) {
   
   ns <- NS(id)
   
   
-  colour_rings <- get_colour_rings()
-  colour_rings$val <- trimws(colour_rings$val)
+  # colour_rings <- get_colour_rings()
+  # colour_rings$val <- trimws(colour_rings$val)
   
   div(
     style = "background-color: #f2f4f5; padding: 5px;",
@@ -96,35 +96,8 @@ birdFinderUI <- function(id) {
     • Each bird has <b>one metal ring</b><br>
     • You can leave a dropdown blank if a ring is <b>unknown</b><br>
     • See bottom of page for an example and diagram")),
-          
-          tags$head(tags$style(HTML("
-            .picker-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-            .picker-item .text { flex-grow: 1; }
-            .picker-item .icon { height: 1em; width: auto; margin-left: 5px;}
-          "))),
-          pickerInput("Yr", "Year bird seen",
-                      choices = c("Select year..." = "", year(Sys.Date()):1955),
-                      selected = "Select year...",
-                      options = list(size = 4.6)),
-          pickerInput("Sp", "Species",
-                      choices = c("Select species..." = "", "Blue tit", "Great tit"),
-                      selected = "Select species..."),
-          pickerInput("Left1", "Left leg - top ring",
-                      choices = c("", colour_rings$val),
-                      choicesOpt = list(content = c("Select colour...", colour_rings$img)),
-                      selected = "Select colour..."),
-          pickerInput("Left2", "Left leg - bottom ring",
-                      choices = c("", colour_rings$val),
-                      choicesOpt = list(content = c("Select colour...", colour_rings$img)),
-                      selected = "Select colour..."),
-          pickerInput("Right1", "Right leg - top ring",
-                      choices = c("", colour_rings$val),
-                      choicesOpt = list(content = c("Select colour...", colour_rings$img)),
-                      selected = "Select colour..."),
-          pickerInput("Right2", "Right leg - bottom ring",
-                      choices = c("", colour_rings$val),
-                      choicesOpt = list(content = c("Select colour...", colour_rings$img)),
-                      selected = "Select colour..."),
+          # picker input dropdowns for bird filtering
+          uiOutput("searchDropdowns"),
           actionButton("reset_filters", "Reset filters", style = "margin-top: 10px;"),
           br(),
           br(),
@@ -167,7 +140,44 @@ birdFinderUI <- function(id) {
 
 ## Single server function 
 
-birdFinderServer <- function(input, output, data, session) {
+birdFinderServer <- function(input, output, data, session, i18n) {
+  
+  # ---- Server side ui generation to handle live translation ---------------
+  output$searchDropdowns <- renderUI({
+    colour_rings <- get_colour_rings()
+    colour_rings$val <- trimws(colour_rings$val)
+    tagList(
+    tags$head(tags$style(HTML("
+            .picker-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+            .picker-item .text { flex-grow: 1; }
+            .picker-item .icon { height: 1em; width: auto; margin-left: 5px;}
+          "))),
+    pickerInput("Yr", i18n$t("birdFinder_pickerYr_heading"),
+                choices = c(setNames("", i18n$t("birdFinder_pickerYr_filler")), year(Sys.Date()):1955),
+                selected = i18n$t("birdFinder_pickerYr_filler"),
+                options = list(size = 4.6)),
+    pickerInput("Sp", "Species",
+                choices = c("Select species..." = "", "Blue tit", "Great tit"),
+                selected = "Select species..."),
+    pickerInput("Left1", "Left leg - top ring",
+                choices = c("", colour_rings$val),
+                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                selected = "Select colour..."),
+    pickerInput("Left2", "Left leg - bottom ring",
+                choices = c("", colour_rings$val),
+                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                selected = "Select colour..."),
+    pickerInput("Right1", "Right leg - top ring",
+                choices = c("", colour_rings$val),
+                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                selected = "Select colour..."),
+    pickerInput("Right2", "Right leg - bottom ring",
+                choices = c("", colour_rings$val),
+                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
+                selected = "Select colour...")
+    )
+  })
+  
   
   # ---- Uncaps species names in data ----
   data$Species <- str_to_sentence(data$Species)
@@ -203,13 +213,17 @@ birdFinderServer <- function(input, output, data, session) {
     
     options <- get_dropdown_options(data, input)
     
+    # translate dropdown fillers for no selection
+    Yr_filler <- setNames("", i18n$t("birdFinder_pickerYr_filler"))
     
     # below "options" is the list "get_dropdown_options" generated in birdFinder_functions
     # the length of each "options" sub list e.g. options$sp depends on the subsetting applied by selections in the other dropdowns
-    updatePickerInput(session, "Yr", choices = c("", sort(options$Yr, decreasing = T)),
-                      choicesOpt = list(content = c("Select year...", sort(options$Yr, decreasing = T))),
+    updatePickerInput(session, "Yr",
+                      choices = c(Yr_filler, sort(options$Yr, decreasing = T)),
+                      choicesOpt = list(content = c(Yr_filler, sort(options$Yr, decreasing = T))),
                       selected = isolate(input$Yr))
-    updatePickerInput(session, "Sp", choices = c("", sort(options$Sp)),
+    updatePickerInput(session, "Sp",
+                      choices = c("", sort(options$Sp)),
                       choicesOpt = list(content = c("Select species...", sort(options$Sp))),
                       selected = isolate(input$Sp))
     updatePickerInput(session, "Left1", choices = c("", sort(options$Left1)),
@@ -281,7 +295,7 @@ birdFinderServer <- function(input, output, data, session) {
   selected_ring <- reactiveVal(NULL)
   selected_colours <- reactiveVal(NULL)
   
-  # text shown when too any birds selected to show summary_info
+  # text shown when too many birds selected to show summary_info
   output$more_data <- renderUI({
     req(is.null(search_results()))
     HTML(paste("Over 200 individuals match your search criteria.<br>

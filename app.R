@@ -124,7 +124,7 @@ ui <- tagList(
              hidden(
                div(
                  id = "search_panel",
-                 birdFinderUI("birdFinder")  # birdFinderUI now produces the full layout
+                 birdFinderUI("birdFinder", i18n)  # birdFinderUI now produces the full layout
                )
              ),
              
@@ -196,8 +196,8 @@ ui <- tagList(
                      )),
      selectInput(inputId = "lang_select",
                  label = NULL,
-                 #choices = i18n$get_languages(), # tag language also in language change dropdown (for development)
-                 choices = i18n$get_languages()[i18n$get_languages() != "tag"], # tag language NOT in language change dropdown (for sharing)
+                 choices = i18n$get_languages(), # tag language also in language change dropdown (for development)
+                 #choices = i18n$get_languages()[i18n$get_languages() != "tag"], # tag language NOT in language change dropdown (for sharing)
                  selected = i18n$get_translation_language(),
                  width = "75px"
      )
@@ -256,7 +256,7 @@ server <- function(input, output, session) {
   
   # Find individual by colour rings
   #finder <- birdFinderServer(input, output, vlieland.data, session) # feeding in dummy data
-  finder <- birdFinderServer(input, output, IndividualDataVlieland, session) # feeding in real data
+  finder <- birdFinderServer(input, output, IndividualDataVlieland, session, i18n) # feeding in real data
   search_results <- finder$search_results
   selected_ring <- finder$selected_ring
   selected_colours <- finder$selected_colours

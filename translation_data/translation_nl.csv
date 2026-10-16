@@ -58,6 +58,9 @@ projInfo_research_text, "Meer informatie over koolmezen, over Vlieland, of over 
 
 
 # BIRD SEARCH #
+birdFinder_pickerYr_heading, "TRANSLATE: Year bird seen"
+birdFinder_pickerSp_filler, "TRANSLATE: Select species..."
+birdFinder_pickerYr_filler, "TRANSLATE: Select year..."
 
 
 # SELECETD BIRD - ON ALL PAGES #
@@ -82,3 +85,20 @@ app_subtab_tree, "TRANSLATE: Family Tree"
 
 
 # CITIZEN SCIENCE #
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

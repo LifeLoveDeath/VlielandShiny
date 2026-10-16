@@ -58,7 +58,9 @@ projInfo_research_text, "Placeholder text about hole-breeding passerines or stud
 
 
 # BIRD SEARCH #
-
+birdFinder_pickerYr_heading, "Year bird seen"
+birdFinder_pickerSp_filler, "Select species..."
+birdFinder_pickerYr_filler, "Select year..."
 
 # VIEW BIRD - ON ALL PAGES #
 app_back_to_search, "Return to search"
@@ -83,3 +85,19 @@ app_subtab_tree, "Family Tree"
 
 
 # CITIZEN SCIENCE #
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
