@@ -203,6 +203,13 @@ birdFinderServer <- function(input, output, data, session, i18n) {
   # Excludes current dropdown to prevent circular filtering
   # Uses get_dropdown_options() from birdFunder_functions
   
+  # ReactiveVal to triggor updates when language selection changes
+  Current_lang <- reactiveVal()
+  observeEvent(input$lang_select,{
+    Current_lang(input$lang_select)
+  })
+
+  
   # Reactive observation - triggers output whenever one of the inputs changes
   observe({
     if (!is.null(input$ring_search) && input$ring_search != "") return()
@@ -211,11 +218,15 @@ birdFinderServer <- function(input, output, data, session, i18n) {
     colour_rings$val <- trimws(colour_rings$val)
     get_icons <- function(options) colour_rings$img[match(options, colour_rings$val)]
     
-    options <- get_dropdown_options(data, input)
+    options <- get_dropdown_options(data, input, lang = Current_lang())
     
     # translate dropdown fillers for no selection
     Yr_filler <- setNames("", i18n$t("birdFinder_pickerYr_filler"))
     Sp_filler <- setNames("", i18n$t("birdFinder_pickerSp_filler"))
+    
+    # print(i18n$get_translation_language())
+    # print(options$Sp)
+    # print(to_current_lang(options$Sp, picker_translate))
     
     # below "options" is the list "get_dropdown_options" generated in birdFinder_functions
     # the length of each "options" sub list e.g. options$sp depends on the subsetting applied by selections in the other dropdowns
@@ -239,7 +250,7 @@ birdFinderServer <- function(input, output, data, session, i18n) {
     updatePickerInput(session, "Right2", choices = c("", sort(options$Right2)),
                       choicesOpt = list(content = c("Select colour...", get_icons(sort(options$Right2)))),
                       selected = isolate(input$Right2))
-  })
+  }) %>% bindEvent(input$lang_select)
   
   # reset all to blank if button pressed
   observeEvent(input$reset_filters, {
@@ -288,7 +299,7 @@ birdFinderServer <- function(input, output, data, session, i18n) {
         input$Left2, input$Right1, input$Right2
       )))
     )
-    filter_birds(data, input)
+    filter_birds(data, input, lang = Current_lang())
   })
   
   
@@ -304,7 +315,7 @@ birdFinderServer <- function(input, output, data, session, i18n) {
   
   # text shown when too many birds selected to show summary_info
   output$more_data <- renderUI({
-    req(
+    req(is.null(search_results),
         any(nzchar(c(
           input$Yr, input$Sp, input$Left1,
             input$Left2, input$Right1, input$Right2

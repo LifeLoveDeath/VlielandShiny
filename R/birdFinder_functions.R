@@ -11,15 +11,15 @@
 ## LIST GENERATION CODE ##
 # LANG <- "nl"
 # i18n$.__enclos_env__$private$raw_translate(c("Blue_tit", "Great_tit"), LANG ) %>%
-#   #{sub(" ", "", .)} %>% # Keep the leading spaces! They are present in the translations that will come through
+#   {sub(" ", "", .)} %>%
 #   paste0(. , collapse = '", "') %>%
 #   {paste0('"', . , '"')} %>%
 #   cat()
 ## LIST GENERATION CODE ##
 # Build table
-tag_opts <- c(" Blue_tit", " Great_tit")
-nl_opts <- c(" TRANSLATE: Blue tit", " TRANSLATE: Great tit")
-en_opts <- c(" Blue tit", " Great tit")
+tag_opts <- c("Blue_tit", "Great_tit")
+nl_opts <- c("TRANSLATE: Blue tit", "TRANSLATE: Great tit")
+en_opts <- c("Blue tit", "Great tit")
 en_use <- c("Blue tit", "Great tit")
 picker_translate <- data.frame(tag = tag_opts,
                                nl = nl_opts,
@@ -29,8 +29,7 @@ picker_translate <- data.frame(tag = tag_opts,
 
 # Dropdown picker - translation to static ref -----------------------------
 # Takes current picker input or list and converts to the English used in data frame
-to_static_lang <- function(picker_list, picker_translate) {
-  lang <- i18n$get_translation_language()
+to_static_lang <- function(picker_list, picker_translate, lang) {
   df <- picker_translate
   list_in <- picker_list
   
@@ -39,8 +38,7 @@ to_static_lang <- function(picker_list, picker_translate) {
 }
 
 # Takes English used in data frame and converts to current selected language
-to_current_lang <- function(picker_list, picker_translate) {
-  lang <- i18n$get_translation_language()
+to_current_lang <- function(picker_list, picker_translate, lang) {
   df <- picker_translate
   list_in <- picker_list
   
@@ -72,14 +70,15 @@ get_colour_rings <- function() {
 
 # Establish vector of date options for dropdown options ---------------------
 
-date_options <- function(data, input) {
+date_options <- function(data, input, lang = lang) {
   
-  
+  # Stabilise translated inputs to app internal terms
+  input_Sp <- ifelse(input$Sp == "", "", to_static_lang(input$Sp, picker_translate, lang))
   
   # Birds selected by all other filters
   filtered_birds <- data[
     which((!is.na(data$Colour_EarliestStart)) &
-      (input$Sp == "" | data$Species == input$Sp) &
+      (input_Sp == "" | data$Species == input_Sp) &
       (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
       (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
       (input$Right1 == "" | data$ColourRingRight1 == input$Right1) &
@@ -141,10 +140,13 @@ date_options <- function(data, input) {
 
 # Filtering colour ring dropdown options ----------------------------------
 
-get_dropdown_options <- function(data, input) {
+get_dropdown_options <- function(data, input, lang) {
+  
+  # Stabilise translated inputs to app internal terms
+  input_Sp <- ifelse(input$Sp == "", "", to_static_lang(input$Sp, picker_translate, lang))
   
   list(
-    Yr = date_options(data = data, input = input),
+    Yr = date_options(data = data, input = input, lang = lang),
     Sp = unique(data[
       (input$Yr == "" | (data$Colour_EarliestStart <= input$Yr & data$Colour_LatestLikely >= input$Yr)) &
         (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
@@ -152,10 +154,11 @@ get_dropdown_options <- function(data, input) {
         (input$Right1 == "" | data$ColourRingRight1 == input$Right1) &
         (input$Right2 == "" | data$ColourRingRight2 == input$Right2),
       "Species"
-    ]),
+    ]) %>% to_current_lang(picker_translate, lang
+                           ),
     Left1 = unique(data[
       (input$Yr == "" | (data$Colour_EarliestStart <= input$Yr & data$Colour_LatestLikely >= input$Yr)) &
-        (input$Sp == "" | data$Species == input$Sp) &
+        (input_Sp == "" | data$Species == input_Sp) &
         (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
         (input$Right1 == "" | data$ColourRingRight1 == input$Right1) &
         (input$Right2 == "" | data$ColourRingRight2 == input$Right2),
@@ -163,7 +166,7 @@ get_dropdown_options <- function(data, input) {
     ]),
     Left2 = unique(data[
       (input$Yr == "" | (data$Colour_EarliestStart <= input$Yr & data$Colour_LatestLikely >= input$Yr)) &
-        (input$Sp == "" | data$Species == input$Sp) &
+        (input_Sp == "" | data$Species == input_Sp) &
         (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
         (input$Right1 == "" | data$ColourRingRight1 == input$Right1) &
         (input$Right2 == "" | data$ColourRingRight2 == input$Right2),
@@ -171,7 +174,7 @@ get_dropdown_options <- function(data, input) {
     ]),
     Right1 = unique(data[
       (input$Yr == "" | (data$Colour_EarliestStart <= input$Yr & data$Colour_LatestLikely >= input$Yr)) &
-        (input$Sp == "" | data$Species == input$Sp) &
+        (input_Sp == "" | data$Species == input_Sp) &
         (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
         (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
         (input$Right2 == "" | data$ColourRingRight2 == input$Right2),
@@ -179,7 +182,7 @@ get_dropdown_options <- function(data, input) {
     ]),
     Right2 = unique(data[
       (input$Yr == "" | (data$Colour_EarliestStart <= input$Yr & data$Colour_LatestLikely >= input$Yr)) &
-        (input$Sp == "" | data$Species == input$Sp) &
+        (input_Sp == "" | data$Species == input_Sp) &
         (input$Left1 == "" | data$ColourRingLeft1 == input$Left1) &
         (input$Left2 == "" | data$ColourRingLeft2 == input$Left2) &
         (input$Right1 == "" | data$ColourRingRight1 == input$Right1),
@@ -194,9 +197,10 @@ get_dropdown_options <- function(data, input) {
 
 # Filtering the dataset ---------------------------------------------------
 
-filter_birds <- function(data, input) {
+filter_birds <- function(data, input, lang) {
   
   filtered <- data
+  
   
   # Ring number search overrides colour rings
   if (!is.null(input$ring_search) && input$ring_search != "") {
@@ -208,9 +212,12 @@ filter_birds <- function(data, input) {
     return(NULL)
   }
   
+  # Stabilise translated inputs to app internal terms
+  input_Sp <- ifelse(input$Sp == "", "", to_static_lang(input$Sp, picker_translate, lang))
+  
   # Colour ring filtering
   if (input$Yr != "" && !is.na(input$Yr)) filtered <- filtered[!is.na(filtered$Colour_EarliestStart) & filtered$Colour_EarliestStart <= input$Yr & filtered$Colour_LatestLikely >= input$Yr, ]
-  if (input$Sp != "" && !is.na(input$Sp)) filtered <- filtered[!is.na(filtered$Species) & filtered$Species == input$Sp, ]
+  if (input_Sp != "" && !is.na(input_Sp)) filtered <- filtered[!is.na(filtered$Species) & filtered$Species == input_Sp, ]
   if (input$Left1 != "" && !is.na(input$Left1)) filtered <- filtered[!is.na(filtered$ColourRingLeft1) & filtered$ColourRingLeft1 == input$Left1, ]
   if (input$Left2 != "" && !is.na(input$Left2)) filtered <- filtered[!is.na(filtered$ColourRingLeft2) & filtered$ColourRingLeft2 == input$Left2, ]
   if (input$Right1 != "" && !is.na(input$Right1)) filtered <- filtered[!is.na(filtered$ColourRingRight1) & filtered$ColourRingRight1 == input$Right1, ]

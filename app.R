@@ -51,7 +51,7 @@ lapply(required_packages, library, character.only = TRUE)
 # Translation ------------------------------------------------
 
 i18n <- Translator$new(translation_csvs_path = "./translation_data/")
-i18n$set_translation_language("en")
+i18n$set_translation_language("nl")
 
 # App UI -----------------------------------------------------
 
@@ -236,7 +236,6 @@ server <- function(input, output, session) {
   BroodData <- readRDS("data/BroodDataApp.rds")
   location.data <- readRDS("data/location_data.rds")
   IndividualInfo <- readRDS('data/IndividualInfo.rds')
-  
   
   # App navigation
   # Title link to home page
