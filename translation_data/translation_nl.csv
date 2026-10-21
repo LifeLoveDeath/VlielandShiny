@@ -26,6 +26,8 @@ tag, nl
 # COMMONLY USED WORDS & PHRASES #
 # Words and phrases that occur on multiple pages of the app
 # Anticipating words like blue tit, great tit & species might feature... possibly in upper and lower case??
+Blue_tit, "TRANSLATE: Blue tit"
+Great_tit, "TRANSLATE: Great tit"
 
 
 
@@ -58,8 +60,9 @@ projInfo_research_text, "Meer informatie over koolmezen, over Vlieland, of over 
 
 
 # BIRD SEARCH #
-birdFinder_pickerYr_heading, "TRANSLATE: Year bird seen"
+birdFinder_pickerSp_heading, "TRANSLATE: Species"
 birdFinder_pickerSp_filler, "TRANSLATE: Select species..."
+birdFinder_pickerYr_heading, "TRANSLATE: Year bird seen"
 birdFinder_pickerYr_filler, "TRANSLATE: Select year..."
 
 

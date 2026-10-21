@@ -26,6 +26,8 @@ tag, en
 # COMMONLY USED WORDS & PHRASES #
 # Words and phrases that occur on multiple pages of the app
 # Anticipating words like blue tit, great tit & species might feature... possibly in upper and lower case??
+Blue_tit, "Blue tit"
+Great_tit, "Great tit"
 
 
 
@@ -58,8 +60,9 @@ projInfo_research_text, "Placeholder text about hole-breeding passerines or stud
 
 
 # BIRD SEARCH #
-birdFinder_pickerYr_heading, "Year bird seen"
+birdFinder_pickerSp_heading, "Species" 
 birdFinder_pickerSp_filler, "Select species..."
+birdFinder_pickerYr_heading, "Year bird seen"
 birdFinder_pickerYr_filler, "Select year..."
 
 # VIEW BIRD - ON ALL PAGES #

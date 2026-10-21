@@ -156,9 +156,9 @@ birdFinderServer <- function(input, output, data, session, i18n) {
                 choices = c(setNames("", i18n$t("birdFinder_pickerYr_filler")), year(Sys.Date()):1955),
                 selected = i18n$t("birdFinder_pickerYr_filler"),
                 options = list(size = 4.6)),
-    pickerInput("Sp", "Species",
-                choices = c("Select species..." = "", "Blue tit", "Great tit"),
-                selected = "Select species..."),
+    pickerInput("Sp", i18n$t("birdFinder_pickerSp_heading"),
+                choices = c(setNames("", i18n$t("birdFinder_pickerSp_filler")), i18n$t("Blue_tit"), i18n$t("Great_tit")),
+                selected = i18n$t("birdFinder_pickerSp_filler")),
     pickerInput("Left1", "Left leg - top ring",
                 choices = c("", colour_rings$val),
                 choicesOpt = list(content = c("Select colour...", colour_rings$img)),
@@ -215,6 +215,7 @@ birdFinderServer <- function(input, output, data, session, i18n) {
     
     # translate dropdown fillers for no selection
     Yr_filler <- setNames("", i18n$t("birdFinder_pickerYr_filler"))
+    Sp_filler <- setNames("", i18n$t("birdFinder_pickerSp_filler"))
     
     # below "options" is the list "get_dropdown_options" generated in birdFinder_functions
     # the length of each "options" sub list e.g. options$sp depends on the subsetting applied by selections in the other dropdowns
@@ -223,8 +224,8 @@ birdFinderServer <- function(input, output, data, session, i18n) {
                       choicesOpt = list(content = c(Yr_filler, sort(options$Yr, decreasing = T))),
                       selected = isolate(input$Yr))
     updatePickerInput(session, "Sp",
-                      choices = c("", sort(options$Sp)),
-                      choicesOpt = list(content = c("Select species...", sort(options$Sp))),
+                      choices = c(Sp_filler, sort(options$Sp)),
+                      choicesOpt = list(content = c(Sp_filler, sort(options$Sp))),
                       selected = isolate(input$Sp))
     updatePickerInput(session, "Left1", choices = c("", sort(options$Left1)),
                       choicesOpt = list(content = c("Select colour...", get_icons(sort(options$Left1)))),
@@ -281,6 +282,12 @@ birdFinderServer <- function(input, output, data, session, i18n) {
   
   # Reactive filtered search results, returns results when fewer than 5 rows
   search_results <- reactive({
+    req(
+      any(nzchar(c(
+        input$Yr, input$Sp, input$Left1,
+        input$Left2, input$Right1, input$Right2
+      )))
+    )
     filter_birds(data, input)
   })
   
@@ -297,7 +304,12 @@ birdFinderServer <- function(input, output, data, session, i18n) {
   
   # text shown when too many birds selected to show summary_info
   output$more_data <- renderUI({
-    req(is.null(search_results()))
+    req(
+        any(nzchar(c(
+          input$Yr, input$Sp, input$Left1,
+            input$Left2, input$Right1, input$Right2
+        )))
+        )
     HTML(paste("Over 200 individuals match your search criteria.<br>
                More information is required to narrow down potential matches."))
   })
