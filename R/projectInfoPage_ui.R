@@ -220,7 +220,7 @@ projectInfoUI <- function(id, i18n) {
               style = "text-align: center;",
               tags$img(
                 src = "greattit.jpg",
-                alt = "Image",
+                alt = "Image of great tit",
                 style = "max-width: 600px; width: 100%; border-radius: 5px;"
               )
             )

@@ -60,8 +60,8 @@ birdFinderUI <- function(id, i18n) {
       tags$head(tags$style(HTML(".panel-title > a  {
                           color:#3f5262 !important; font-weight:500;
                           font-size: 16px; line-height: 1.1; }"))),
-      bsCollapse(
-        bsCollapsePanel(
+      bsCollapse(open = "eg_birds",
+        bsCollapsePanel( value = "eg_birds",
           title = "⌵ Example birds",
           div(style = "padding-left: 15px; padding-right: 15px;",
               helpText(HTML("<b>Try searching for the following birds:</b>"))),
@@ -72,7 +72,11 @@ birdFinderUI <- function(id, i18n) {
                                             Right leg - top ring: <b>blue/white</b><br>
                                             Right leg - bottom ring:<b>red</b><br>
                                             <i>Ring number: AE...85066</i>"))),
-          column(width = 3, helpText(HTML("<i>(Placeholder: Diagram showing order of rings on bird)</i>"))),
+          column(width = 3,
+                 style = "text-align: left;",
+                 tags$img(src = "Illustrated_BlueTit.png",
+                          alt = "Drawing of colour ringed blue tit with leg rings matching the first example bird",
+                          style = "max-width: 230px; width: 100%; border-radius: 5px;")),
           column(width = 3, helpText(HTML("Year: <b>1999</b><br>
                           Species: <b>Great tit</b><br>
                           Left leg - top ring: <b>blue</b><br>
@@ -80,7 +84,11 @@ birdFinderUI <- function(id, i18n) {
                           Right leg - top ring: <b>metal</b><br>
                           Right leg - bottom ring: <b>pink/green</b><br>
                           <i>Ring number: B...956635</i>"))),
-          column(width = 3, helpText(HTML("<i>(Placeholder: Diagram showing order of rings on bird)</i>")))
+          column(width = 3, 
+                 style = "text-align: left;",
+                 tags$img(src = "Illustrated_BlueTit.png",
+                          alt = "Drawing of colour ringed great tit with leg rings matching the second example bird",
+                          style = "max-width: 230px; width: 100%; border-radius: 5px;"))
         )),
       
       # --- Search inputs (left) and results (right) ---
