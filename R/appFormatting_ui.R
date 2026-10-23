@@ -86,7 +86,7 @@ navbarUI <- function(id) {
     ### --- Collapse menu when screen is narrow ------------
     tags$style(HTML("
           /* collapse navbar earlier */
-          @media (max-width: 1150px) {
+          @media (max-width: 1356px) {
         
             /* show hamburger toggle button */
             .navbar-toggle {
@@ -128,7 +128,7 @@ navbarUI <- function(id) {
     
     ### Make this dropdown background blue -----------
     tags$style(HTML("
-          @media (max-width: 1150px) {
+          @media (max-width: 1356px) {
           
             /* Hamburger icon background colour */
             .navbar-toggle {
@@ -346,7 +346,7 @@ navbarShinyThemeUI <- function(id) {
     ### --- Collapse menu when screen is narrow ------------
     tags$style(HTML("
           /* collapse navbar earlier */
-          @media (max-width: 1150px) {
+          @media (max-width: 1356px) {
         
             /* show hamburger toggle button */
             .navbar-toggle {

@@ -294,7 +294,7 @@ server <- function(input, output, session) {
   })
   
   # Generate preview map
-  map_preview <- genPreviewMapServer(input, output, search_results, location.data, session)
+  map_preview <- genPreviewMapServer(input, output, search_results, location.data, session, i18n)
   
   # Generate interactive map (always present)
   map_individual <- genMapServer("map_individual", location.data, selected_ring)

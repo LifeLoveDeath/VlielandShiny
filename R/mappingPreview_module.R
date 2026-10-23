@@ -28,7 +28,7 @@
 
 # # Server ------------------------------------------------
 
-genPreviewMapServer <- function(input, output, search_results, location.data, session) {
+genPreviewMapServer <- function(input, output, search_results, location.data, session, i18n) {
   
   # store the last selected RingNumber
   last_ring <- reactiveVal(NULL)
@@ -51,6 +51,6 @@ genPreviewMapServer <- function(input, output, search_results, location.data, se
   output$map_preview <- renderLeaflet({
     req(last_ring(), search_results())
     loc_data <- get_last_location(location.data, last_ring())
-    build_preview_map(loc_data)
+    build_preview_map(loc_data, i18n = i18n)
   })
 }

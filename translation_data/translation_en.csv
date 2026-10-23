@@ -27,7 +27,10 @@ tag, en
 # Words and phrases that occur on multiple pages of the app
 # Anticipating words like blue tit, great tit & species might feature... possibly in upper and lower case??
 Blue_tit, "Blue tit"
+Colour_rings, "Colour rings"
 Great_tit, "Great tit"
+Ring_number, "Ring number"
+Species, "Species"
 
 
 
@@ -75,24 +78,47 @@ birdFinder_Col_white, "white"
 birdFinder_Col_white/blue, "white/blue"
 birdFinder_Col_yellow, "yellow"
 birdFinder_Col_yellow/black, "yellow/black"
+birdFinder_example_heading, "<b>Try searching for the following birds:</b>"
+birdFinder_example_bird1, "Year: <b>2003</b><br>
+                          Species: <b>Blue tit</b><br>
+                          Left leg - top ring: <b>green</b><br>
+                          Left leg - bottom ring: <b>metal</b><br>
+                          Right leg - top ring: <b>blue/white</b><br>
+                          Right leg - bottom ring:<b>red</b><br>
+                          <i>Ring number: AE...85066</i>"
+birdFinder_example_bird2, "Year: <b>1999</b><br>
+                          Species: <b>Great tit</b><br>
+                          Left leg - top ring: <b>blue</b><br>
+                          Left leg - bottom ring: <b>white</b><br>
+                          Right leg - top ring: <b>metal</b><br>
+                          Right leg - bottom ring: <b>pink/green</b><br>
+                          <i>Ring number: B...956635</i>"
+birdFinder_example_title, "⌵ Example birds"
+birdFinder_map_preview, "Last recorded location of "
 birdFinder_pickerColRing_filler, "Select colour..."
 birdFinder_pickerL1_heading, "Left leg - top ring"
 birdFinder_pickerL2_heading, "Left leg - bottom ring"
 birdFinder_pickerR1_heading, "Right leg - top ring"
 birdFinder_pickerR2_heading, "Right leg - bottom ring"
-birdFinder_pickerSp_heading, "Species" 
 birdFinder_pickerSp_filler, "Select species..."
 birdFinder_pickerYr_heading, "Year bird seen"
 birdFinder_pickerYr_filler, "Select year..."
 birdFinder_ringSearch_clear, "Clear ring number"
 birdFinder_ringSearch_filler, "Enter ring number"
 birdFinder_table_button, "See full info"
+birdFinder_table_head_birthYr, "Birth year"
+birdFinder_table_head_select, "Select"
+birdFinder_table_head_pageFirst, "First"
+birdFinder_table_head_pagePrevious, "Previous"
+birdFinder_table_head_pageNext, "Next"
+birdFinder_table_head_pageLast, "Last"
 
-# VIEW BIRD - ON ALL PAGES #
+
+
+# SELECETD BIRD - ON ALL PAGES #
 app_back_to_search, "Return to search"
 app_view_bird_heading, "Explore individual info: Ring number"
 app_view_bird_text, "Here you can view the details of your selected bird.<br>Use the tabs below to explore their general info, location data and family tree."
-
 
 ## INDIVIDUAL INFO ##
 app_subtab_info, "General Info"
@@ -111,6 +137,7 @@ app_subtab_tree, "Family Tree"
 
 
 # CITIZEN SCIENCE #
+
 
 
 

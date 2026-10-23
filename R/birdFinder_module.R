@@ -32,7 +32,7 @@ birdFinderUI <- function(id, i18n) {
   div(
     style = "background-color: #f2f4f5; padding: 5px;",
     
-    # --- White panel container ---
+    # --- White panel container ----
     div(
       style = "
         background-color: #ffffff;
@@ -44,7 +44,7 @@ birdFinderUI <- function(id, i18n) {
           box-shadow: 0 0 12px rgba(0,0,0,0.08);
       ",
       
-      # --- Page title and instructions ---
+      # --- Page title and instructions ----
       fluidRow(
         column(
           width = 12,
@@ -61,29 +61,17 @@ birdFinderUI <- function(id, i18n) {
                           color:#3f5262 !important; font-weight:500;
                           font-size: 16px; line-height: 1.1; }"))),
       bsCollapse(open = "eg_birds",
-        bsCollapsePanel( value = "eg_birds",
-          title = "⌵ Example birds",
+        bsCollapsePanel(value = "eg_birds",
+          title = i18n$t("birdFinder_example_title"),
           div(style = "padding-left: 15px; padding-right: 15px;",
-              helpText(HTML("<b>Try searching for the following birds:</b>"))),
-          column(width = 3, helpText(HTML("Year: <b>2003</b><br>
-                                            Species: <b>Blue tit</b><br>
-                                            Left leg - top ring: <b>green</b><br>
-                                            Left leg - bottom ring: <b>metal</b><br>
-                                            Right leg - top ring: <b>blue/white</b><br>
-                                            Right leg - bottom ring:<b>red</b><br>
-                                            <i>Ring number: AE...85066</i>"))),
+              uiOutput("eg_heading")), 
+          column(width = 3, uiOutput("eg_bird1")),
           column(width = 3,
                  style = "text-align: left;",
                  tags$img(src = "Illustrated_BlueTit.png",
                           alt = "Drawing of colour ringed blue tit with leg rings matching the first example bird",
                           style = "max-width: 230px; width: 100%; border-radius: 5px;")),
-          column(width = 3, helpText(HTML("Year: <b>1999</b><br>
-                          Species: <b>Great tit</b><br>
-                          Left leg - top ring: <b>blue</b><br>
-                          Left leg - bottom ring: <b>white</b><br>
-                          Right leg - top ring: <b>metal</b><br>
-                          Right leg - bottom ring: <b>pink/green</b><br>
-                          <i>Ring number: B...956635</i>"))),
+          column(width = 3, uiOutput("eg_bird2")),
           column(width = 3, 
                  style = "text-align: left;",
                  tags$img(src = "Illustrated_BlueTit.png",
@@ -91,7 +79,7 @@ birdFinderUI <- function(id, i18n) {
                           style = "max-width: 230px; width: 100%; border-radius: 5px;"))
         )),
       
-      # --- Search inputs (left) and results (right) ---
+      # --- Search inputs (left) and results (right) ----
       fluidRow(
         # Left column: search inputs
         column(
@@ -159,6 +147,14 @@ birdFinderServer <- function(input, output, data, session, i18n) {
   
   # ---- Server side ui generation to handle live translation ---------------
   
+  ## ----Example bird collapsible panel ----
+  # heading
+  output$eg_heading <- renderUI({helpText(HTML(i18n$t("birdFinder_example_heading")))})
+  # e.g. bird 1
+  output$eg_bird1 <- renderUI({helpText(HTML(i18n$t("birdFinder_example_bird1")))})
+  # e.g. bird 2
+  output$eg_bird2 <- renderUI({helpText(HTML(i18n$t("birdFinder_example_bird2")))})
+  
   ## ----Colour ring dropdowns ----
   output$searchDropdowns <- renderUI({
     
@@ -175,7 +171,7 @@ birdFinderServer <- function(input, output, data, session, i18n) {
                 choices = c(setNames("", i18n$t("birdFinder_pickerYr_filler")), year(Sys.Date()):1955),
                 selected = i18n$t("birdFinder_pickerYr_filler"),
                 options = list(size = 4.6)),
-    pickerInput("Sp", i18n$t("birdFinder_pickerSp_heading"),
+    pickerInput("Sp", i18n$t("Species"),
                 choices = c(setNames("", i18n$t("birdFinder_pickerSp_filler")), i18n$t("Blue_tit"), i18n$t("Great_tit")),
                 selected = i18n$t("birdFinder_pickerSp_filler")),
     pickerInput("Left1", i18n$t("birdFinder_pickerL1_heading"),
@@ -369,14 +365,30 @@ birdFinderServer <- function(input, output, data, session, i18n) {
       {gsub(", NA", "", .)}
     
     df <- df[, c("RingNumber", "Colour_rings", "BirthYear", "Species")]
-    colnames(df) <- c("Ring number", "Colour rings", "Birth year", "Species")
+
     df$Species <- to_current_lang(df$Species, picker_translate, lang = Current_lang())
     
     df$Select <- make_action_buttons(nrow(df), "select_", label = i18n$t("birdFinder_table_button"))
     
-    datatable(df, options = list(dom = 't<"bottom"p>', ordering = FALSE),
+    RingNumb <- i18n$t("Ring_number")
+    ColRings <- i18n$t("Colour_rings")
+    BirthYr <- i18n$t("birdFinder_table_head_birthYr")
+    Sp <- i18n$t("Species")
+    SelectCol <- i18n$t("birdFinder_table_head_select")
+    
+    colnames(df) <- c(RingNumb, ColRings,
+                      BirthYr, Sp, SelectCol)
+    
+    datatable(df, options = list(dom = 't<"bottom"p>', ordering = FALSE,
+                                 language = list(paginate = list(
+                                   "first" = i18n$t("birdFinder_table_head_pageFirst"),
+                                   "previous" = i18n$t("birdFinder_table_head_pagePrevious"),
+                                   "next" = i18n$t("birdFinder_table_head_pageNext"),
+                                   "last" = i18n$t("birdFinder_table_head_pageLast")
+                                   ))
+                                 ),
               rownames = FALSE, escape = FALSE, selection = list(mode = "single", selected = 1))
-  })
+    })
   
   observeEvent(input$select_button, {
     index <- as.numeric(gsub("select_", "", input$select_button))
