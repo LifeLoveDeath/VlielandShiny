@@ -120,7 +120,6 @@ app_back_to_search, "Return to search"
 app_view_bird_heading, "Explore individual info: Ring number"
 app_view_bird_text, "Here you can view the details of your selected bird.<br>Use the tabs below to explore their general info, location data and family tree."
 
-
 ## INDIVIDUAL INFO ##
 app_subtab_info, "General Info"
 individualInfo_bird_profile, "Bird profile"
@@ -138,6 +137,7 @@ app_subtab_tree, "Family Tree"
 
 
 # CITIZEN SCIENCE #
+
 
 
 
