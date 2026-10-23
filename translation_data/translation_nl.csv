@@ -26,6 +26,8 @@ tag, nl
 # COMMONLY USED WORDS & PHRASES #
 # Words and phrases that occur on multiple pages of the app
 # Anticipating words like blue tit, great tit & species might feature... possibly in upper and lower case??
+Blue_tit, "TRANSLATE: Blue tit"
+Great_tit, "TRANSLATE: Great tit"
 
 
 
@@ -58,6 +60,33 @@ projInfo_research_text, "Meer informatie over koolmezen, over Vlieland, of over 
 
 
 # BIRD SEARCH #
+birdFinder_Col_blue, "TRANSLATE: blue"
+birdFinder_Col_blue/white, "TRANSLATE: blue/white"
+birdFinder_Col_green, "TRANSLATE: green"
+birdFinder_Col_green/white, "TRANSLATE: green/white"
+birdFinder_Col_metal, "TRANSLATE: metal"
+birdFinder_Col_orange, "TRANSLATE: orange"
+birdFinder_Col_pink, "TRANSLATE: pink"
+birdFinder_Col_pink/blue, "TRANSLATE: pink/blue"
+birdFinder_Col_pink/green, "TRANSLATE: pink/green"
+birdFinder_Col_red, "TRANSLATE: red"
+birdFinder_Col_red/white, "TRANSLATE: red/white"
+birdFinder_Col_white, "TRANSLATE: white"
+birdFinder_Col_white/blue, "TRANSLATE: white/blue"
+birdFinder_Col_yellow, "TRANSLATE: yellow"
+birdFinder_Col_yellow/black, "TRANSLATE: yellow/black"
+birdFinder_pickerColRing_filler, "TRANSLATE: Select colour..."
+birdFinder_pickerL1_heading, "TRANSLATE: Left leg - top ring"
+birdFinder_pickerL2_heading, "TRANSLATE: Left leg - bottom ring"
+birdFinder_pickerR1_heading, "TRANSLATE: Right leg - top ring"
+birdFinder_pickerR2_heading, "TRANSLATE: Right leg - bottom ring"
+birdFinder_pickerSp_heading, "TRANSLATE: Species"
+birdFinder_pickerSp_filler, "TRANSLATE: Select species..."
+birdFinder_pickerYr_heading, "TRANSLATE: Year bird seen"
+birdFinder_pickerYr_filler, "TRANSLATE: Select year..."
+birdFinder_ringSearch_clear, "TRANSLATE: Clear ring number"
+birdFinder_ringSearch_filler, "TRANSLATE: Enter ring number"
+birdFinder_table_button, "TRANSLATE: See full info"
 
 
 # SELECETD BIRD - ON ALL PAGES #
@@ -82,3 +111,12 @@ app_subtab_tree, "TRANSLATE: Family Tree"
 
 
 # CITIZEN SCIENCE #
+
+
+
+
+
+
+
+
+

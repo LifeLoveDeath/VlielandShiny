@@ -26,6 +26,8 @@ tag, en
 # COMMONLY USED WORDS & PHRASES #
 # Words and phrases that occur on multiple pages of the app
 # Anticipating words like blue tit, great tit & species might feature... possibly in upper and lower case??
+Blue_tit, "Blue tit"
+Great_tit, "Great tit"
 
 
 
@@ -58,7 +60,33 @@ projInfo_research_text, "Placeholder text about hole-breeding passerines or stud
 
 
 # BIRD SEARCH #
-
+birdFinder_Col_blue, "blue"
+birdFinder_Col_blue/white, "blue/white"
+birdFinder_Col_green, "green"
+birdFinder_Col_green/white, "green/white"
+birdFinder_Col_metal, "metal"
+birdFinder_Col_orange, "orange"
+birdFinder_Col_pink, "pink"
+birdFinder_Col_pink/blue, "pink/blue"
+birdFinder_Col_pink/green, "pink/green"
+birdFinder_Col_red, "red"
+birdFinder_Col_red/white, "red/white"
+birdFinder_Col_white, "white"
+birdFinder_Col_white/blue, "white/blue"
+birdFinder_Col_yellow, "yellow"
+birdFinder_Col_yellow/black, "yellow/black"
+birdFinder_pickerColRing_filler, "Select colour..."
+birdFinder_pickerL1_heading, "Left leg - top ring"
+birdFinder_pickerL2_heading, "Left leg - bottom ring"
+birdFinder_pickerR1_heading, "Right leg - top ring"
+birdFinder_pickerR2_heading, "Right leg - bottom ring"
+birdFinder_pickerSp_heading, "Species" 
+birdFinder_pickerSp_filler, "Select species..."
+birdFinder_pickerYr_heading, "Year bird seen"
+birdFinder_pickerYr_filler, "Select year..."
+birdFinder_ringSearch_clear, "Clear ring number"
+birdFinder_ringSearch_filler, "Enter ring number"
+birdFinder_table_button, "See full info"
 
 # VIEW BIRD - ON ALL PAGES #
 app_back_to_search, "Return to search"
@@ -83,3 +111,12 @@ app_subtab_tree, "Family Tree"
 
 
 # CITIZEN SCIENCE #
+
+
+
+
+
+
+
+
+
