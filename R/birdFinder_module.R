@@ -115,9 +115,8 @@ birdFinderUI <- function(id, i18n) {
           helpText(HTML("
     • Each metal ring is marked with a unique number<br>
     • This can also be used as an alternative to colour rings to identify your bird")),
-          textInput("ring_search", "",
-                    placeholder = "Enter ring number"),
-          actionButton("clear_ring_search", "Clear ring number"),
+          uiOutput("ringNumb_search"),
+          actionButton("clear_ring_search", i18n$t("birdFinder_ringSearch_clear")),
         ),
         
         # Right column: table and map
@@ -130,7 +129,7 @@ birdFinderUI <- function(id, i18n) {
           • <b>Click “See full info”</b> to explore its <b>full details</b>, a map of its nesting sites and its family tree.")),
           DT::dataTableOutput("summary_info"),
           br(),
-          tags$style(type = "text/css", "#more_data{color:#01B6DC; text-align: center;}"), #8AD5E6
+          tags$style(type = "text/css", "#more_data{color:#01B6DC; text-align: center;}"),
           uiOutput("more_data"),  
           uiOutput("map_preview_ui")
           
@@ -150,10 +149,22 @@ birdFinderUI <- function(id, i18n) {
 
 birdFinderServer <- function(input, output, data, session, i18n) {
   
+  # ---- Reactive live language change -------------------------------------
+  # ReactiveVal to trigger updates when language selection changes
+  Current_lang <- reactiveVal()
+  observeEvent(input$lang_select,{
+    Current_lang(input$lang_select)
+  })
+  
+  
   # ---- Server side ui generation to handle live translation ---------------
+  
+  ## ----Colour ring dropdowns ----
   output$searchDropdowns <- renderUI({
-    colour_rings <- get_colour_rings()
+    
+    colour_rings <- get_colour_rings(picker_translate = picker_translate, lang = Current_lang())
     colour_rings$val <- trimws(colour_rings$val)
+    
     tagList(
     tags$head(tags$style(HTML("
             .picker-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -167,25 +178,30 @@ birdFinderServer <- function(input, output, data, session, i18n) {
     pickerInput("Sp", i18n$t("birdFinder_pickerSp_heading"),
                 choices = c(setNames("", i18n$t("birdFinder_pickerSp_filler")), i18n$t("Blue_tit"), i18n$t("Great_tit")),
                 selected = i18n$t("birdFinder_pickerSp_filler")),
-    pickerInput("Left1", "Left leg - top ring",
-                choices = c("", colour_rings$val),
-                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
-                selected = "Select colour..."),
-    pickerInput("Left2", "Left leg - bottom ring",
-                choices = c("", colour_rings$val),
-                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
-                selected = "Select colour..."),
-    pickerInput("Right1", "Right leg - top ring",
-                choices = c("", colour_rings$val),
-                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
-                selected = "Select colour..."),
-    pickerInput("Right2", "Right leg - bottom ring",
-                choices = c("", colour_rings$val),
-                choicesOpt = list(content = c("Select colour...", colour_rings$img)),
-                selected = "Select colour...")
+    pickerInput("Left1", i18n$t("birdFinder_pickerL1_heading"),
+                choices = c(setNames("", i18n$t("birdFinder_pickerColRing_filler")), colour_rings$val),
+                choicesOpt = list(content = c(setNames("", i18n$t("birdFinder_pickerColRing_filler")), colour_rings$img)),
+                selected = i18n$t("birdFinder_pickerColRing_filler")),
+    pickerInput("Left2", i18n$t("birdFinder_pickerL2_heading"),
+                choices = c(setNames("", i18n$t("birdFinder_pickerColRing_filler")), colour_rings$val),
+                choicesOpt = list(content = c(setNames("", i18n$t("birdFinder_pickerColRing_filler")), colour_rings$img)),
+                selected = i18n$t("birdFinder_pickerColRing_filler")),
+    pickerInput("Right1", i18n$t("birdFinder_pickerR1_heading"),
+                choices = c(setNames("", i18n$t("birdFinder_pickerColRing_filler")), colour_rings$val),
+                choicesOpt = list(content = c(setNames("", i18n$t("birdFinder_pickerColRing_filler")), colour_rings$img)),
+                selected = i18n$t("birdFinder_pickerColRing_filler")),
+    pickerInput("Right2", i18n$t("birdFinder_pickerR2_heading"),
+                choices = c(setNames("", i18n$t("birdFinder_pickerColRing_filler")), colour_rings$val),
+                choicesOpt = list(content = c(setNames("", i18n$t("birdFinder_pickerColRing_filler")), colour_rings$img)),
+                selected = ("birdFinder_pickerColRing_filler"))
     )
   })
   
+  ## ----Metal ring number entry ----
+  output$ringNumb_search <- renderUI({
+    textInput("ring_search", "",
+              placeholder = i18n$t("birdFinder_ringSearch_filler"))
+  })
   
   # ---- Uncaps species names in data ----
   data$Species <- str_to_sentence(data$Species)
@@ -211,18 +227,13 @@ birdFinderServer <- function(input, output, data, session, i18n) {
   # Excludes current dropdown to prevent circular filtering
   # Uses get_dropdown_options() from birdFunder_functions
   
-  # ReactiveVal to triggor updates when language selection changes
-  Current_lang <- reactiveVal()
-  observeEvent(input$lang_select,{
-    Current_lang(input$lang_select)
-  })
-
-  
   # Reactive observation - triggers output whenever one of the inputs changes
   observe({
+    
     if (!is.null(input$ring_search) && input$ring_search != "") return()
     
-    colour_rings <- get_colour_rings()
+    picker_translate <- picker_translate
+    colour_rings <- get_colour_rings(picker_translate = picker_translate, lang = Current_lang())
     colour_rings$val <- trimws(colour_rings$val)
     get_icons <- function(options) colour_rings$img[match(options, colour_rings$val)]
     
@@ -231,10 +242,7 @@ birdFinderServer <- function(input, output, data, session, i18n) {
     # translate dropdown fillers for no selection
     Yr_filler <- setNames("", i18n$t("birdFinder_pickerYr_filler"))
     Sp_filler <- setNames("", i18n$t("birdFinder_pickerSp_filler"))
-    
-    # print(i18n$get_translation_language())
-    # print(options$Sp)
-    # print(to_current_lang(options$Sp, picker_translate))
+    ColRing_filler <- setNames("", i18n$t("birdFinder_pickerColRing_filler"))
     
     # below "options" is the list "get_dropdown_options" generated in birdFinder_functions
     # the length of each "options" sub list e.g. options$sp depends on the subsetting applied by selections in the other dropdowns
@@ -246,19 +254,19 @@ birdFinderServer <- function(input, output, data, session, i18n) {
                       choices = c(Sp_filler, sort(options$Sp)),
                       choicesOpt = list(content = c(Sp_filler, sort(options$Sp))),
                       selected = isolate(input$Sp))
-    updatePickerInput(session, "Left1", choices = c("", sort(options$Left1)),
-                      choicesOpt = list(content = c("Select colour...", get_icons(sort(options$Left1)))),
+    updatePickerInput(session, "Left1", choices = c(ColRing_filler, sort(options$Left1)),
+                      choicesOpt = list(content = c(ColRing_filler, get_icons(sort(options$Left1)))),
                       selected = isolate(input$Left1))
-    updatePickerInput(session, "Left2", choices = c("", sort(options$Left2)),
-                      choicesOpt = list(content = c("Select colour...", get_icons(sort(options$Left2)))),
+    updatePickerInput(session, "Left2", choices = c(ColRing_filler, sort(options$Left2)),
+                      choicesOpt = list(content = c(ColRing_filler, get_icons(sort(options$Left2)))),
                       selected = isolate(input$Left2))
-    updatePickerInput(session, "Right1", choices = c("", sort(options$Right1)),
-                      choicesOpt = list(content = c("Select colour...", get_icons(sort(options$Right1)))),
+    updatePickerInput(session, "Right1", choices = c(ColRing_filler, sort(options$Right1)),
+                      choicesOpt = list(content = c(ColRing_filler, get_icons(sort(options$Right1)))),
                       selected = isolate(input$Right1))
-    updatePickerInput(session, "Right2", choices = c("", sort(options$Right2)),
-                      choicesOpt = list(content = c("Select colour...", get_icons(sort(options$Right2)))),
+    updatePickerInput(session, "Right2", choices = c(ColRing_filler, sort(options$Right2)),
+                      choicesOpt = list(content = c(ColRing_filler, get_icons(sort(options$Right2)))),
                       selected = isolate(input$Right2))
-  }) %>% bindEvent(input$lang_select)
+  })
   
   # reset all to blank if button pressed
   observeEvent(input$reset_filters, {
@@ -323,7 +331,7 @@ birdFinderServer <- function(input, output, data, session, i18n) {
   
   # text shown when too many birds selected to show summary_info
   output$more_data <- renderUI({
-    req(is.null(search_results),
+    req(is.null(search_results()),
         any(nzchar(c(
           input$Yr, input$Sp, input$Left1,
             input$Left2, input$Right1, input$Right2
@@ -333,29 +341,50 @@ birdFinderServer <- function(input, output, data, session, i18n) {
                More information is required to narrow down potential matches."))
   })
   
+  option_colours <- reactive({
+    df <- search_results()
+    if (is.null(df) || nrow(df) == 0) return(NULL)
+    df <- df[order(df$Colour_EarliestStart, decreasing = T),]
+    df <- df[, c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
+    col_opts <- df$ColourRingCombo
+    col_opts
+  })
+  
   output$summary_info <- DT::renderDataTable({
     df <- search_results()
     if (is.null(df) || nrow(df) == 0) return(NULL)
     
     df <- df[order(df$Colour_EarliestStart, decreasing = T),]
     
-    df <- df[, c("RingNumber", "ColourRingCombo", "BirthYear", "Species")]
-    df$ColourRingCombo <- gsub("-", ", ", df$ColourRingCombo)
-    colnames(df) <- c("Ring number", "Colour rings", "Birth year", "Species")
+    df <- df[, c("RingNumber", "ColourRingLeft1", "ColourRingLeft2",
+                 "ColourRingRight1", "ColourRingRight2", "BirthYear", "Species")]
+    colnames(df) <- c("RingNumber", "Left1", "Left2", "Right1", "Right2", "BirthYear", "Species")
+  
+    df$Left1 <- to_current_lang(df$Left1, picker_translate, lang = Current_lang())
+    df$Left2 <- to_current_lang(df$Left2, picker_translate, lang = Current_lang())
+    df$Right1 <- to_current_lang(df$Right1, picker_translate, lang = Current_lang())
+    df$Right2 <- to_current_lang(df$Right2, picker_translate, lang = Current_lang())
+    df$Colour_rings <- paste(df$Left1, df$Left2, df$Right1, df$Right2, sep = ", ") %>%
+      {gsub("NA, ", "", .)} %>%
+      {gsub(", NA", "", .)}
     
-    df$Select <- make_action_buttons(nrow(df), "select_")
+    df <- df[, c("RingNumber", "Colour_rings", "BirthYear", "Species")]
+    colnames(df) <- c("Ring number", "Colour rings", "Birth year", "Species")
+    df$Species <- to_current_lang(df$Species, picker_translate, lang = Current_lang())
+    
+    df$Select <- make_action_buttons(nrow(df), "select_", label = i18n$t("birdFinder_table_button"))
     
     datatable(df, options = list(dom = 't<"bottom"p>', ordering = FALSE),
               rownames = FALSE, escape = FALSE, selection = list(mode = "single", selected = 1))
   })
   
   observeEvent(input$select_button, {
-    row_index <- as.numeric(gsub("select_", "", input$select_button))
+    index <- as.numeric(gsub("select_", "", input$select_button))
     df <- search_results()
     df <- df[order(df$Colour_EarliestStart, decreasing = T),]
-    if (!is.null(df) && nrow(df) >= row_index)
-    {selected_ring(df[row_index, "RingNumber"])
-      selected_colours(gsub(", ","-",df[row_index, "ColourRingCombo"]))}
+    if (!is.null(df) && nrow(df) >= index)
+    {selected_ring(df[index, "RingNumber"])
+      selected_colours(option_colours()[index])}
   })
   
   return(list(search_results = search_results, selected_ring = selected_ring,

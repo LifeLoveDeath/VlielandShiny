@@ -6,8 +6,6 @@
 
 citizenScienceUI <- function(data) {
   
-  colour_rings <- get_colour_rings()
-  
   div(
     style = "background-color: #f2f4f5; padding: 5px;",
     
