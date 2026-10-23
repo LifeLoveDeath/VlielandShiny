@@ -369,17 +369,50 @@ birdFinderServer <- function(input, output, data, session, i18n) {
     #                   i18n$t("birdFinder_table_head_birthYr"), i18n$t("Species"))
     df$Species <- to_current_lang(df$Species, picker_translate, lang = Current_lang())
     
+    df$Select <- make_action_buttons(nrow(df), "select_", label = i18n$t("birdFinder_table_button"))
+    
     RingNumb <- i18n$t("Ring_number")
     ColRings <- i18n$t("Colour_rings")
     BirthYr <- i18n$t("birdFinder_table_head_birthYr")
     Sp <- i18n$t("Species")
+    SelectCol <- i18n$t("birdFinder_table_head_select")
     
     colnames(df) <- c(RingNumb, ColRings,
-                      BirthYr, Sp)
+                      BirthYr, Sp, SelectCol)
     
-    df$Select <- make_action_buttons(nrow(df), "select_", label = i18n$t("birdFinder_table_button"))
+    # img <- sprintf(
+    #   "<div class='picker-item'>
+    #    <span class='text'>%s</span>
+    #    <img src='%s.png' class='icon'>
+    #  </div>",
+    #   val_lang,
+    #   gsub("/", "_", val)
+    # )
     
-    datatable(df, options = list(dom = 't<"bottom"p>', ordering = FALSE),
+    # tags$script(HTML(sprintf("$('#DataTables_Table_0').DataTable({
+    #                         language: {
+    #                             paginate: {
+    #                                 first: '%s',
+    #                                 previous: '%s',
+    #                                 next: '%s',
+    #                                 last: '%s'
+    #                             }
+    #                         }
+    #                     });",
+    #                          i18n$t("birdFinder_table_head_pageFirst"),
+    #                          i18n$t("birdFinder_table_head_pagePrevious"),
+    #                          i18n$t("birdFinder_table_head_pageNext"),
+    #                          i18n$t("birdFinder_table_head_pageLast"))
+    #                  ))
+    
+    datatable(df, options = list(dom = 't<"bottom"p>', ordering = FALSE,
+                                 language = list(paginate = list(
+                                   "first" = i18n$t("birdFinder_table_head_pageFirst"),
+                                   "previous" = i18n$t("birdFinder_table_head_pagePrevious"),
+                                   "next" = i18n$t("birdFinder_table_head_pageNext"),
+                                   "last" = i18n$t("birdFinder_table_head_pageLast")
+                                   ))
+                                 ),
               rownames = FALSE, escape = FALSE, selection = list(mode = "single", selected = 1))
     })
   

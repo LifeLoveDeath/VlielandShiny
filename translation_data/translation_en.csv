@@ -107,9 +107,15 @@ birdFinder_ringSearch_clear, "Clear ring number"
 birdFinder_ringSearch_filler, "Enter ring number"
 birdFinder_table_button, "See full info"
 birdFinder_table_head_birthYr, "Birth year"
+birdFinder_table_head_select, "Select"
+birdFinder_table_head_pageFirst, "First"
+birdFinder_table_head_pagePrevious, "Previous"
+birdFinder_table_head_pageNext, "Next"
+birdFinder_table_head_pageLast, "Last"
 
 
-# VIEW BIRD - ON ALL PAGES #
+
+# SELECETD BIRD - ON ALL PAGES #
 app_back_to_search, "Return to search"
 app_view_bird_heading, "Explore individual info: Ring number"
 app_view_bird_text, "Here you can view the details of your selected bird.<br>Use the tabs below to explore their general info, location data and family tree."
