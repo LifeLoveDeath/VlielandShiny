@@ -75,6 +75,22 @@ birdFinder_Col_white, "white"
 birdFinder_Col_white/blue, "white/blue"
 birdFinder_Col_yellow, "yellow"
 birdFinder_Col_yellow/black, "yellow/black"
+birdFinder_example_heading, "<b>Try searching for the following birds:</b>"
+birdFinder_example_bird1, "Year: <b>2003</b><br>
+                          Species: <b>Blue tit</b><br>
+                          Left leg - top ring: <b>green</b><br>
+                          Left leg - bottom ring: <b>metal</b><br>
+                          Right leg - top ring: <b>blue/white</b><br>
+                          Right leg - bottom ring:<b>red</b><br>
+                          <i>Ring number: AE...85066</i>"
+birdFinder_example_bird2, "Year: <b>1999</b><br>
+                          Species: <b>Great tit</b><br>
+                          Left leg - top ring: <b>blue</b><br>
+                          Left leg - bottom ring: <b>white</b><br>
+                          Right leg - top ring: <b>metal</b><br>
+                          Right leg - bottom ring: <b>pink/green</b><br>
+                          <i>Ring number: B...956635</i>"
+birdFinder_example_title, "⌵ Example birds"
 birdFinder_pickerColRing_filler, "Select colour..."
 birdFinder_pickerL1_heading, "Left leg - top ring"
 birdFinder_pickerL2_heading, "Left leg - bottom ring"

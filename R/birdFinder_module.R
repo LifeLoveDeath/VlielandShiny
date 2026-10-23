@@ -32,7 +32,7 @@ birdFinderUI <- function(id, i18n) {
   div(
     style = "background-color: #f2f4f5; padding: 5px;",
     
-    # --- White panel container ---
+    # --- White panel container ----
     div(
       style = "
         background-color: #ffffff;
@@ -44,7 +44,7 @@ birdFinderUI <- function(id, i18n) {
           box-shadow: 0 0 12px rgba(0,0,0,0.08);
       ",
       
-      # --- Page title and instructions ---
+      # --- Page title and instructions ----
       fluidRow(
         column(
           width = 12,
@@ -60,30 +60,27 @@ birdFinderUI <- function(id, i18n) {
       tags$head(tags$style(HTML(".panel-title > a  {
                           color:#3f5262 !important; font-weight:500;
                           font-size: 16px; line-height: 1.1; }"))),
+      tags$script(HTML('
+      <script>
+      $(document).on("shiny:sessioninitialized", function(event) {
+        $("a[id^=\'ui-collapse\']").each(function() {
+          $(this).addClass("i18n");
+          $(this).attr("data-key", $(this).text());
+        }); 
+      });
+      </script>')),
       bsCollapse(open = "eg_birds",
-        bsCollapsePanel( value = "eg_birds",
-          title = "⌵ Example birds",
+        bsCollapsePanel(value = "eg_birds",
+          title = i18n$t("birdFinder_example_title"),
           div(style = "padding-left: 15px; padding-right: 15px;",
-              helpText(HTML("<b>Try searching for the following birds:</b>"))),
-          column(width = 3, helpText(HTML("Year: <b>2003</b><br>
-                                            Species: <b>Blue tit</b><br>
-                                            Left leg - top ring: <b>green</b><br>
-                                            Left leg - bottom ring: <b>metal</b><br>
-                                            Right leg - top ring: <b>blue/white</b><br>
-                                            Right leg - bottom ring:<b>red</b><br>
-                                            <i>Ring number: AE...85066</i>"))),
+              renderUI("eg_heading")),
+          column(width = 3, renderUI("eg_bird1")),
           column(width = 3,
                  style = "text-align: left;",
                  tags$img(src = "Illustrated_BlueTit.png",
                           alt = "Drawing of colour ringed blue tit with leg rings matching the first example bird",
                           style = "max-width: 230px; width: 100%; border-radius: 5px;")),
-          column(width = 3, helpText(HTML("Year: <b>1999</b><br>
-                          Species: <b>Great tit</b><br>
-                          Left leg - top ring: <b>blue</b><br>
-                          Left leg - bottom ring: <b>white</b><br>
-                          Right leg - top ring: <b>metal</b><br>
-                          Right leg - bottom ring: <b>pink/green</b><br>
-                          <i>Ring number: B...956635</i>"))),
+          column(width = 3, renderUI("eg_bird2")),
           column(width = 3, 
                  style = "text-align: left;",
                  tags$img(src = "Illustrated_BlueTit.png",
@@ -91,7 +88,7 @@ birdFinderUI <- function(id, i18n) {
                           style = "max-width: 230px; width: 100%; border-radius: 5px;"))
         )),
       
-      # --- Search inputs (left) and results (right) ---
+      # --- Search inputs (left) and results (right) ----
       fluidRow(
         # Left column: search inputs
         column(
@@ -158,6 +155,14 @@ birdFinderServer <- function(input, output, data, session, i18n) {
   
   
   # ---- Server side ui generation to handle live translation ---------------
+  
+  ## ----Example bird collapsible panel ----
+  # heading
+  output$eg_heading <- renderUI({helpText(HTML(i18n$t("birdFinder_example_heading")))})
+  # e.g. bird 1
+  output$eg_bird1 <- renderUI({helpText(HTML(i18n$t("birdFinder_example_bird1")))})
+  # e.g. bird 2
+  output$eg_bird2 <- renderUI({helpText(HTML(i18n$t("birdFinder_example_bird2")))})
   
   ## ----Colour ring dropdowns ----
   output$searchDropdowns <- renderUI({

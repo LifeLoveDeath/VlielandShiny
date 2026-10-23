@@ -75,6 +75,22 @@ birdFinder_Col_white, "TRANSLATE: white"
 birdFinder_Col_white/blue, "TRANSLATE: white/blue"
 birdFinder_Col_yellow, "TRANSLATE: yellow"
 birdFinder_Col_yellow/black, "TRANSLATE: yellow/black"
+birdFinder_example_heading, "TRANSLATE: <b>Try searching for the following birds:</b>"
+birdFinder_example_bird1, "TRANSLATE: Year: <b>2003</b><br>
+                          Species: <b>Blue tit</b><br>
+                          Left leg - top ring: <b>green</b><br>
+                          Left leg - bottom ring: <b>metal</b><br>
+                          Right leg - top ring: <b>blue/white</b><br>
+                          Right leg - bottom ring:<b>red</b><br>
+                          <i>Ring number: AE...85066</i>"
+birdFinder_example_bird2, "TRANSLATE: Year: <b>1999</b><br>
+                          Species: <b>Great tit</b><br>
+                          Left leg - top ring: <b>blue</b><br>
+                          Left leg - bottom ring: <b>white</b><br>
+                          Right leg - top ring: <b>metal</b><br>
+                          Right leg - bottom ring: <b>pink/green</b><br>
+                          <i>Ring number: B...956635</i>"
+birdFinder_example_title, "TRANSLATE: ⌵ Example birds"
 birdFinder_pickerColRing_filler, "TRANSLATE: Select colour..."
 birdFinder_pickerL1_heading, "TRANSLATE: Left leg - top ring"
 birdFinder_pickerL2_heading, "TRANSLATE: Left leg - bottom ring"
