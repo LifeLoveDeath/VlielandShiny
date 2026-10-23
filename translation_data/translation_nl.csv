@@ -27,7 +27,10 @@ tag, nl
 # Words and phrases that occur on multiple pages of the app
 # Anticipating words like blue tit, great tit & species might feature... possibly in upper and lower case??
 Blue_tit, "TRANSLATE: Blue tit"
+Colour_rings, "TRANSLATE: Colour rings"
 Great_tit, "TRANSLATE: Great tit"
+Ring_number, "TRANSLATE: Ring number"
+Species, "TRANSLATE: Species"
 
 
 
@@ -91,18 +94,19 @@ birdFinder_example_bird2, "TRANSLATE: Year: <b>1999</b><br>
                           Right leg - bottom ring: <b>pink/green</b><br>
                           <i>Ring number: B...956635</i>"
 birdFinder_example_title, "TRANSLATE: ⌵ Example birds"
+birdFinder_map_preview, "TRANSLATE: Last recorded location of "
 birdFinder_pickerColRing_filler, "TRANSLATE: Select colour..."
 birdFinder_pickerL1_heading, "TRANSLATE: Left leg - top ring"
 birdFinder_pickerL2_heading, "TRANSLATE: Left leg - bottom ring"
 birdFinder_pickerR1_heading, "TRANSLATE: Right leg - top ring"
 birdFinder_pickerR2_heading, "TRANSLATE: Right leg - bottom ring"
-birdFinder_pickerSp_heading, "TRANSLATE: Species"
 birdFinder_pickerSp_filler, "TRANSLATE: Select species..."
 birdFinder_pickerYr_heading, "TRANSLATE: Year bird seen"
 birdFinder_pickerYr_filler, "TRANSLATE: Select year..."
 birdFinder_ringSearch_clear, "TRANSLATE: Clear ring number"
 birdFinder_ringSearch_filler, "TRANSLATE: Enter ring number"
 birdFinder_table_button, "TRANSLATE: See full info"
+birdFinder_table_head_birthYr, "TRANSLATE: Birth year"
 
 
 # SELECETD BIRD - ON ALL PAGES #

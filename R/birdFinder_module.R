@@ -60,27 +60,18 @@ birdFinderUI <- function(id, i18n) {
       tags$head(tags$style(HTML(".panel-title > a  {
                           color:#3f5262 !important; font-weight:500;
                           font-size: 16px; line-height: 1.1; }"))),
-      tags$script(HTML('
-      <script>
-      $(document).on("shiny:sessioninitialized", function(event) {
-        $("a[id^=\'ui-collapse\']").each(function() {
-          $(this).addClass("i18n");
-          $(this).attr("data-key", $(this).text());
-        }); 
-      });
-      </script>')),
       bsCollapse(open = "eg_birds",
         bsCollapsePanel(value = "eg_birds",
           title = i18n$t("birdFinder_example_title"),
           div(style = "padding-left: 15px; padding-right: 15px;",
-              renderUI("eg_heading")),
-          column(width = 3, renderUI("eg_bird1")),
+              uiOutput("eg_heading")), 
+          column(width = 3, uiOutput("eg_bird1")),
           column(width = 3,
                  style = "text-align: left;",
                  tags$img(src = "Illustrated_BlueTit.png",
                           alt = "Drawing of colour ringed blue tit with leg rings matching the first example bird",
                           style = "max-width: 230px; width: 100%; border-radius: 5px;")),
-          column(width = 3, renderUI("eg_bird2")),
+          column(width = 3, uiOutput("eg_bird2")),
           column(width = 3, 
                  style = "text-align: left;",
                  tags$img(src = "Illustrated_BlueTit.png",
@@ -180,7 +171,7 @@ birdFinderServer <- function(input, output, data, session, i18n) {
                 choices = c(setNames("", i18n$t("birdFinder_pickerYr_filler")), year(Sys.Date()):1955),
                 selected = i18n$t("birdFinder_pickerYr_filler"),
                 options = list(size = 4.6)),
-    pickerInput("Sp", i18n$t("birdFinder_pickerSp_heading"),
+    pickerInput("Sp", i18n$t("Species"),
                 choices = c(setNames("", i18n$t("birdFinder_pickerSp_filler")), i18n$t("Blue_tit"), i18n$t("Great_tit")),
                 selected = i18n$t("birdFinder_pickerSp_filler")),
     pickerInput("Left1", i18n$t("birdFinder_pickerL1_heading"),
@@ -374,14 +365,23 @@ birdFinderServer <- function(input, output, data, session, i18n) {
       {gsub(", NA", "", .)}
     
     df <- df[, c("RingNumber", "Colour_rings", "BirthYear", "Species")]
-    colnames(df) <- c("Ring number", "Colour rings", "Birth year", "Species")
+    # colnames(df) <- c(i18n$t("Ring_number"), i18n$t("Colour_rings"),
+    #                   i18n$t("birdFinder_table_head_birthYr"), i18n$t("Species"))
     df$Species <- to_current_lang(df$Species, picker_translate, lang = Current_lang())
+    
+    RingNumb <- i18n$t("Ring_number")
+    ColRings <- i18n$t("Colour_rings")
+    BirthYr <- i18n$t("birdFinder_table_head_birthYr")
+    Sp <- i18n$t("Species")
+    
+    colnames(df) <- c(RingNumb, ColRings,
+                      BirthYr, Sp)
     
     df$Select <- make_action_buttons(nrow(df), "select_", label = i18n$t("birdFinder_table_button"))
     
     datatable(df, options = list(dom = 't<"bottom"p>', ordering = FALSE),
               rownames = FALSE, escape = FALSE, selection = list(mode = "single", selected = 1))
-  })
+    })
   
   observeEvent(input$select_button, {
     index <- as.numeric(gsub("select_", "", input$select_button))

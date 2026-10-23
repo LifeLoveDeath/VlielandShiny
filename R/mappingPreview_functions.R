@@ -13,7 +13,8 @@ get_last_location <- function(location_data, ring) {
 }
 
 # --- Build Leaflet map for a given location ---
-build_preview_map <- function(loc_data, default_lat = 53.273449, default_lng = 5.013775, default_zoom = 12.5) {
+build_preview_map <- function(loc_data, default_lat = 53.273449, default_lng = 5.013775, default_zoom = 12.5, i18n) {
+  birdFinder_map_preview <- i18n$t("birdFinder_map_preview")
   m <- leaflet(options = leafletOptions(zoomControl = TRUE, zoomSnap = 0.5)) %>%
     addTiles() %>%
     setView(lng = default_lng, lat = default_lat, zoom = default_zoom) %>%
@@ -39,7 +40,7 @@ build_preview_map <- function(loc_data, default_lat = 53.273449, default_lng = 5
     m <- m %>%
       addControl(
         html = paste0("<div style='font-weight:bold; font-size:16px; background:white; padding:4px; border-radius:4px;'>",
-                      loc_data$RingNumber, " Last recorded location</div>"),
+                      birdFinder_map_preview, loc_data$RingNumber, "</div>"),
         position = "topright"
       ) %>%
       addCircleMarkers(
