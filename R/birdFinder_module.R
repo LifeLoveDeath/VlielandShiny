@@ -385,7 +385,7 @@ birdFinderServer <- function(input, output, data, session, i18n) {
                                    "previous" = i18n$t("birdFinder_table_head_pagePrevious"),
                                    "next" = i18n$t("birdFinder_table_head_pageNext"),
                                    "last" = i18n$t("birdFinder_table_head_pageLast")
-                                   ))
+                                   )), pageLength = 5
                                  ),
               rownames = FALSE, escape = FALSE, selection = list(mode = "single", selected = 1))
     })
