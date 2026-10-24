@@ -308,7 +308,8 @@ birdFinderServer <- function(input, output, data, session, i18n) {
     req(
       any(nzchar(c(
         input$Yr, input$Sp, input$Left1,
-        input$Left2, input$Right1, input$Right2
+        input$Left2, input$Right1, input$Right2,
+        input$ring_search
       )))
     )
     filter_birds(data, input, lang = Current_lang())
