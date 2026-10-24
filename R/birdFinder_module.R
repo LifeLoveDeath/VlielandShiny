@@ -331,7 +331,8 @@ birdFinderServer <- function(input, output, data, session, i18n) {
     req(is.null(search_results()),
         any(nzchar(c(
           input$Yr, input$Sp, input$Left1,
-            input$Left2, input$Right1, input$Right2
+            input$Left2, input$Right1, input$Right2,
+          input$ring_search
         )))
         )
     HTML(paste("Over 200 individuals match your search criteria.<br>
