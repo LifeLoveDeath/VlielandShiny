@@ -21,6 +21,13 @@ appThemeUI <- function(id) {
     .dropdown-menu {
     z-index: 2000 !important;
     }
+    
+    /* set width & placement of example bird colour ring icons */
+    .RingCols {
+    max-height: 14px;
+    padding-left: 10px;
+    }
+    
     "))
   )
 }

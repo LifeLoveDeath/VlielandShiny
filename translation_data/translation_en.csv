@@ -63,6 +63,7 @@ projInfo_research_text, "Placeholder text about hole-breeding passerines or stud
 
 
 # BIRD SEARCH #
+# For the example birds nothing within the <img .. > tags needs translation
 birdFinder_Col_blue, "blue"
 birdFinder_Col_blue/white, "blue/white"
 birdFinder_Col_green, "green"
@@ -81,17 +82,17 @@ birdFinder_Col_yellow/black, "yellow/black"
 birdFinder_example_heading, "<b>Try searching for the following birds:</b>"
 birdFinder_example_bird1, "Year: <b>2003</b><br>
                           Species: <b>Blue tit</b><br>
-                          Left leg - top ring: <b>green</b><br>
-                          Left leg - bottom ring: <b>metal</b><br>
-                          Right leg - top ring: <b>blue/white</b><br>
-                          Right leg - bottom ring:<b>red</b><br>
+                          Left leg - top ring: <b>green</b>             <img src='green.png' class='icon RingCols'> <br>
+                          Left leg - bottom ring: <b>metal</b>          <img src='metal.png' class='icon RingCols'> <br>
+                          Right leg - top ring: <b>blue/white</b>       <img src='blue_white.png' class='icon RingCols'> <br>
+                          Right leg - bottom ring: <b>red</b>           <img src='red.png' class='icon RingCols'> <br>
                           <i>Ring number: AE...85066</i>"
 birdFinder_example_bird2, "Year: <b>1999</b><br>
                           Species: <b>Great tit</b><br>
-                          Left leg - top ring: <b>blue</b><br>
-                          Left leg - bottom ring: <b>white</b><br>
-                          Right leg - top ring: <b>metal</b><br>
-                          Right leg - bottom ring: <b>pink/green</b><br>
+                          Left leg - top ring: <b>blue</b>              <img src='blue.png' class='icon RingCols'> <br>
+                          Left leg - bottom ring: <b>white</b>          <img src='white.png' class='icon RingCols'> <br>
+                          Right leg - top ring: <b>metal</b>            <img src='metal.png' class='icon RingCols'> <br>
+                          Right leg - bottom ring: <b>pink/green</b>    <img src='pink_green.png' class='icon RingCols'> <br>
                           <i>Ring number: B...956635</i>"
 birdFinder_example_title, "⌵ Example birds"
 birdFinder_map_preview, "Last recorded location of "
