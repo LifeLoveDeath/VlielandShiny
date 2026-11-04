@@ -71,14 +71,14 @@ birdFinderUI <- function(id, i18n) {
                  style = "text-align: left;",
                  tags$img(src = "Blue_tit-Illustration.png",
                           alt = "Drawing of colour ringed blue tit with leg rings matching the first example bird",
-                          style = "max-height: 135px; width: 100%;")),
+                          style = "width: 100%; max-height: 135px; object-fit: contain;")),
           column(width = 3, uiOutput("eg_bird2")),
           column(width = 3, style = "padding-top: 10px; padding-bottom: 10px;
                  padding-left: 5; padding-right: 5;",
                  style = "text-align: left;",
                  tags$img(src = "Great_tit-Illustration.png",
                           alt = "Drawing of colour ringed great tit with leg rings matching the second example bird",
-                          style = "max-height: 135px; width: 100%;"))
+                          style = "width: 100%; max-height: 135px; object-fit: contain;"))
         )),
       
       # --- Search inputs (left) and results (right) ----
